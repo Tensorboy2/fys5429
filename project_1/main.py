@@ -3,10 +3,9 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
-
-import numpy as np
+import time
 import matplotlib.pyplot as plt
-import math
+
 
 from cnn import CNN
 from train import Trainer
@@ -22,6 +21,7 @@ def main():
                 pool_2='max',
                 use_batch_norm=True,
                 use_dropout=True)
+    model.p=0.1
     optimizer = optim.Adam(params = model.parameters(), lr = 0.001)
     trainer = Trainer()
 
@@ -39,18 +39,22 @@ def main():
     train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
     test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
 
-    
-    trainer.train(model,optimizer,train_data_loader,test_data_loader) # Run training
+    start = time.time()
+    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=5) # Run training
+    stop = time.time()
+    print(f'Total training time: {stop-start} seconds')
 
     plotter = Plotter(trainer,model)
     plotter.plot_mse()
+    plotter.plot_r2()
+    plotter.visualize_kernels_1()
+    plotter.visualize_kernels_2()
+    plt.show()
 
 
 
 
 if __name__ == '__main__':
-    import time
-    start = time.time()
+    
     main()
-    stop = time.time()
-    print(f'Total run time: {stop-start} seconds')
+    
