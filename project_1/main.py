@@ -21,21 +21,20 @@ def main():
                 pool_2='max',
                 use_batch_norm=True,
                 use_dropout=True)
-    model.p=0.1
+    model.p=0.5
     optimizer = optim.Adam(params = model.parameters(), lr = 0.001)
     trainer = Trainer()
+    batch_size = 64
 
     # Dummy data
-    num_images = 256
+    num_images = 100
     images = torch.rand((num_images,1,128,128))
     params = torch.rand((num_images))
 
+    # Prepare data for the 
     X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.2, random_state=42)
-
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test,y_test)
-
-    batch_size = 32
     train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
     test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
 
