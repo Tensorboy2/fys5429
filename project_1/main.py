@@ -27,8 +27,10 @@ def main():
     batch_size = 64
 
     # Dummy data
-    num_images = 100
-    images = torch.rand((num_images,1,128,128))
+    # num_images = 100
+    # images = torch.rand((num_images,1,128,128))
+    images = torch.load('images.pt')
+    num_images = images.shape[0]
     params = torch.rand((num_images))
 
     # Prepare data for the 
