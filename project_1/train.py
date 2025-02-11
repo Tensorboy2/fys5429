@@ -75,13 +75,13 @@ class Trainer():
                     running_test_r2 += r2_score(y_true=y_test,y_pred=y_pred)
 
             epoch_test_mse = running_test_loss/len(y_test)
-            self.train_mse.append(epoch_test_mse)
+            self.test_mse.append(epoch_test_mse)
 
             # epoch_train_mae = running_train_loss/len(y_train)
             # self.train_mae.append(epoch_train_mae)
 
             epoch_test_r2 = running_test_r2/len(y_test)
-            self.train_r2.append(epoch_test_r2)
+            self.test_r2.append(epoch_test_r2)
             
             print(f'Epoch {epoch},')
             print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2},')
