@@ -33,6 +33,7 @@ class CNN(nn.Module):
         - hidden_size: Int (The number of hidden nodes in the fully connected layer)
         - activation: 'relu', 'leakyrelu', 'sigmoid' or 'tanh' (Activation function in fully connected layer)
         - use_dropout: Bool (Optional. Whether or not to use dropout)
+        - use_batch_norm: Bool (Optional. Whether or not to use batch normalization)
 
         The constructor of a CNN need parameters for its basic architecture.
         In this project we will stick to only having 2 layers of convolution,
@@ -59,6 +60,9 @@ class CNN(nn.Module):
                                        kernel_size = kernel_size_2,
                                        stride = stride_2)
         
+        self.activation_cnn = nn.ReLU()
+
+
         # Declaring optional pooling layers.
         self.pool_stride = 2
         self.pool_kernel = 2
@@ -137,11 +141,13 @@ class CNN(nn.Module):
         - out: tensor (The predicted parameter)
         '''
         x = self.convolution_1(x) # Apply first convolution layer (B,C,Nx,Ny)
+        x = self.activation_cnn(x) # Apply ReLU to feature maps
         if self.pool_1 is not None: # Apply pooling if given
             x = self.pool_1(x)
         if self.use_batch_norm: # Apply batch normalization if given
             x = self.batch_norm_1(x)
         x = self.convolution_2(x) # Apply second convolution layer
+        x = self.activation_cnn(x)# Apply ReLU to feature maps
         if self.pool_2 is not None: # Apply pooling if given
             x = self.pool_2(x)
         if self.use_batch_norm: # Apply batch normalization if given
