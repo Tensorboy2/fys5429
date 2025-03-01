@@ -87,12 +87,12 @@ def main_cnn():
                 stride_2=2,
                 pool_1='max',
                 pool_2='max',
-                hidden_size=4096,
+                hidden_sizes=None,
                 # hidden_size=2048,
                 use_batch_norm=True,
                 use_dropout=True)
     model.p=0.5
-    optimizer = optim.Adam(params = model.parameters(), lr = 0.001,weight_decay=0.1)
+    optimizer = optim.Adam(params = model.parameters(), lr = 0.0001,weight_decay=0.001)
     trainer = Trainer()
     batch_size = 16
 
@@ -103,26 +103,27 @@ def main_cnn():
     # params = torch.rand((num_images)) # Produce fake labels
     images = torch.load(os.path.join(path,'data/images.pt')) # Load generated data
     params = torch.load(os.path.join(path,'data/k.pt')) # Load generated data
-    params = (params - params.min()) / (params.max() - params.min())
+    # params = (params - params.min()) / (params.max() - params.min())
     # Prepare data for the 
-    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.2)
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test,y_test)
     train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
     test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
 
     start = time.time()
-    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=200) # Run training
+    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=40) # Run training
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 
     torch.save(model.state_dict(), os.path.join(path,'models/model.pth'))
 
     plotter = Plotter(trainer,model)
-    plotter.plot_mse()
-    plotter.plot_r2()
-    plotter.visualize_kernels_1()
-    plotter.visualize_kernels_2()
+    name='cnn'
+    plotter.plot_mse(name)
+    plotter.plot_r2(name)
+    plotter.visualize_kernels_1(name)
+    plotter.visualize_kernels_2(name)
     # plt.show()
 
 
@@ -132,7 +133,7 @@ def main_autoencoder():
     '''
     # Initializing classes
     model = Autoencoder()
-    optimizer = optim.Adam(params = model.parameters(), lr = 0.01,weight_decay=0.1)
+    optimizer = optim.Adam(params = model.parameters(), lr = 0.0001,weight_decay=0.001)
     trainer = Trainer()
     batch_size = 16
 
@@ -143,26 +144,25 @@ def main_autoencoder():
     # params = torch.rand((num_images)) # Produce fake labels
     images = torch.load(os.path.join(path,'data/images.pt')) # Load generated data
     params = torch.load(os.path.join(path,'data/k.pt')) # Load generated data
-    params = (params - params.min()) / (params.max() - params.min())
+    # params = (params - params.min()) / (params.max() - params.min())
     # Prepare data for the 
-    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.2)
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test,y_test)
     train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
     test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
 
     start = time.time()
-    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=200) # Run training
+    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=40) # Run training
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 
-    torch.save(model.state_dict(), os.path.join(path,'models/model.pth'))
+    torch.save(model.state_dict(), os.path.join(path,'models/autoencoder.pth'))
 
     plotter = Plotter(trainer,model)
-    plotter.plot_mse()
-    plotter.plot_r2()
-    plotter.visualize_kernels_1()
-    plotter.visualize_kernels_2()
+    name='autoencoder'
+    plotter.plot_mse(name)
+    plotter.plot_r2(name)
     # plt.show()
 
 
@@ -170,5 +170,6 @@ def main_autoencoder():
 
 if __name__ == '__main__':
     # grid_search()
-    main_autoencoder()
+    main_cnn()
+    # main_autoencoder()
     

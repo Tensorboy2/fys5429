@@ -1,5 +1,7 @@
 '''Module for plotting with CNN'''
 import matplotlib.pyplot as plt
+import os
+path = os.path.dirname(__file__)
 
 class Plotter:
     '''
@@ -9,7 +11,7 @@ class Plotter:
         self.trainer = trainer
         self.model = model
 
-    def plot_mse(self):
+    def plot_mse(self,name):
         '''
         Plotting the mean square error of the training process.
         '''
@@ -23,8 +25,9 @@ class Plotter:
         plt.xlabel('epoch')
         plt.ylabel('MSE')
         plt.legend()
+        plt.savefig(os.path.join(path,f'plots/{name}/{name}_mse.pdf'))
 
-    def plot_r2(self):
+    def plot_r2(self,name):
         '''
         Plotting the R2 score of the training process.
         '''
@@ -34,12 +37,14 @@ class Plotter:
         plt.plot(train_r2, label= 'Train R2')
         plt.plot(test_r2, label= 'Test R2')
         plt.xscale('log')
-        plt.yscale('log')
+        # plt.yscale('log')
+        plt.ylim(-1,1)
         plt.xlabel('epoch')
         plt.ylabel('R2')
         plt.legend()
+        plt.savefig(os.path.join(path,f'plots/{name}/{name}_r2.pdf'))
 
-    def visualize_kernels_1(self):
+    def visualize_kernels_1(self,name):
         '''
         Visualizing the kernels from the first convolution layer
         '''
@@ -54,8 +59,9 @@ class Plotter:
                 img = ax.imshow(weight[i], cmap="jet", vmin=vmin, vmax=vmax)
                 ax.axis("off")
         fig.colorbar(img, ax=axes, orientation="vertical", fraction=0.02, pad=0.02)
+        plt.savefig(os.path.join(path,f'plots/{name}/{name}_kernels_1.pdf'))
 
-    def visualize_kernels_2(self):
+    def visualize_kernels_2(self,name):
         '''
         Visualizing the kernels from the second convolution layer
         '''
@@ -70,3 +76,4 @@ class Plotter:
                 img = ax.imshow(weight[i], cmap="jet", vmin=vmin, vmax=vmax)
                 ax.axis("off")
         fig.colorbar(img, ax=axes, orientation="vertical", fraction=0.02, pad=0.02)
+        plt.savefig(os.path.join(path,f'plots/{name}/{name}_kernels_2.pdf'))

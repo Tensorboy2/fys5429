@@ -14,7 +14,7 @@ class CNN(nn.Module):
                  kernel_size_2 = 3,
                  stride_2 = 1,
                  pool_2 = None,
-                 hidden_size=128,
+                 hidden_sizes=None,
                  activation = 'relu',
                  use_dropout = False,
                  use_batch_norm = False,
@@ -93,8 +93,8 @@ class CNN(nn.Module):
 
 
         # Declare fully connected layer with correct input size
-        self.first_linear_layer = nn.Linear(in_features = num_out_channels_2 * (out_conv_2 ** 2),
-                                             out_features = hidden_size)
+        # self.first_linear_layer = nn.Linear(in_features = num_out_channels_2 * (out_conv_2 ** 2),
+        #                                      out_features = hidden_size)
         
         # Declare activation function in fully connected layers
         if activation == 'relu':
@@ -107,9 +107,29 @@ class CNN(nn.Module):
             self.activation = nn.Tanh()
 
         # Declare last layer 
-        self.second_linear_layer = nn.Linear(in_features = hidden_size,
-                                             out_features = 1)
+        # self.second_linear_layer = nn.Linear(in_features = hidden_size,
+                                            #  out_features = 1)
         
+        if hidden_sizes is None:
+            hidden_sizes = [image_size * 8,
+                            image_size * 8,
+                            image_size * 2]
+        
+        layers = []
+        input_dim = num_out_channels_2 * (out_conv_2 ** 2)
+        
+        # Construct hidden layers dynamically
+        for hidden_dim in hidden_sizes:
+            layers.append(nn.Linear(input_dim, hidden_dim))
+            layers.append(self.activation)
+            input_dim = hidden_dim
+        
+        # Output layer
+        layers.append(nn.Linear(hidden_sizes[-1], 1))
+        
+        self.layers = nn.Sequential(*layers)
+
+
         # Declare optional dropout
         '''
         Dropout can be used in many places of a neural network. It can be effectual
@@ -153,11 +173,12 @@ class CNN(nn.Module):
         if self.use_batch_norm: # Apply batch normalization if given
             x = self.batch_norm_2(x)
         x = x.view(x.shape[0], -1) # Flatten to give to the linear layers
-        x = self.first_linear_layer(x) # Apply first linear layer
-        x = self.activation(x) # Apply activation function
-        if self.use_dropout: # Apply dropout if given
-            x = self.dropout(x) 
-        out = self.second_linear_layer(x) # Apply second linear layer
+        # x = self.first_linear_layer(x) # Apply first linear layer
+        # x = self.activation(x) # Apply activation function
+        # if self.use_dropout: # Apply dropout if given
+        #     x = self.dropout(x) 
+        # out = self.second_linear_layer(x) # Apply second linear layer
+        out = self.layers(x)
         return out
 
 
