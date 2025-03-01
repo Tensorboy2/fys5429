@@ -14,6 +14,7 @@ path = os.path.dirname(__file__)
 from cnn import CNN
 from train import Trainer
 from plot import Plotter
+from autoencoder import Autoencoder
 
 
 def grid_search():
@@ -75,7 +76,7 @@ def grid_search():
     plt.savefig(os.path.join(path,'plots/grid_search_mse.pdf'))
     # plt.show()
 
-def main():
+def main_cnn():
     '''
     Main function of project.
     '''
@@ -125,9 +126,49 @@ def main():
     # plt.show()
 
 
+def main_autoencoder():
+    '''
+    Main function of project.
+    '''
+    # Initializing classes
+    model = Autoencoder()
+    optimizer = optim.Adam(params = model.parameters(), lr = 0.01,weight_decay=0.1)
+    trainer = Trainer()
+    batch_size = 16
+
+    # Dummy data
+    # num_images = 10_000
+    # images = torch.rand((num_images,1,128,128))
+    # num_images = images.shape[0] # Get num images
+    # params = torch.rand((num_images)) # Produce fake labels
+    images = torch.load(os.path.join(path,'data/images.pt')) # Load generated data
+    params = torch.load(os.path.join(path,'data/k.pt')) # Load generated data
+    params = (params - params.min()) / (params.max() - params.min())
+    # Prepare data for the 
+    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.3)
+    train_dataset = TensorDataset(X_train,y_train)
+    test_dataset = TensorDataset(X_test,y_test)
+    train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
+    test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
+
+    start = time.time()
+    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=200) # Run training
+    stop = time.time()
+    print(f'Total training time: {stop-start} seconds')
+
+    torch.save(model.state_dict(), os.path.join(path,'models/model.pth'))
+
+    plotter = Plotter(trainer,model)
+    plotter.plot_mse()
+    plotter.plot_r2()
+    plotter.visualize_kernels_1()
+    plotter.visualize_kernels_2()
+    # plt.show()
+
+
 
 
 if __name__ == '__main__':
     # grid_search()
-    main()
+    main_autoencoder()
     
