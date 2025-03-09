@@ -13,7 +13,7 @@ class Autoencoder(nn.Module):
         layers = []
         input_dim = image_size * image_size
         
-        # Construct hidden layers dynamically
+        # Construct hidden layers dynamically:
         for hidden_dim in hidden_sizes:
             layers.append(nn.Linear(input_dim, hidden_dim))
             layers.append(nn.ReLU())

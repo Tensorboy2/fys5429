@@ -1,184 +1,115 @@
 '''A module containing a pytorch class for doing Convolution Neural Network processing of 2d images with 1 channel to single parameter.'''
+import torch
 import torch.nn as nn
 
 class CNN(nn.Module):
-    '''
-    A python class for a CNN using pytorch.
-    '''
-    def __init__(self, image_size = 128, 
-                 num_out_channels_1 = 32,
-                 kernel_size_1 = 3,
-                 stride_1 = 1,
-                 pool_1 = None,
-                 num_out_channels_2 = 64,
-                 kernel_size_2 = 3,
-                 stride_2 = 1,
-                 pool_2 = None,
+    def __init__(self,
+                 image_size=128,
+                 # Default convolution layout:
+                 conv_layers_params=[{'out_channels': 5, 'kernel_size': 3, 'stride': 2, 'pool': 'max'},
+                                     {'out_channels': 10, 'kernel_size': 3, 'stride': 1, 'pool': 'max'},
+                                     {'out_channels': 20, 'kernel_size': 3, 'stride': 1, 'pool': 'max'}],
                  hidden_sizes=None,
-                 activation = 'relu',
-                 use_dropout = False,
-                 use_batch_norm = False,
-                    *args, **kwargs):
-        '''
-        # Parameters:
-        - image_size: Int (The size of the input image)
-        - num_out_channels_1: Int (The number of produced feature maps, similar number of kernels)
-        - kernel_size_1: Int (The size of the filter (kernel))
-        - stride_1: Int (The numbers of steps between each convolution)
-        - pool_1: 'max' or 'avg' (Optional. Sets the pooling method used)
-        - num_out_channels_2: Int (The number of produced feature maps, similar number of kernels)
-        - kernel_size_2: Int (The size of the filter (kernel))
-        - stride_2: Int (The numbers of steps between each convolution)
-        - pool_2: 'max' or 'avg' (Optional. Sets the pooling method used)
-        - hidden_size: Int (The number of hidden nodes in the fully connected layer)
-        - activation: 'relu', 'leakyrelu', 'sigmoid' or 'tanh' (Activation function in fully connected layer)
-        - use_dropout: Bool (Optional. Whether or not to use dropout)
-        - use_batch_norm: Bool (Optional. Whether or not to use batch normalization)
+                 activation='relu',
+                 use_dropout=False,
+                 use_batch_norm=False):
+        """
+        Parameters:
+            image_size (int): The size (width/height) of the input image.
+            conv_layers_params (list): List of dictionaries, each with:
+                - out_channels (int): Number of output channels.
+                - kernel_size (int): Size of the convolution kernel.
+                - stride (int): Stride for the convolution.
+                - pool (str or None): Optional pooling method ('max' or 'avg').
+            hidden_sizes (list): List of sizes for fully connected hidden layers.
+            activation (str): Activation function to use ('relu', 'leakyrelu', 'sigmoid', 'tanh').
+            use_dropout (bool): Whether to include dropout (p=0.5) after fully connected layers.
+            use_batch_norm (bool): Whether to add batch normalization after each conv layer.
+        """
+        super().__init__()
 
-        The constructor of a CNN need parameters for its basic architecture.
-        In this project we will stick to only having 2 layers of convolution,
-        but letting the kernel size, stride and channels be tunable hyper parameters.
-        For the fully connected layer we will let its architecture be fixed to 2 hidden 
-        layers but the with will be tunable. For the model we will assume that the image is 
-        square so that the width and hight is the same number of pixels.
-
-        The model will assume that the batch (B) comes first then the channel (C) then the dimension of the image (B,C,Nx,Ny).
-        '''
-        super().__init__(*args, **kwargs)
-
-        self.training = False # Can be used for later if tests if needed. (DELETE IF NEVER USED IN THE PROJECT)
-
-        # Declaring the first convolution layer.
-        self.convolution_1 = nn.Conv2d(in_channels = 1, # Only one channel since data is binary.
-                                       out_channels = num_out_channels_1, # Same as number of kernels.
-                                       kernel_size = kernel_size_1,
-                                       stride = stride_1)
         
-        # Declaring the second convolution layer.
-        self.convolution_2 = nn.Conv2d(in_channels = num_out_channels_1, # Must match the output of the last layer.
-                                       out_channels = num_out_channels_2,
-                                       kernel_size = kernel_size_2,
-                                       stride = stride_2)
+        def get_activation(name): # Getting the right activation function
+            if name == 'relu':
+                return nn.ReLU()
+            elif name == 'leakyrelu':
+                return nn.LeakyReLU()
+            elif name == 'sigmoid':
+                return nn.Sigmoid()
+            elif name == 'tanh':
+                return nn.Tanh()
+            else:
+                raise ValueError(f"Unsupported activation: {name}")
+
+        # Build convolutional layers:
+        self.conv_layers = nn.Sequential()
+        in_channels = 1  # A single-channel input from binary image
+        current_size = image_size
+        pool_kernel = 2  # Default pooling kernel size
+        pool_stride = 2  # Default pooling stride
+
+        for idx, params in enumerate(conv_layers_params):
+            conv = nn.Conv2d(in_channels=in_channels,
+                             out_channels=params['out_channels'],
+                             kernel_size=params['kernel_size'],
+                             stride=params['stride'])
+            
+            self.conv_layers.add_module(f"conv{idx+1}", conv)
+
+            current_size = (current_size - params['kernel_size']) // params['stride'] + 1 # Output size after convolution
+            
+            if use_batch_norm: # Optional batch normalization
+                bn = nn.BatchNorm2d(params['out_channels'])
+                self.conv_layers.add_module(f"batch_norm{idx+1}", bn)
+
+            self.conv_layers.add_module(f"activation{idx+1}", get_activation(activation)) # Activation
+
+            
+            if params.get('pool', None) is not None: # Optional pooling layer
+                if params['pool'] == 'max':
+                    pool_layer = nn.MaxPool2d(kernel_size=pool_kernel, stride=pool_stride)
+                
+                elif params['pool'] == 'avg':
+                    pool_layer = nn.AvgPool2d(kernel_size=pool_kernel, stride=pool_stride)
+                
+                else: # Handel invalid pooling type input
+                    raise ValueError("Pooling must be 'max', 'avg', or None")
+                self.conv_layers.add_module(f"pool{idx+1}", pool_layer)
+                
+                current_size = (current_size - pool_kernel) // pool_stride + 1 # Output after pooling:
+
+            in_channels = params['out_channels']
+
         
-        self.activation_cnn = nn.ReLU()
+        conv_output_dim = in_channels * (current_size ** 2) # Input size to fully connected layers.
 
+        if hidden_sizes is None: # Default hidden sizes
+            hidden_sizes = [conv_output_dim // 16, conv_output_dim // 32]
 
-        # Declaring optional pooling layers.
-        self.pool_stride = 2
-        self.pool_kernel = 2
-        self.pool_1 = pool_1
-        self.pool_2 = pool_2
-        if pool_1 == 'max':
-            self.pool_1 = nn.MaxPool2d(kernel_size = self.pool_kernel, stride = self.pool_stride)
-        elif pool_1 == 'avg':
-            self.pool_1 = nn.AvgPool2d(kernel_size = self.pool_kernel, stride = self.pool_stride)
+        # Build fully connected layers:
+        fc_layers = []
+        fc_input_dim = conv_output_dim
+        for idx, hidden_dim in enumerate(hidden_sizes):
+            fc_layers.append(nn.Linear(fc_input_dim, hidden_dim))
 
-        if pool_2 == 'max':
-            self.pool_2 = nn.MaxPool2d(kernel_size = self.pool_kernel, stride = self.pool_stride)
-        elif pool_2 == 'avg':
-            self.pool_2 = nn.AvgPool2d(kernel_size = self.pool_kernel, stride = self.pool_stride)
+            if use_dropout: # Apply dropout if given.
+                fc_layers.append(nn.Dropout(p=0.5))
+            fc_layers.append(get_activation(activation))
+            fc_input_dim = hidden_dim
 
-        '''
-        To account for the size of the out channels of the convolution and possibly pooling layers we calculate:
-        H = ((((image_size - kernel_size) / conv_stride) + 1) - (pool_kernel - 1))/ pool_stride
-        '''
-        # Compute feature map size after first convolution
-        out_conv_1 = ((image_size - kernel_size_1) // stride_1) + 1
-        if pool_1 is not None:
-            out_conv_1 = ((out_conv_1 - self.pool_kernel) // self.pool_stride) + 1
-        # Compute feature map size after second convolution
-        out_conv_2 = ((out_conv_1 - kernel_size_2) // stride_2) + 1
-        if pool_2 is not None:
-            out_conv_2 = ((out_conv_2 - self.pool_kernel) // self.pool_stride) + 1 
+        fc_layers.append(nn.Linear(fc_input_dim, 1)) # Output layer
+        self.fc_layers = nn.Sequential(*fc_layers)
 
-
-        # Declare fully connected layer with correct input size
-        # self.first_linear_layer = nn.Linear(in_features = num_out_channels_2 * (out_conv_2 ** 2),
-        #                                      out_features = hidden_size)
-        
-        # Declare activation function in fully connected layers
-        if activation == 'relu':
-            self.activation = nn.ReLU()
-        elif activation == 'leakyrelu':
-            self.activation = nn.LeakyReLU()
-        elif activation == 'sigmoid':
-            self.activation = nn.Sigmoid()
-        elif activation == 'tanh':
-            self.activation = nn.Tanh()
-
-        # Declare last layer 
-        # self.second_linear_layer = nn.Linear(in_features = hidden_size,
-                                            #  out_features = 1)
-        
-        if hidden_sizes is None:
-            hidden_sizes = [image_size * 8,
-                            image_size * 8,
-                            image_size * 2]
-        
-        layers = []
-        input_dim = num_out_channels_2 * (out_conv_2 ** 2)
-        
-        # Construct hidden layers dynamically
-        for hidden_dim in hidden_sizes:
-            layers.append(nn.Linear(input_dim, hidden_dim))
-            layers.append(self.activation)
-            input_dim = hidden_dim
-        
-        # Output layer
-        layers.append(nn.Linear(hidden_sizes[-1], 1))
-        
-        self.layers = nn.Sequential(*layers)
-
-
-        # Declare optional dropout
-        '''
-        Dropout can be used in many places of a neural network. It can be effectual
-        in parts that are prone to over fitting. One such part is the first linear layer 
-        as it has a big number of input parameters compared to other parts of the network.
-        '''
-        self.use_dropout = use_dropout
-        if use_dropout:
-            self.p = 0.5 # Making p an attribute so that it can be reset later
-            self.dropout = nn.Dropout(p = self.p) # 0.5 is the default value, currently do not know of a better value 
-
-        # Declare optional batch normalization
-        '''
-        Convolution layers can be regularized by the use of batch normalization.  
-        '''
-        self.use_batch_norm = use_batch_norm
-        if use_batch_norm:
-            self.batch_norm_1 = nn.BatchNorm2d(num_out_channels_1)
-            self.batch_norm_2 = nn.BatchNorm2d(num_out_channels_2)
-
-    def forward(self,x):
-        '''
-        Applies the CNN to a input image and return a number.
-
-        # Params:
-        - x: tensor (The image of form (B,Nx,Ny))
-
-        # Returns:
-        - out: tensor (The predicted parameter)
-        '''
-        x = self.convolution_1(x) # Apply first convolution layer (B,C,Nx,Ny)
-        x = self.activation_cnn(x) # Apply ReLU to feature maps
-        if self.pool_1 is not None: # Apply pooling if given
-            x = self.pool_1(x)
-        if self.use_batch_norm: # Apply batch normalization if given
-            x = self.batch_norm_1(x)
-        x = self.convolution_2(x) # Apply second convolution layer
-        x = self.activation_cnn(x)# Apply ReLU to feature maps
-        if self.pool_2 is not None: # Apply pooling if given
-            x = self.pool_2(x)
-        if self.use_batch_norm: # Apply batch normalization if given
-            x = self.batch_norm_2(x)
-        x = x.view(x.shape[0], -1) # Flatten to give to the linear layers
-        # x = self.first_linear_layer(x) # Apply first linear layer
-        # x = self.activation(x) # Apply activation function
-        # if self.use_dropout: # Apply dropout if given
-        #     x = self.dropout(x) 
-        # out = self.second_linear_layer(x) # Apply second linear layer
-        out = self.layers(x)
+    def forward(self, x):
+        """
+        Forward pass:
+          x: Tensor of shape (B, 1, image_size, image_size). Single channel image.
+        Returns:
+          out: Tensor with the predicted parameter.
+        """
+        x = self.conv_layers(x)
+        x = x.view(x.size(0), -1)  # Flatten for fully connected layers (B,conv_output_dim*conv_output_dim)
+        out = self.fc_layers(x)
         return out
 
 
@@ -186,6 +117,6 @@ if __name__ == '__main__':
     import torch
     image_size = 128
     x = torch.rand((1,1,image_size,image_size)) # (B,C,Nx,Ny) We only have one channel but torch still expects a channel number.
-    model = CNN(image_size=image_size, pool_1='max',pool_2='avg', activation='sigmoid', use_dropout=True, use_batch_norm=True)
+    model = CNN(use_dropout=True, use_batch_norm=True)
     r = model(x).item()
     print(r)

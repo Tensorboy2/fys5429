@@ -1,129 +1,117 @@
 '''Main module for project 1.'''
 import torch
+torch.manual_seed(0)
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 import time
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import os
 path = os.path.dirname(__file__)
 
 from cnn import CNN
-from train import Trainer
+from train import Trainer,train
 from plot import Plotter
 from autoencoder import Autoencoder
 
-
-def grid_search():
-    batch_size = 32
-    lrs = [0.01,0.005,0.001,0.0005,0.0001]
-    l2s = [0,0.01,0.05,0.1,0.5]
-    results = []
-
-    images = torch.load(os.path.join(path,'data/images.pt')) # Load generated data
-    params = torch.load(os.path.join(path,'data/k.pt')) # Load generated data
-
+def get_data(batch_size = 32,test_size=0.2,normalize=True):
+    '''
+    Function for getting data and turning them into the train and test loader.
+    '''
+    images = torch.load(os.path.join(path,'data/images.pt'),weights_only=False) # Load generated images
+    params = torch.load(os.path.join(path,'data/k.pt'),weights_only=False) # Load calculated permeability
+    if normalize:
+        params = (params - params.min()) / (params.max() - params.min())
     # Prepare data for the 
-    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=test_size,random_state=42)
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test,y_test)
     train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
     test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
+    return train_data_loader, test_data_loader
 
+def grid_search():
+    '''
+    Grid search function. 
+    Preforms a grid search of given model hyper parameters and model architectures.
+    '''
+    results = []
+    epoch_results = []
+    train_data_loader, test_data_loader = get_data(batch_size=64,test_size=0.2)
 
+    lrs = np.logspace(-1,-6,4)#[0.1,0.01, 0.001,0.0001,0.00001]
+    l2s = [0, 0.001, 0.01,0.1]
+    
+
+    num_epochs = 10
     for lr in lrs:
         for l2 in l2s:
-            model = CNN(kernel_size_1=8,
-                    stride_1=4,
-                    kernel_size_2=8,
-                    stride_2=4,
-                    pool_1='max',
-                    pool_2='max',
-                    activation='sigmoid',
-                    use_batch_norm=True,
-                    use_dropout=True)
-            optimizer = optim.Adam(params = model.parameters(), lr = lr,weight_decay=l2)
+            models = {'CNN': CNN(use_batch_norm=True, use_dropout=True),
+                    'Autoencoder': Autoencoder()}
+            for model_name, model in models.items():
+                optimizer = optim.Adam(params = model.parameters(), lr = lr,weight_decay=0)
+                print(f"Training {model_name} with lr={lr}, L2={l2}")
+                train_mse, test_mse, train_r2, test_r2, train_mae, test_mae = train(model,
+                                                            optimizer,
+                                                            train_data_loader,
+                                                            test_data_loader, 
+                                                            num_epochs=num_epochs,
+                                                            l2=l2)
+                # Store per-epoch metrics
+                for epoch in range(num_epochs):
+                    epoch_results.append({
+                        "Model": model_name,
+                        "Learning Rate": lr,
+                        "L2 Weight Decay": l2,
+                        "Epoch": epoch + 1,
+                        "Train MSE": train_mse[epoch],
+                        "Test MSE": test_mse[epoch],
+                        "Train R2": train_r2[epoch],
+                        "Test R2": test_r2[epoch],
+                        "Train MAE": train_mae[epoch],
+                        "Test MAE": test_mae[epoch]
+                    })
 
-            trainer = Trainer()
-            trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=200)
-            
-            train_mse = trainer.train_mse[-1]
-            test_mse = trainer.train_mse[-1]
-            train_r2 = trainer.train_r2[-1]
-            test_r2 = trainer.train_r2[-1]
-            results.append((lr, l2, train_r2, test_r2, train_mse, train_mse))
-    df = pd.DataFrame(results, columns=["lr", "l2", "train_r2", "test_r2", "trains_mse", "test_mse"])
-    df.to_csv(os.path.join(path,'r2.csv'))
-    # Convert to DataFrame
-    data = pd.read_csv(os.path.join(path,'r2.csv'))
-    # Pivot for heatmap
-    train_r2_pivot = data.pivot(index="lr", columns="l2", values="train_r2")
-    test_r2_pivot = data.pivot(index="lr", columns="l2", values="test_r2")
-    train_mse_pivot = data.pivot(index="lr", columns="l2", values="train_mse")
-    test_mse_pivot = data.pivot(index="lr", columns="l2", values="test_mse")
+                # Store final epoch metrics in the summary DataFrame
+                results.append({
+                    "Model": model_name,
+                    "Learning Rate": lr,
+                    "L2 Weight Decay": l2,
+                    "Final Test MSE": test_mse[-1],
+                    "Final Test R2": test_r2[-1],
+                    "Final Test MAE": test_mae[-1]
+                })
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    sns.heatmap(train_r2_pivot, annot=True, cmap="viridis", ax=axes[0])
-    sns.heatmap(test_r2_pivot, annot=True, cmap="magma", ax=axes[1])
-    plt.savefig(os.path.join(path,'plots/grid_search_r2.pdf'))
-
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    sns.heatmap(train_mse_pivot, annot=True, cmap="viridis", ax=axes[0])
-    sns.heatmap(test_mse_pivot, annot=True, cmap="magma", ax=axes[1])
-    plt.savefig(os.path.join(path,'plots/grid_search_mse.pdf'))
-    # plt.show()
+    # Convert to DataFrames
+    df_results = pd.DataFrame(results)  # Final metrics summary
+    df_epoch_results = pd.DataFrame(epoch_results)  # Per-epoch metrics
+    df_results.to_csv(os.path.join(path,'training_data/grid_search_last.csv'))
+    df_epoch_results.to_csv(os.path.join(path,'training_data/grid_search_full.csv'))
 
 def main_cnn():
     '''
     Main function of project.
     '''
     # Initializing classes
-    model = CNN(kernel_size_1=8,
-                stride_1=2,
-                kernel_size_2=8,
-                stride_2=2,
-                pool_1='max',
-                pool_2='max',
-                hidden_sizes=None,
-                # hidden_size=2048,
-                use_batch_norm=True,
+    model = CNN(use_batch_norm=True,
                 use_dropout=True)
-    model.p=0.5
-    optimizer = optim.Adam(params = model.parameters(), lr = 0.0001,weight_decay=0.001)
-    trainer = Trainer()
-    batch_size = 16
-
-    # Dummy data
-    # num_images = 10_000
-    # images = torch.rand((num_images,1,128,128))
-    # num_images = images.shape[0] # Get num images
-    # params = torch.rand((num_images)) # Produce fake labels
-    images = torch.load(os.path.join(path,'data/images.pt')) # Load generated data
-    params = torch.load(os.path.join(path,'data/k.pt')) # Load generated data
-    # params = (params - params.min()) / (params.max() - params.min())
-    # Prepare data for the 
-    X_train, X_test, y_train, y_test = train_test_split(images, params, test_size=0.2)
-    train_dataset = TensorDataset(X_train,y_train)
-    test_dataset = TensorDataset(X_test,y_test)
-    train_data_loader = DataLoader(train_dataset,batch_size=batch_size)
-    test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
+    optimizer = optim.Adam(params = model.parameters(), lr = 0.0001, weight_decay = 0)
+    train_data_loader, test_data_loader = get_data(batch_size=128,test_size=0.3,normalize=True)
 
     start = time.time()
-    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=40) # Run training
+    _ = train(model,optimizer,train_data_loader,test_data_loader, num_epochs=14,l1=0,l2=0) # Run training
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 
-    torch.save(model.state_dict(), os.path.join(path,'models/model.pth'))
+    # torch.save(model.state_dict(), os.path.join(path,'models/model.pth'))
 
-    plotter = Plotter(trainer,model)
-    name='cnn'
-    plotter.plot_mse(name)
-    plotter.plot_r2(name)
-    plotter.visualize_kernels_1(name)
-    plotter.visualize_kernels_2(name)
+    # plotter = Plotter(trainer,model)
+    # name='cnn'
+    # plotter.plot_mse(name)
+    # plotter.plot_r2(name)
+    # plotter.visualize_kernels_1(name)
+    # plotter.visualize_kernels_2(name)
     # plt.show()
 
 
@@ -169,7 +157,7 @@ def main_autoencoder():
 
 
 if __name__ == '__main__':
-    # grid_search()
-    main_cnn()
+    grid_search()
+    # main_cnn()
     # main_autoencoder()
     

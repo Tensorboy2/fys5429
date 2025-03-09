@@ -274,7 +274,7 @@ def pipeline(start_index,stop_index,T,rank):
 import sys
 from mpi4py import MPI
 if __name__ == '__main__':
-    num_samples = 16*50  # Total number of samples
+    num_samples = 16*100  # Total number of samples
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank() # Process ID
     size = comm.Get_size() # Total number of processes
@@ -299,8 +299,8 @@ if __name__ == '__main__':
         k_tensor = torch.cat(all_k, dim=0)
 
         # Save only on rank 0
-        torch.save(images_tensor, os.path.join(path,'data/images.pt'))
-        torch.save(k_tensor, os.path.join(path,'data/k.pt'))
+        torch.save(images_tensor, os.path.join(path,'data/images_2.pt'))
+        torch.save(k_tensor, os.path.join(path,'data/k_2.pt'))
         print(f"Saved tensors. Total samples: {images_tensor.shape[0]}")
     MPI.Finalize()
 """
