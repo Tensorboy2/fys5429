@@ -89,24 +89,62 @@ def plot_metrics(df_epoch_results):
         # Convert Learning Rate to string to avoid hue issues
         df_model["Learning Rate"] = df_model["Learning Rate"].astype(str)
 
-        ## ---- MSE Plot ---- ##
+        ## ---- Train MSE Plot ---- ##
         g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Train MSE", hue="Learning Rate", marker="o", linestyle="-")
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Test MSE", hue="Learning Rate", marker="s", linestyle="--")
-        g.set_axis_labels("Epoch", "MSE")
+        g.map_dataframe(sns.lineplot, x="Epoch", y="Train MSE", hue="Learning Rate")#, marker="o", linestyle="-")
+        g.set_axis_labels("Epoch", "Train MSE (log scale)")
         g.set_titles(f"{model_name} - L2 = {{col_name}}")
+        g.set(yscale="log")  # Set y-axis to logarithmic scale
         g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_mse.pdf"))
+        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_train_mse.pdf"))
         plt.clf()
 
-        ## ---- R² Plot ---- ##
+        ## ---- Test MSE Plot ---- ##
         g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Train R2", hue="Learning Rate", marker="o", linestyle="-")
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Test R2", hue="Learning Rate", marker="s", linestyle="--")
-        g.set_axis_labels("Epoch", "R²")
+        g.map_dataframe(sns.lineplot, x="Epoch", y="Test MSE", hue="Learning Rate")#, marker="s", linestyle="--")
+        g.set_axis_labels("Epoch", "Test MSE (log scale)")
+        g.set_titles(f"{model_name} - L2 = {{col_name}}")
+        g.set(yscale="log")  # Set y-axis to logarithmic scale
+        g.add_legend()
+        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_test_mse.pdf"))
+        plt.clf()
+
+        ## ---- Train MAE Plot ---- ##
+        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
+        g.map_dataframe(sns.lineplot, x="Epoch", y="Train MAE", hue="Learning Rate")#, marker="o", linestyle="-")
+        g.set_axis_labels("Epoch", "Train MAE (log scale)")
+        g.set_titles(f"{model_name} - L2 = {{col_name}}")
+        g.set(yscale="log")  # Set y-axis to logarithmic scale
+        g.add_legend()
+        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_train_mae.pdf"))
+        plt.clf()
+
+        ## ---- Test MAE Plot ---- ##
+        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
+        g.map_dataframe(sns.lineplot, x="Epoch", y="Test MAE", hue="Learning Rate")#, marker="s", linestyle="--")
+        g.set_axis_labels("Epoch", "Test MAE (log scale)")
+        g.set_titles(f"{model_name} - L2 = {{col_name}}")
+        g.set(yscale="log")  # Set y-axis to logarithmic scale
+        g.add_legend()
+        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_test_mae.pdf"))
+        plt.clf()
+
+        ## ---- Train R² Plot ---- ##
+        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
+        g.map_dataframe(sns.lineplot, x="Epoch", y="Train R2", hue="Learning Rate")#, marker="o", linestyle="-")
+        g.set_axis_labels("Epoch", "Train R²")
         g.set_titles(f"{model_name} - L2 = {{col_name}}")
         g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_r2.pdf"))
+        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_train_r2.pdf"))
+        plt.clf()
+
+        ## ---- Test R² Plot ---- ##
+        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
+        g.map_dataframe(sns.lineplot, x="Epoch", y="Test R2", hue="Learning Rate")#, marker="s", linestyle="--")
+        g.set_axis_labels("Epoch", "Test R²")
+        g.set_titles(f"{model_name} - L2 = {{col_name}}")
+        g.add_legend()
+        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_test_r2.pdf"))
         plt.clf()
 
 

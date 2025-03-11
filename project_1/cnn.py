@@ -118,5 +118,5 @@ if __name__ == '__main__':
     image_size = 128
     x = torch.rand((1,1,image_size,image_size)) # (B,C,Nx,Ny) We only have one channel but torch still expects a channel number.
     model = CNN(use_dropout=True, use_batch_norm=True)
-    r = model(x).item()
-    print(r)
+    pred = model(x).item()
+    print(pred)

@@ -1,6 +1,7 @@
 '''Training module for CNN.'''
 import torch
 import torch.optim as op
+import numpy as np
 from sklearn.metrics import r2_score, mean_absolute_error
 
 class Trainer():
@@ -103,7 +104,9 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
     for epoch in range(num_epochs):
         running_train_loss = 0
         running_train_mae = 0
-        running_train_r2 = 0
+        # running_train_r2 = 0
+        all_y_true = []
+        all_y_pred = []
         for X_train, y_train in train_data_loader:
             # X_train, y_train = train_data
 
@@ -125,7 +128,10 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
             running_train_loss += loss.item()
             y_pred = outputs.detach().numpy()
             running_train_mae += mean_absolute_error(y_true=y_train,y_pred=y_pred)
-            running_train_r2 += r2_score(y_true=y_train,y_pred=y_pred)
+            # running_train_r2 += r2_score(y_true=y_train,y_pred=y_pred)
+            all_y_true.append(y_train.numpy())
+            all_y_pred.append(y_pred)
+
         
         epoch_train_mse = running_train_loss/len(y_train)
         train_mse.append(epoch_train_mse)
@@ -133,12 +139,18 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_train_mae = running_train_mae/len(y_train)
         train_mae.append(epoch_train_mae)
 
-        epoch_train_r2 = running_train_r2/len(y_train)
+
+        all_y_true = np.concatenate(all_y_true)
+        all_y_pred = np.concatenate(all_y_pred)
+        # epoch_train_r2 = running_train_r2/len(y_train)
+        epoch_train_r2 = r2_score(all_y_true, all_y_pred)
         train_r2.append(epoch_train_r2)
 
         running_test_loss = 0
         running_test_mae = 0
-        running_test_r2 = 0
+        # running_test_r2 = 0
+        all_y_true = []
+        all_y_pred = []
         with torch.no_grad():
             for X_test, y_test in test_data_loader:
                 outputs = model(X_test) # Make predictions
@@ -147,7 +159,9 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
                 running_test_loss += loss.item()
                 y_pred = outputs.detach().numpy()
                 running_test_mae += mean_absolute_error(y_true=y_test,y_pred=y_pred)
-                running_test_r2 += r2_score(y_true=y_test,y_pred=y_pred)
+                # running_test_r2 += r2_score(y_true=y_test,y_pred=y_pred)
+                all_y_true.append(y_test.numpy())
+                all_y_pred.append(y_pred)
 
         epoch_test_mse = running_test_loss/len(y_test)
         test_mse.append(epoch_test_mse)
@@ -155,7 +169,10 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_test_mae = running_test_mae/len(y_test)
         test_mae.append(epoch_test_mae)
 
-        epoch_test_r2 = running_test_r2/len(y_test)
+        # epoch_test_r2 = running_test_r2/len(y_test)
+        all_y_true = np.concatenate(all_y_true)
+        all_y_pred = np.concatenate(all_y_pred)
+        epoch_test_r2 = r2_score(all_y_true, all_y_pred)
         test_r2.append(epoch_test_r2)
         
         print(f'Epoch {epoch},')
