@@ -89,7 +89,7 @@ class Trainer():
             print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}')
             print('')
 
-def train(model = None, optimizer = None, train_data_loader = None, test_data_loader = None, num_epochs = 5, l1 = 0, l2 = 0):
+def train(model = None, optimizer = None, train_data_loader = None, test_data_loader = None, num_epochs = 5, lr_step = 5):
     '''
     Training function.
 
@@ -101,6 +101,7 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
     test_mae = [] # Mean absolute error
     test_r2 = [] # Coefficient of Determination
     loss_fn = torch.nn.MSELoss()
+    scheduler = op.lr_scheduler.StepLR(optimizer,step_size=lr_step)
     for epoch in range(num_epochs):
         running_train_loss = 0
         running_train_mae = 0
@@ -115,12 +116,12 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
             outputs = model(X_train) # Make predictions
             loss = loss_fn(outputs.view(-1),y_train)  # Calculate loss
 
-            if l1!=0:
-                l1_norm = sum(p.abs().sum() for p in model.parameters())
-                loss += l1*l1_norm # Add L2 penalty
-            if l2!=0:
-                l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
-                loss += l2*l2_norm # Add L2 penalty
+            # if l1!=0:
+            #     l1_norm = sum(p.abs().sum() for p in model.parameters())
+            #     loss += l1*l1_norm # Add L2 penalty
+            # if l2!=0:
+            #     l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
+            #     loss += l2*l2_norm # Add L2 penalty
             loss.backward() # Calculate gradients
 
             optimizer.step() # Update weights
@@ -179,6 +180,7 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2}, MAE = {epoch_train_mae}')
         print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}, MAE = {epoch_test_mae}')
         print('')
+        scheduler.step()
     return train_mse, test_mse, train_r2, test_r2, train_mae, test_mae
             
                     

@@ -12,7 +12,6 @@ path = os.path.dirname(__file__)
 
 from cnn import CNN
 from train import Trainer,train
-from plot import Plotter
 from autoencoder import Autoencoder
 
 def get_data(batch_size = 32,test_size=0.2,normalize=True):
@@ -147,17 +146,50 @@ def main_cnn():
     '''
     Main function of project.
     '''
+    num_epochs = 50
+    lr = 0.001
+    lr_step = 10
+    weight_decay = 0.0001
+    batch_size = 32
     # Initializing classes
-    model = CNN(use_batch_norm=True,
+    cnns = [{'out_channels': 5, 'kernel_size': 4, 'stride': 1, 'pool': 'max'},
+             {'out_channels': 10, 'kernel_size': 7, 'stride': 1, 'pool': 'max'},
+             {'out_channels': 20, 'kernel_size': 11, 'stride': 1, 'pool': 'max'}]
+    model = CNN(conv_layers_params=cnns,
+                activation='leakyrelu',
+                use_batch_norm=True,
                 use_dropout=True)
-    optimizer = optim.Adam(params = model.parameters(), lr = 0.0001, weight_decay = 0)
-    train_data_loader, test_data_loader = get_data(batch_size=16,test_size=0.2,normalize=True)
+    optimizer = optim.AdamW(params = model.parameters(), lr = lr, weight_decay=weight_decay)
+    train_data_loader, test_data_loader = get_data(batch_size=batch_size,test_size=0.1,normalize=True)
 
+    results = []
     start = time.time()
-    _ = train(model,optimizer,train_data_loader,test_data_loader, num_epochs=200,l1=0,l2=0.0001) # Run training
+    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae = train(model,
+                                                                        optimizer,
+                                                                        train_data_loader,
+                                                                        test_data_loader, 
+                                                                        num_epochs=num_epochs,
+                                                                        lr_step = lr_step) # Run training
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
-
+    torch.save(model.state_dict(),os.path.join(path,'models/cnn.pth'))
+    for epoch in range(num_epochs):
+                    results.append({
+                        "Model": 'cnn',
+                        "Learning Rate": lr,
+                        "Weight Decay": weight_decay,
+                        "Epoch": epoch + 1,
+                        "Train MSE": train_mse[epoch],
+                        "Test MSE": test_mse[epoch],
+                        "Train R2": train_r2[epoch],
+                        "Test R2": test_r2[epoch],
+                        "Train MAE": train_mae[epoch],
+                        "Test MAE": test_mae[epoch]
+                    })
+    
+    df_results = pd.DataFrame(results)  # Final metrics summary
+    df_results.to_csv(os.path.join(path,'training_data/cnn_best_long_01.csv'))
+    
 
 
 def main_autoencoder():
@@ -202,7 +234,7 @@ def main_autoencoder():
 
 
 if __name__ == '__main__':
-    grid_search()
-    # main_cnn()
+    # grid_search()
+    main_cnn()
     # main_autoencoder()
     

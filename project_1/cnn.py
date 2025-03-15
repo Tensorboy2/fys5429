@@ -84,7 +84,9 @@ class CNN(nn.Module):
         conv_output_dim = in_channels * (current_size ** 2) # Input size to fully connected layers.
 
         if hidden_sizes is None: # Default hidden sizes
-            hidden_sizes = [conv_output_dim // 16, conv_output_dim // 32]
+            hidden_sizes = [conv_output_dim // 1, 
+                            conv_output_dim // 2,
+                            conv_output_dim // 4]
 
         # Build fully connected layers:
         fc_layers = []
