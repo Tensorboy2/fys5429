@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 
-class Autoencoder(nn.Module):
+class FeedForward(nn.Module):
     def __init__(self, image_size=128, hidden_sizes=None):
         super().__init__()
         
@@ -33,6 +33,6 @@ class Autoencoder(nn.Module):
 
 if __name__ == '__main__':
     x = torch.rand((1,1,128,128))
-    model = Autoencoder()
+    model = FeedForward()
     pred = model(x).item()
     print(pred)

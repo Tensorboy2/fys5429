@@ -10,9 +10,9 @@ import pandas as pd
 import os
 path = os.path.dirname(__file__)
 
-from cnn import CNN
-from train import Trainer,train
-from autoencoder import Autoencoder
+from project_1.cnn import CNN
+from project_1.train import Trainer,train
+from project_1.feedforward import FeedForward
 
 def get_data(batch_size = 32,test_size=0.2,normalize=True):
     '''
@@ -101,7 +101,7 @@ def grid_search():
     num_epochs = 40
     for lr in lrs:
         for l2 in l2s:
-            models = {'Autoencoder': Autoencoder()}
+            models = {'FeedForward': FeedForward()}
             for model_name, model in models.items():
                 optimizer = optim.Adam(params = model.parameters(), lr = lr,weight_decay=0)
                 print(f"Training {model_name} with lr={lr}, L2={l2}")
@@ -192,14 +192,13 @@ def main_cnn():
     
 
 
-def main_autoencoder():
+def main_feedforward():
     '''
     Main function of project.
     '''
     # Initializing classes
-    model = Autoencoder()
+    model = FeedForward()
     optimizer = optim.Adam(params = model.parameters(), lr = 0.0001,weight_decay=0.001)
-    trainer = Trainer()
     batch_size = 16
 
     # Dummy data
@@ -218,17 +217,13 @@ def main_autoencoder():
     test_data_loader = DataLoader(test_dataset,batch_size=batch_size)
 
     start = time.time()
-    trainer.train(model,optimizer,train_data_loader,test_data_loader, num_epochs=40) # Run training
+    _ = train(model,optimizer,train_data_loader,test_data_loader, num_epochs=40) # Run training
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 
-    torch.save(model.state_dict(), os.path.join(path,'models/autoencoder.pth'))
+    torch.save(model.state_dict(), os.path.join(path,'models/feedforward.pth'))
 
-    plotter = Plotter(trainer,model)
-    name='autoencoder'
-    plotter.plot_mse(name)
-    plotter.plot_r2(name)
-    # plt.show()
+    
 
 
 
@@ -236,5 +231,5 @@ def main_autoencoder():
 if __name__ == '__main__':
     # grid_search()
     main_cnn()
-    # main_autoencoder()
+    # main_feedforward()
     
