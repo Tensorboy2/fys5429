@@ -115,7 +115,7 @@ def grid_search_ff():
 
     lrs = [0.01, 0.001, 0.0001]
     l2s = [0, 0.0001, 0.001]
-    hidden_sizes =[[2],[2,4],[2,4,8]]
+    hidden_sizes =[[32],[32,64],[32,64,128]]
     activations = ['leakyrelu','relu','sigmoid','tanh']
 
     num_epochs = 10
