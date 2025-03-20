@@ -2,119 +2,153 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import torch
+import numpy as np
 import os
 path = os.path.dirname(__file__)
 
 
-def plot_metrics(df_epoch_results):
-    for model_name in ["CNN", "Autoencoder"]:
-        df_model = df_epoch_results[df_epoch_results["Model"] == model_name].copy()
-        
-        # Convert Learning Rate to string to avoid hue issues
-        df_model["Learning Rate"] = df_model["Learning Rate"].astype(str)
+def plot_params():
+    params = torch.load('project_1/data/k.pt',weights_only=False).numpy()
+    sns.lineplot(np.sort(params,kind='heapsort'))
+    plt.xlabel("Index")
+    plt.ylabel("Permeability")
+    plt.savefig(os.path.join(path,'plots/perms.pdf'))
+    # plt.show()
 
-        ## ---- Train MSE Plot ---- ##
-        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Train MSE", hue="Learning Rate")#, marker="o", linestyle="-")
-        g.set_axis_labels("Epoch", "Train MSE (log scale)")
-        g.set_titles(f"{model_name} - L2 = {{col_name}}")
-        g.set(yscale="log")  # Set y-axis to logarithmic scale
-        g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_train_mse.pdf"))
-        plt.clf()
+def plot_best_r2_grid_search_cnn(data):
+    # Get the index of the best model
+    best_model_idx = data["Test R2"].idxmax()
 
-        ## ---- Test MSE Plot ---- ##
-        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Test MSE", hue="Learning Rate")#, marker="s", linestyle="--")
-        g.set_axis_labels("Epoch", "Test MSE (log scale)")
-        g.set_titles(f"{model_name} - L2 = {{col_name}}")
-        g.set(yscale="log")  # Set y-axis to logarithmic scale
-        g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_test_mse.pdf"))
-        plt.clf()
+    # Extract hyperparameters of the best model
+    best_model_params = data.loc[best_model_idx, ["Learning Rate", "L2 Weight Decay", "CNNs", "Hiddens", "Activation"]]
 
-        ## ---- Train MAE Plot ---- ##
-        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Train MAE", hue="Learning Rate")#, marker="o", linestyle="-")
-        g.set_axis_labels("Epoch", "Train MAE (log scale)")
-        g.set_titles(f"{model_name} - L2 = {{col_name}}")
-        g.set(yscale="log")  # Set y-axis to logarithmic scale
-        g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_train_mae.pdf"))
-        plt.clf()
+    # Filter all epochs of the best model
+    best_model_df = data[
+        (data["Learning Rate"] == best_model_params["Learning Rate"]) &
+        (data["L2 Weight Decay"] == best_model_params["L2 Weight Decay"]) &
+        (data["CNNs"] == best_model_params["CNNs"]) &
+        (data["Hiddens"] == best_model_params["Hiddens"]) &
+        (data["Activation"] == best_model_params["Activation"])
+    ]
+    plt.figure(figsize=(6,3))
+    plt.subplot(1,2,1)
+    sns.lineplot(best_model_df, x="Epoch",y="Test R2",label="Test R2")
+    sns.lineplot(best_model_df, x="Epoch",y="Train R2",linestyle="--",label="Train R2")
+    plt.ylabel('R2')
+    plt.subplot(1,2,2)
+    sns.lineplot(best_model_df, x="Epoch",y="Test MSE",label="Test MSE")
+    sns.lineplot(best_model_df, x="Epoch",y="Train MSE",linestyle="--",label="Train MSE")
+    plt.yscale('log')
+    plt.ylabel('MSE')
+    plt.tight_layout()
+    plt.savefig(os.path.join(path,'plots/best_cnn_grid_search_r2.pdf'))
 
-        ## ---- Test MAE Plot ---- ##
-        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Test MAE", hue="Learning Rate")#, marker="s", linestyle="--")
-        g.set_axis_labels("Epoch", "Test MAE (log scale)")
-        g.set_titles(f"{model_name} - L2 = {{col_name}}")
-        g.set(yscale="log")  # Set y-axis to logarithmic scale
-        g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_test_mae.pdf"))
-        plt.clf()
-
-        ## ---- Train R² Plot ---- ##
-        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Train R2", hue="Learning Rate")#, marker="o", linestyle="-")
-        g.set_axis_labels("Epoch", "Train R²")
-        g.set_titles(f"{model_name} - L2 = {{col_name}}")
-        g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_train_r2.pdf"))
-        plt.clf()
-
-        ## ---- Test R² Plot ---- ##
-        g = sns.FacetGrid(df_model, col="L2 Weight Decay", col_wrap=2, height=3, sharey=False)
-        g.map_dataframe(sns.lineplot, x="Epoch", y="Test R2", hue="Learning Rate")#, marker="s", linestyle="--")
-        g.set_axis_labels("Epoch", "Test R²")
-        g.set_titles(f"{model_name} - L2 = {{col_name}}")
-        g.add_legend()
-        plt.savefig(os.path.join(path, f"plots/training_metrics_{model_name.lower()}_test_r2.pdf"))
-        plt.clf()
+def plot_best_r2_grid_search_cnn_vary_conv_hid(data):
+    best_model_idx = data["Test R2"].idxmax()
+    best_model_params = data.loc[best_model_idx, ["Learning Rate", "L2 Weight Decay", "Activation"]]
+    best_model_df = data[
+        (data["Learning Rate"] == best_model_params["Learning Rate"]) &
+        (data["L2 Weight Decay"] == best_model_params["L2 Weight Decay"]) &
+        (data["Activation"] == best_model_params["Activation"])
+    ]
+    # Define color palette
+    palette = sns.color_palette("mako_r", best_model_df["CNNs"].nunique())
+    
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharex=True)
+    # Subplot 1: Test R² 
+    sns.lineplot(data=best_model_df, x="Epoch", y="Test R2", hue="CNNs",style="Hiddens", palette=palette, ax=axes[0])
+    
+    # Subplot 2: Test R2 
+    sns.lineplot(data=best_model_df, x="Epoch", y="Train R2", hue="CNNs", style="Hiddens", palette=palette, ax=axes[1])
+    plt.tight_layout()
 
 
-def plot_heat(df_results):
-    model_name='CNN'
-    df_model = df_results[df_results["Model"] == model_name]
-    # df_pivot = df_model.pivot("Learning Rate", "L2 Weight Decay", "Final Test MSE")
-    df_pivot = df_model.pivot(index="Learning Rate", columns="L2 Weight Decay", values="Final Test MSE")
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(df_pivot, annot=True, cmap="coolwarm", fmt=".3f")
-    plt.title(f"Final Test MSE for {model_name}")
-    plt.xlabel("L2 Weight Decay")
-    plt.ylabel("Learning Rate")
-    plt.savefig(os.path.join(path,'plots/CNN_grid_search_mse.pdf'))
+    plt.savefig(os.path.join(path,'plots/diff_conv_hid_cnn_gird_search_r2.pdf'))
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharex=True)
 
-    df_pivot = df_model.pivot(index="Learning Rate", columns="L2 Weight Decay", values="Final Test R2")
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(df_pivot, annot=True, cmap="coolwarm", fmt=".3f")
-    plt.title(f"Final Test R2 for {model_name}")
-    plt.xlabel("L2 Weight Decay")
-    plt.ylabel("Learning Rate")
-    plt.savefig(os.path.join(path,'plots/CNN_grid_search_r2.pdf'))
+    # Subplot 1: Test MSE
+    sns.lineplot(data=best_model_df, x="Epoch", y="Test MSE", hue="CNNs", style="Hiddens", palette=palette, ax=axes[0])
+    axes[1].set_yscale("log")  # Log scale for better readability
+
+    # Subplot 2: Train MSE
+    sns.lineplot(data=best_model_df, x="Epoch", y="Train MSE", hue="CNNs", style="Hiddens", palette=palette, ax=axes[1])
+    axes[1].set_yscale("log")
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(path,'plots/diff_conv_hid_cnn_gird_search_mse.pdf'))
+
+def plot_best_r2_grid_search_ff(data):
+    # Get the index of the best model
+    best_model_idx = data["Test R2"].idxmax()
+    best_model = data.loc[data["Test R2"].idxmax()]
+    print(best_model)
+    # Extract hyperparameters of the best model
+    best_model_params = data.loc[best_model_idx, ["Learning Rate", "L2 Weight Decay", "Hiddens", "Activation"]]
+    print
+    # Filter all epochs of the best model
+    best_model_df = data[
+        (data["Learning Rate"] == best_model_params["Learning Rate"]) &
+        (data["L2 Weight Decay"] == best_model_params["L2 Weight Decay"]) &
+        (data["Hiddens"] == best_model_params["Hiddens"]) &
+        (data["Activation"] == best_model_params["Activation"])
+    ]
+    plt.figure(figsize=(6,3))
+    plt.subplot(1,2,1)
+    sns.lineplot(best_model_df, x="Epoch",y="Test R2",label="Test R2")
+    sns.lineplot(best_model_df, x="Epoch",y="Train R2",linestyle="--",label="Train R2")
+    plt.ylabel('R2')
+    plt.subplot(1,2,2)
+    sns.lineplot(best_model_df, x="Epoch",y="Test MSE",label="Test MSE")
+    sns.lineplot(best_model_df, x="Epoch",y="Train MSE",linestyle="--",label="Train MSE")
+    plt.yscale('log')
+    plt.ylabel('MSE')
+    plt.tight_layout()
+    plt.savefig(os.path.join(path,'plots/best_ff_grid_search_r2.pdf'))
+
+def plot_best_r2_grid_search_ff_vary_hid(data):
+    best_model_idx = data["Test R2"].idxmax()
+    best_model_params = data.loc[best_model_idx, ["Learning Rate", "L2 Weight Decay", "Activation"]]
+    best_model_df = data[
+        (data["Learning Rate"] == best_model_params["Learning Rate"]) &
+        (data["L2 Weight Decay"] == best_model_params["L2 Weight Decay"]) &
+        (data["Activation"] == best_model_params["Activation"])
+    ]
+    # Define color palette
+    palette = sns.color_palette("mako_r", best_model_df["Hiddens"].nunique())
+    
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharex=True)
+    # Subplot 1: Test R² 
+    sns.lineplot(data=best_model_df, x="Epoch", y="Test R2", hue="Hiddens", palette=palette, ax=axes[0])
+    
+    # Subplot 2: Test R2 
+    sns.lineplot(data=best_model_df, x="Epoch", y="Train R2", hue="Hiddens", palette=palette, ax=axes[1])
+    plt.tight_layout()
 
 
+    plt.savefig(os.path.join(path,'plots/diff_hid_ff_gird_search_r2.pdf'))
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharex=True)
 
-    model_name='Autoencoder'
-    df_model = df_results[df_results["Model"] == model_name]
-    # df_pivot = df_model.pivot("Learning Rate", "L2 Weight Decay", "Final Test MSE")
-    df_pivot = df_model.pivot(index="Learning Rate", columns="L2 Weight Decay", values="Final Test MSE")
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(df_pivot, annot=True, cmap="coolwarm", fmt=".3f")
-    plt.title(f"Final Test MSE for {model_name}")
-    plt.xlabel("L2 Weight Decay")
-    plt.ylabel("Learning Rate")
-    plt.savefig(os.path.join(path,'plots/Autoencoder_grid_search_mse.pdf'))
+    # Subplot 1: Test MSE
+    sns.lineplot(data=best_model_df, x="Epoch", y="Test MSE", hue="Hiddens", palette=palette, ax=axes[0])
+    axes[1].set_yscale("log")  # Log scale for better readability
 
-    df_pivot = df_model.pivot(index="Learning Rate", columns="L2 Weight Decay", values="Final Test R2")
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(df_pivot, annot=True, cmap="coolwarm", fmt=".3f")
-    plt.title(f"Final Test R2 for {model_name}")
-    plt.xlabel("L2 Weight Decay")
-    plt.ylabel("Learning Rate")
-    plt.savefig(os.path.join(path,'plots/Autoencoder_grid_search_r2.pdf'))
+    # Subplot 2: Train MSE
+    sns.lineplot(data=best_model_df, x="Epoch", y="Train MSE", hue="Hiddens", palette=palette, ax=axes[1])
+    axes[1].set_yscale("log")
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(path,'plots/diff_hid_ff_gird_search_mse.pdf'))
 
 if __name__ == '__main__':
-    df_results = pd.read_csv(os.path.join(path,'training_data/grid_search_last.csv'))
-    df_epoch_results = pd.read_csv(os.path.join(path,'training_data/grid_search_full.csv'))
-    plot_metrics(df_epoch_results)
-    plot_heat(df_results)
+    df_cnn_gird_search = pd.read_csv(os.path.join(path,'training_data/cnn_grid_search_full.csv'))
+    plot_best_r2_grid_search_cnn(df_cnn_gird_search)
+    # plot_best_r2_grid_search_cnn_vary_conv_hid(df_cnn_gird_search)
+
+    df_ff_gird_search = pd.read_csv(os.path.join(path,'training_data/ff_grid_search_full.csv'))
+    # plot_best_r2_grid_search_ff(df_ff_gird_search)
+    plot_best_r2_grid_search_ff_vary_hid(df_ff_gird_search)
+
+    
+
+

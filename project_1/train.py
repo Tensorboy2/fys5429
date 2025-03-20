@@ -97,9 +97,11 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
     train_mse = [] # Mean square error
     train_mae = [] # Mean absolute error
     train_r2 = [] # Coefficient of Determination
+    train_R = []
     test_mse = [] # Mean square error
     test_mae = [] # Mean absolute error
     test_r2 = [] # Coefficient of Determination
+    test_R = []
     loss_fn = torch.nn.MSELoss()
     scheduler = op.lr_scheduler.StepLR(optimizer,step_size=lr_step)
     for epoch in range(num_epochs):
@@ -147,6 +149,9 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_train_r2 = r2_score(all_y_true, all_y_pred)
         train_r2.append(epoch_train_r2)
 
+        R_train = 1-np.mean(all_y_pred/all_y_true)
+        train_R.append(R_train)
+
         running_test_loss = 0
         running_test_mae = 0
         # running_test_r2 = 0
@@ -176,12 +181,15 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_test_r2 = r2_score(all_y_true, all_y_pred)
         test_r2.append(epoch_test_r2)
         
+        R_test = 1-np.mean(all_y_pred/all_y_true)
+        test_R.append(R_test)
+        
         print(f'Epoch {epoch},')
-        print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2}, MAE = {epoch_train_mae}')
-        print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}, MAE = {epoch_test_mae}')
+        print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2}, MAE = {epoch_train_mae}, R = {R_train}')
+        print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}, MAE = {epoch_test_mae}, R = {R_test}')
         print('')
         scheduler.step()
-    return train_mse, test_mse, train_r2, test_r2, train_mae, test_mae
+    return train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R
             
                     
 

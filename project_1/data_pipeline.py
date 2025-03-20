@@ -299,11 +299,11 @@ if __name__ == '__main__':
         k_tensor = torch.cat(all_k, dim=0)
 
         # Save only on rank 0
-        torch.save(images_tensor, os.path.join(path,'data/images_6.pt'))
-        torch.save(k_tensor, os.path.join(path,'data/k_6.pt'))
+        torch.save(images_tensor, os.path.join(path,'data/images_8.pt'))
+        torch.save(k_tensor, os.path.join(path,'data/k_8.pt'))
         print(f"Saved tensors. Total samples: {images_tensor.shape[0]}")
     MPI.Finalize()
 """
-mpirun -np 1 python3 project_1/data_pipeline.py
+mpirun -np 8 python3 project_1/data_pipeline.py   # Use this one, more efficient and hwthread is not faster on authors computer.
 mpirun --use-hwthread-cpus -np 16 python3 project_1/data_pipeline.py
 """

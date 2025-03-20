@@ -6,11 +6,13 @@ import numpy as np
 import os
 import pandas as pd
 path = os.path.dirname(__file__)
-# k = torch.load('project_1/data/k.pt',weights_only=False).numpy()
-# args = np.where(k<0)
-# print(args)
-# plt.plot(np.sort(k,kind='heapsort'))
-# plt.imshow(images[2222,0])
+# params = torch.load('project_1/data/k.pt',weights_only=False).numpy()
+# images = torch.load('project_1/data/images.pt',weights_only=False).numpy()
+# args = np.argmin(params)
+# # print(args)
+# # plt.plot(np.sort(params,kind='heapsort'))
+# plt.title(f'{params[args]}')
+# plt.imshow(images[args,0])
 # plt.show()
 # images_1 = torch.load('project_1/data/images_1.pt',weights_only=False)
 # images_2 = torch.load('project_1/data/images_2.pt',weights_only=False)
@@ -18,7 +20,9 @@ path = os.path.dirname(__file__)
 # images_4 = torch.load('project_1/data/images_4.pt',weights_only=False)
 # images_5 = torch.load('project_1/data/images_5.pt',weights_only=False)
 # images_6 = torch.load('project_1/data/images_6.pt',weights_only=False)
-# images = torch.cat((images_1,images_2,images_3,images_4,images_5,images_6),0)
+# images_7 = torch.load('project_1/data/images_7.pt',weights_only=False)
+# images_8 = torch.load('project_1/data/images_8.pt',weights_only=False)
+# images = torch.cat((images_1,images_2,images_3,images_4,images_5,images_6,images_7,images_8),0)
 # print(images.shape)
 
 # k_1 = torch.load('project_1/data/k_1.pt',weights_only=False)
@@ -27,7 +31,9 @@ path = os.path.dirname(__file__)
 # k_4 = torch.load('project_1/data/k_4.pt',weights_only=False)
 # k_5 = torch.load('project_1/data/k_5.pt',weights_only=False)
 # k_6 = torch.load('project_1/data/k_6.pt',weights_only=False)
-# k = torch.cat((k_1,k_2,k_3,k_4,k_5,k_6),0)
+# k_7 = torch.load('project_1/data/k_7.pt',weights_only=False)
+# k_8 = torch.load('project_1/data/k_8.pt',weights_only=False)
+# k = torch.cat((k_1,k_2,k_3,k_4,k_5,k_6,k_7,k_8),0)
 # print(k.shape)
 
 # torch.save(images, os.path.join(path,'data/images.pt'))
@@ -106,10 +112,38 @@ path = os.path.dirname(__file__)
 #     plt.show()
 
 
-# df_epoch_results = pd.read_csv(os.path.join(path,'training_data/cnn_best_long_01.csv'))
+# def plot_hyperparameter_results(df, x="Epoch", y_metrics=["Test MSE", "Train MSE"], hue="Activation", col="Learning Rate", row="L2 Weight Decay"):
+#     """
+#     Creates subplots of hyperparameter tuning results using seaborn.
 
-# sns.lineplot(df_epoch_results, x='Epoch',y='Train R2')
-# sns.lineplot(df_epoch_results, x='Epoch',y='Test R2')
-# plt.xscale('log')
-# plt.yscale('log')
-# plt.show()
+#     Parameters:
+#     df (pd.DataFrame): The DataFrame containing hyperparameter results.
+#     x (str): The x-axis variable (default: "Epoch").
+#     y_metrics (list): List of y-axis variables to plot (default: ["Test MSE", "Train MSE"]).
+#     hue (str): The variable for color differentiation (default: "Activation").
+#     col (str): Variable for column-wise faceting (default: "Learning Rate").
+#     row (str): Variable for row-wise faceting (default: "L2 Weight Decay").
+#     """
+#     num_metrics = len(y_metrics)
+#     fig, axes = plt.subplots(num_metrics, 1, figsize=(10, 5 * num_metrics), sharex=True)
+
+#     if num_metrics == 1:
+#         axes = [axes]  # Ensure axes is always iterable
+
+#     for ax, metric in zip(axes, y_metrics):
+#         g = sns.relplot(data=df, x=x, y=metric, hue=hue, col=col, row=row,
+#                         kind="line", facet_kws={'sharey': False}, ax=ax)
+#         g.set_titles(col_template="{col_name}", row_template="{row_name}")
+#         g.set_axis_labels(x, metric)
+#         g.legend.set_title(hue)
+
+#     plt.tight_layout()
+#     plt.show()
+
+# # Example usage
+# # df = pd.read_csv("your_data.csv")  # Load your DataFrame
+# df = pd.read_csv(os.path.join(path,'training_data/cnn_grid_search_full.csv'))
+# plot_hyperparameter_results(df)
+
+
+

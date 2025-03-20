@@ -1,7 +1,7 @@
 '''A module containing a pytorch class for doing Convolution Neural Network processing of 2d images with 1 channel to single parameter.'''
 import torch
 import torch.nn as nn
-
+torch.manual_seed(0)
 class CNN(nn.Module):
     def __init__(self,
                  image_size=128,
@@ -9,7 +9,7 @@ class CNN(nn.Module):
                  conv_layers_params=[{'out_channels': 5, 'kernel_size': 3, 'stride': 2, 'pool': 'max'},
                                      {'out_channels': 10, 'kernel_size': 3, 'stride': 1, 'pool': 'max'},
                                      {'out_channels': 20, 'kernel_size': 3, 'stride': 1, 'pool': 'max'}],
-                 hidden_sizes=None,
+                 hidden_sizes=[1,1],
                  activation='relu',
                  use_dropout=False,
                  use_batch_norm=False):
@@ -83,15 +83,14 @@ class CNN(nn.Module):
         
         conv_output_dim = in_channels * (current_size ** 2) # Input size to fully connected layers.
 
-        if hidden_sizes is None: # Default hidden sizes
-            hidden_sizes = [conv_output_dim // 1, 
-                            conv_output_dim // 2,
-                            conv_output_dim // 4]
+        linear = []
+        for hidden in hidden_sizes:
+            linear.append(conv_output_dim // hidden)
 
         # Build fully connected layers:
         fc_layers = []
         fc_input_dim = conv_output_dim
-        for idx, hidden_dim in enumerate(hidden_sizes):
+        for idx, hidden_dim in enumerate(linear):
             fc_layers.append(nn.Linear(fc_input_dim, hidden_dim))
 
             if use_dropout: # Apply dropout if given.
