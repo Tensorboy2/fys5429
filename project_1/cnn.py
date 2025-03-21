@@ -9,6 +9,7 @@ class CNN(nn.Module):
                  conv_layers_params=[{'out_channels': 5, 'kernel_size': 3, 'stride': 2, 'pool': 'max'},
                                      {'out_channels': 10, 'kernel_size': 3, 'stride': 1, 'pool': 'max'},
                                      {'out_channels': 20, 'kernel_size': 3, 'stride': 1, 'pool': 'max'}],
+                 # Default hidden layout:
                  hidden_sizes=[1,1],
                  activation='relu',
                  use_dropout=False,
@@ -81,13 +82,13 @@ class CNN(nn.Module):
             in_channels = params['out_channels']
 
         
-        conv_output_dim = in_channels * (current_size ** 2) # Input size to fully connected layers.
 
+
+        # Build fully connected layers:
+        conv_output_dim = in_channels * (current_size ** 2) # Input size to fully connected layers.
         linear = []
         for hidden in hidden_sizes:
             linear.append(conv_output_dim // hidden)
-
-        # Build fully connected layers:
         fc_layers = []
         fc_input_dim = conv_output_dim
         for idx, hidden_dim in enumerate(linear):
@@ -115,7 +116,9 @@ class CNN(nn.Module):
 
 
 if __name__ == '__main__':
-    import torch
+    '''
+    Example code:
+    '''
     image_size = 128
     x = torch.rand((1,1,image_size,image_size)) # (B,C,Nx,Ny) We only have one channel but torch still expects a channel number.
     model = CNN(use_dropout=True, use_batch_norm=True)

@@ -92,7 +92,8 @@ class Trainer():
 def train(model = None, optimizer = None, train_data_loader = None, test_data_loader = None, num_epochs = 5, lr_step = 5):
     '''
     Training function.
-
+    Performs adams optimization to model on train data loader and predicts on test data loader.
+    Returns metrics from training.
     '''
     train_mse = [] # Mean square error
     train_mae = [] # Mean absolute error
@@ -102,36 +103,25 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
     test_mae = [] # Mean absolute error
     test_r2 = [] # Coefficient of Determination
     test_R = []
+
     loss_fn = torch.nn.MSELoss()
     scheduler = op.lr_scheduler.StepLR(optimizer,step_size=lr_step)
+
     for epoch in range(num_epochs):
         running_train_loss = 0
         running_train_mae = 0
-        # running_train_r2 = 0
         all_y_true = []
         all_y_pred = []
         for X_train, y_train in train_data_loader:
-            # X_train, y_train = train_data
-
             optimizer.zero_grad() # Zero gradients for every batch
-
             outputs = model(X_train) # Make predictions
             loss = loss_fn(outputs.view(-1),y_train)  # Calculate loss
-
-            # if l1!=0:
-            #     l1_norm = sum(p.abs().sum() for p in model.parameters())
-            #     loss += l1*l1_norm # Add L2 penalty
-            # if l2!=0:
-            #     l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
-            #     loss += l2*l2_norm # Add L2 penalty
             loss.backward() # Calculate gradients
-
             optimizer.step() # Update weights
 
             running_train_loss += loss.item()
             y_pred = outputs.detach().numpy()
             running_train_mae += mean_absolute_error(y_true=y_train,y_pred=y_pred)
-            # running_train_r2 += r2_score(y_true=y_train,y_pred=y_pred)
             all_y_true.append(y_train.numpy())
             all_y_pred.append(y_pred)
 
@@ -145,7 +135,6 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
 
         all_y_true = np.concatenate(all_y_true)
         all_y_pred = np.concatenate(all_y_pred)
-        # epoch_train_r2 = running_train_r2/len(y_train)
         epoch_train_r2 = r2_score(all_y_true, all_y_pred)
         train_r2.append(epoch_train_r2)
 
@@ -154,18 +143,16 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
 
         running_test_loss = 0
         running_test_mae = 0
-        # running_test_r2 = 0
         all_y_true = []
         all_y_pred = []
         with torch.no_grad():
             for X_test, y_test in test_data_loader:
                 outputs = model(X_test) # Make predictions
-
                 loss = loss_fn(outputs.view(-1),y_test) # Calculate loss
+
                 running_test_loss += loss.item()
                 y_pred = outputs.detach().numpy()
                 running_test_mae += mean_absolute_error(y_true=y_test,y_pred=y_pred)
-                # running_test_r2 += r2_score(y_true=y_test,y_pred=y_pred)
                 all_y_true.append(y_test.numpy())
                 all_y_pred.append(y_pred)
 
@@ -175,7 +162,6 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_test_mae = running_test_mae/len(y_test)
         test_mae.append(epoch_test_mae)
 
-        # epoch_test_r2 = running_test_r2/len(y_test)
         all_y_true = np.concatenate(all_y_true)
         all_y_pred = np.concatenate(all_y_pred)
         epoch_test_r2 = r2_score(all_y_true, all_y_pred)
@@ -192,9 +178,3 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
     return train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R
             
                     
-
-
-if __name__ == '__main__':
-    trainer = Trainer()
-    trainer.train()
-    mse = trainer.train_mse

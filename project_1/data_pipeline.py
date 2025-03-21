@@ -49,9 +49,9 @@ def check_percolation(img):
 @njit(fastmath=True)
 def big_LBM(solid, T):
     """
-    A monolithic Lattice Boltzmann simulation.
+    A Lattice Boltzmann simulation.
     This single function inlines equilibrium, collision, streaming,
-    bounce-back, and macroscopic updates.
+    bounce-back, and macroscopic updates to optimize njit performance.
     
     # Parameters:
     - solid : 2D numpy array (Nx, Ny) of type bool
@@ -61,14 +61,12 @@ def big_LBM(solid, T):
               
     # Returns:
     - u            : 3D numpy array (Nx, Ny, 2) velocity field.
-    - p            : 2D numpy array (Nx, Ny) pressure field (rho/3).
-    - fluid_rho_t  : 1D array with total fluid density at each step.
-    - solid_rho_t  : 1D array with total solid density at each step.
+    - k            : Permeability calculated from velocity field and density.
     """
     Nx = solid.shape[0]
     Ny = solid.shape[1]
     
-    # Create fluid mask: fluid = not solid.
+    # Create fluid mask: fluid = not solid:
     fluid = np.empty((Nx, Ny), dtype=np.bool_)
     for x in range(Nx):
         for y in range(Ny):
@@ -77,7 +75,7 @@ def big_LBM(solid, T):
             else:
                 fluid[x, y] = True
     
-    # Lattice vectors (9 directions)
+    # Lattice vectors (9 directions):
     c = np.empty((9, 2), dtype=np.int64)
     c[0, 0] =  0; c[0, 1] =  0
     c[1, 0] =  1; c[1, 1] =  0
@@ -89,7 +87,7 @@ def big_LBM(solid, T):
     c[7, 0] = -1; c[7, 1] = -1
     c[8, 0] =  1; c[8, 1] = -1
 
-    # Lattice weights
+    # Lattice weights:
     w = np.empty(9, dtype=np.float64)
     w[0] = 4.0/9.0
     w[1] = 1.0/9.0
@@ -101,7 +99,7 @@ def big_LBM(solid, T):
     w[7] = 1.0/36.0
     w[8] = 1.0/36.0
 
-    # Bounce-back mapping
+    # Bounce-back mapping:
     bounce_back_pairs = np.empty(9, dtype=np.int64)
     bounce_back_pairs[0] = 0
     bounce_back_pairs[1] = 3
@@ -113,7 +111,7 @@ def big_LBM(solid, T):
     bounce_back_pairs[7] = 5
     bounce_back_pairs[8] = 6
 
-    # Initialize macroscopic variables
+    # Initialize macroscopic variables:
     rho = np.empty((Nx, Ny), dtype=np.float64)
     u   = np.zeros((Nx, Ny, 2), dtype=np.float64)
     for x in range(Nx):
@@ -121,7 +119,7 @@ def big_LBM(solid, T):
             if fluid[x,y]:
                 rho[x, y] = 1.0  # initial density
 
-    # Gravity and forcing term
+    # Gravity and forcing term:
     grav = 0.00001
     F = np.zeros((Nx, Ny, 2), dtype=np.float64)
     for x in range(Nx):
@@ -129,21 +127,21 @@ def big_LBM(solid, T):
             F[x, y, 0] = -grav  # gravity in x-direction (adjust as needed)
             F[x, y, 1] = 0.0
 
-    # Relaxation parameter
+    # Relaxation parameter:
     omega = 0.6
     relax_corr = 1.0 - 1.0/(2.0 * omega)
 
-    # Initialize lattice distributions f using equilibrium with forcing
+    # Initialize lattice distributions f using equilibrium with forcing:
     f = np.empty((Nx, Ny, 9), dtype=np.float64)
     for x in range(Nx):
         for y in range(Ny):
             if fluid[x,y]:
-                # Square of velocity
+                # Square of velocity:
                 u_sq = u[x, y, 0]*u[x, y, 0] + u[x, y, 1]*u[x, y, 1]
                 for i in range(9):
-                    # Compute dot product u·c[i]
+                    # Compute dot product u·c[i]:
                     eu = u[x, y, 0]*c[i, 0] + u[x, y, 1]*c[i, 1]
-                    # Forcing term contribution
+                    # Forcing term contribution:
                     Fi = w[i] * relax_corr * 3.0 * (F[x, y, 0]*c[i, 0] + F[x, y, 1]*c[i, 1])
                     f[x, y, i] = w[i]*rho[x, y]*(1.0 + 3.0*eu + 4.5*eu*eu - 1.5*u_sq) + Fi
     
@@ -164,15 +162,9 @@ def big_LBM(solid, T):
                     u_sq = u[x, y, 0]*u[x, y, 0] + u[x, y, 1]*u[x, y, 1]
                     for i in range(9):
                         eu = u[x, y, 0]*c[i, 0] + u[x, y, 1]*c[i, 1]
-                        # Fi = w[i] * relax_corr * 3.0 * (F[x, y, 0]*c[i, 0] + F[x, y, 1]*c[i, 1])
                         feq[x, y, i] = w[i]*rho[x, y]*(1.0 + 3.0*eu + 4.5*eu*eu - 1.5*u_sq) + Fi[x, y, i]
                         f[x, y, i] = f[x, y, i] + omega * (feq[x, y, i] - f[x, y, i])
         
-        # for x in range(Nx):
-        #     for y in range(Ny):
-        #         if fluid[x,y]:
-        #             for i in range(9):
-        #                 f[x, y, i] = f[x, y, i] + omega * (feq[x, y, i] - f[x, y, i])
         
         # Streaming step: propagate distributions
         f_stream = np.copy(f)
@@ -207,16 +199,6 @@ def big_LBM(solid, T):
                         u[x, y, 0] = 0.0
                         u[x, y, 1] = 0.0
         
-        # fluid_sum = 0.0
-        # solid_sum = 0.0
-        # for x in range(Nx):
-        #     for y in range(Ny):
-        #         if fluid[x, y]:
-        #             fluid_sum += rho[x, y]
-        #         else:
-        #             solid_sum += rho[x, y]
-        # fluid_rho_t[step] = fluid_sum
-        # solid_rho_t[step] = solid_sum
     u_x = 0.0
     tot_rho = 0.0
     num = 0.0
@@ -274,7 +256,7 @@ def pipeline(start_index,stop_index,T,rank):
 import sys
 from mpi4py import MPI
 if __name__ == '__main__':
-    num_samples = 16*63  # Total number of samples
+    num_samples = 10_000  # Total number of samples
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank() # Process ID
     size = comm.Get_size() # Total number of processes
@@ -287,23 +269,24 @@ if __name__ == '__main__':
     images_local, k_local = pipeline(start_index,stop_index, simulation_time,rank)
     end = time.time()
 
-    # Gather the data at rank 0
+    # Gather the data at rank 0:
     all_images = comm.gather(images_local, root=0)
     all_k = comm.gather(k_local, root=0)
 
     comm.Barrier()
     if (rank==0):
         print(f'Total time for pipeline: {end-start} seconds.')
-        # Concatenate tensors from all ranks
+        # Concatenate tensors from all ranks:
         images_tensor = torch.cat(all_images, dim=0)
         k_tensor = torch.cat(all_k, dim=0)
 
-        # Save only on rank 0
+        # Save only on rank 0:
         torch.save(images_tensor, os.path.join(path,'data/images_8.pt'))
         torch.save(k_tensor, os.path.join(path,'data/k_8.pt'))
         print(f"Saved tensors. Total samples: {images_tensor.shape[0]}")
     MPI.Finalize()
 """
+Example commands for running:
 mpirun -np 8 python3 project_1/data_pipeline.py   # Use this one, more efficient and hwthread is not faster on authors computer.
 mpirun --use-hwthread-cpus -np 16 python3 project_1/data_pipeline.py
 """

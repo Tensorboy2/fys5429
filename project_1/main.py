@@ -11,12 +11,13 @@ import os
 path = os.path.dirname(__file__)
 
 from cnn import CNN
-from train import train
 from feedforward import FeedForward
+from train import train
 
 def get_data(batch_size = 32,test_size=0.2,normalize=True, mask=False, grid_search=False):
     '''
     Function for getting data and turning them into the train and test loader.
+    Optional: normalization, grid search size, mask outliers.
     '''
     if grid_search: # Less data for grid search
         images = torch.load(os.path.join(path,'data/images.pt'),weights_only=False)[1000:] # Load generated images
@@ -45,9 +46,8 @@ def get_data(batch_size = 32,test_size=0.2,normalize=True, mask=False, grid_sear
 def grid_search_cnn():
     '''
     Grid search function. 
-    Preforms a grid search of given model hyper parameters and model architectures.
+    Preforms a grid search of given model hyper parameters for the CNN.
     '''
-    # results = []
     epoch_results = []
     train_data_loader, test_data_loader = get_data(batch_size=32,test_size=0.20,grid_search=True)
     # Different convolution structures:
@@ -63,12 +63,19 @@ def grid_search_cnn():
              {'out_channels': 40, 'kernel_size': 5, 'stride': 1, 'pool': 'max'},
              {'out_channels': 60, 'kernel_size': 3, 'stride': 1, 'pool': 'max'}],]
     
+    # Different hidden structures:
     hidden_sizes =[[2],[2,4],[2,4,8]]
 
 
+    # Different learning rates:
     lrs = [0.01, 0.001, 0.0001]
+
+    # Different weight decays:
     l2s = [0, 0.0001,0.001]
+
+    # Different activation fucntions:
     activations = ['leakyrelu','relu','sigmoid','tanh']
+    
     num_epochs = 10
     for lr in lrs:
         for l2 in l2s:
@@ -77,17 +84,18 @@ def grid_search_cnn():
                     for hidden_size in hidden_sizes:
 
                         model = CNN(conv_layers_params=conv,hidden_sizes=hidden_size,activation=activation,use_batch_norm=True, use_dropout=True)
-                        
                         optimizer = optim.Adam(params = model.parameters(), lr = lr,weight_decay=l2)
+                        
                         print(f"Training CNN with: lr={lr}, weight decay={l2}, number of convs={len(conv)}, number of linears={len(hidden_size)}, activation={activation}")
+                        
                         train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
                                                                     optimizer,
                                                                     train_data_loader,
                                                                     test_data_loader, 
                                                                     num_epochs=num_epochs,
                                                                     lr_step=num_epochs)
-                        # Store per-epoch metrics
-                        for epoch in range(num_epochs):
+                        
+                        for epoch in range(num_epochs): # Store per-epoch metrics
                             epoch_results.append({
                                 "Learning Rate": lr,
                                 "L2 Weight Decay": l2,
@@ -105,36 +113,48 @@ def grid_search_cnn():
                                 "Test R": test_R[epoch],
                             })
 
-    df_epoch_results = pd.DataFrame(epoch_results)  # Per-epoch metrics
+    df_epoch_results = pd.DataFrame(epoch_results)
     df_epoch_results.to_csv(os.path.join(path,'training_data/cnn_grid_search_full.csv'))
 
 def grid_search_ff():
-    # results = []
+    '''
+    Grid search function. 
+    Preforms a grid search of given model hyper parameters for the FFNN.
+    '''
     epoch_results = []
     train_data_loader, test_data_loader = get_data(batch_size=32,test_size=0.20,grid_search=True)
-
-    lrs = [0.01, 0.001, 0.0001]
-    l2s = [0, 0.0001, 0.001]
+    
+    # Different learning rates:
+    lrs = [0.001, 0.0001]
+    
+    # Weight decay:
+    l2s = [0]
+    
+    # Different hidden structures:
     hidden_sizes =[[32],[32,64],[32,64,128]]
-    activations = ['leakyrelu','relu','sigmoid','tanh']
+    
+    # Activation functions:
+    activations = ['relu']
 
     num_epochs = 10
-    for lr in lrs:
-        for l2 in l2s:
-            for hidden_size in hidden_sizes:
-                for activation in activations:
+    for l2 in l2s:
+        for activation in activations:
+            for lr in lrs:
+                for hidden_size in hidden_sizes:
 
                     model = FeedForward(hidden_sizes=hidden_size,activation=activation)
                     optimizer = optim.Adam(params = model.parameters(), lr = lr,weight_decay=l2)
+
                     print(f"Training FFNN with lr={lr}, L2={l2}, number of linears={len(hidden_size)}, activation={activation}")
+                    
                     train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
                                                                 optimizer,
                                                                 train_data_loader,
                                                                 test_data_loader, 
                                                                 num_epochs=num_epochs,
                                                                 lr_step=num_epochs)
-                    # Store per-epoch metrics
-                    for epoch in range(num_epochs):
+                    
+                    for epoch in range(num_epochs): # Store per-epoch metrics
                         epoch_results.append({
                                     "Learning Rate": lr,
                                     "L2 Weight Decay": l2,
@@ -151,19 +171,19 @@ def grid_search_ff():
                                     "Test R": test_R[epoch],
                                 })
 
-    df_epoch_results = pd.DataFrame(epoch_results)  # Per-epoch metrics
+    df_epoch_results = pd.DataFrame(epoch_results)
     df_epoch_results.to_csv(os.path.join(path,'training_data/ff_grid_search_full.csv'))
 
 def main_cnn():
     '''
-    Main function of project.
+    Longer training of CNN.
     '''
-    num_epochs = 20
+    # Hyper parameters:
+    num_epochs = 50
     lr = 0.001
     lr_step = 10
-    weight_decay = 0.0001
+    weight_decay = 0.0
     batch_size = 32
-    
     cnns = [{'out_channels': 10, 'kernel_size': 5, 'stride': 2, 'pool': 'max'},
              {'out_channels': 20, 'kernel_size': 7, 'stride': 1, 'pool': 'max'},
              {'out_channels': 40, 'kernel_size': 5, 'stride': 1, 'pool': 'max'}]
@@ -173,6 +193,7 @@ def main_cnn():
                 use_batch_norm=True,
                 use_dropout=True)
     optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
+
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
@@ -186,11 +207,13 @@ def main_cnn():
                                                                         train_data_loader,
                                                                         test_data_loader, 
                                                                         num_epochs=num_epochs,
-                                                                        lr_step = lr_step) # Run training
+                                                                        lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
-    torch.save(model.state_dict(),os.path.join(path,'models/cnn.pth'))
-    for epoch in range(num_epochs):
+    
+    torch.save(model.state_dict(),os.path.join(path,'models/cnn.pth')) # Save model for later inference
+    
+    for epoch in range(num_epochs): # Store per-epoch metrics
         results.append({"Epoch": epoch + 1,
                         "Train MSE": train_mse[epoch],
                         "Test MSE": test_mse[epoch],
@@ -201,8 +224,8 @@ def main_cnn():
                         "Train R": train_R[epoch],
                         "Test R": test_R[epoch]})
     
-    df_results = pd.DataFrame(results)  # Final metrics summary
-    df_results.to_csv(os.path.join(path,'training_data/cnn_best_long_01.csv'))
+    df_results = pd.DataFrame(results)
+    df_results.to_csv(os.path.join(path,'training_data/cnn_best_long_02.csv'))
     
 
 
@@ -212,10 +235,10 @@ def main_feedforward():
     '''
     # Initializing classes
     
-    model = FeedForward(hidden_sizes=[32,64])
-    optimizer = optim.Adam(params = model.parameters(), lr = 0.1,weight_decay=0.0)
+    model = FeedForward(hidden_sizes=[32])
+    optimizer = optim.Adam(params = model.parameters(), lr = 0.001,weight_decay=0.0)
     batch_size = 32
-    num_epochs = 100
+    num_epochs = 50
     lr_step = 10
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
@@ -232,8 +255,10 @@ def main_feedforward():
                                                                         lr_step = lr_step) # Run training
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
-    torch.save(model.state_dict(),os.path.join(path,'models/ff.pth'))
-    for epoch in range(num_epochs):
+    
+    torch.save(model.state_dict(),os.path.join(path,'models/ff.pth')) # Save model for later inference
+    
+    for epoch in range(num_epochs): # Store per-epoch metrics
         results.append({"Epoch": epoch + 1,
                         "Train MSE": train_mse[epoch],
                         "Test MSE": test_mse[epoch],
@@ -244,8 +269,8 @@ def main_feedforward():
                         "Train R": train_R[epoch],
                         "Test R": test_R[epoch]})
     
-    df_results = pd.DataFrame(results)  # Final metrics summary
-    df_results.to_csv(os.path.join(path,'training_data/ff_best_long_01.csv'))
+    df_results = pd.DataFrame(results)
+    df_results.to_csv(os.path.join(path,'training_data/ff_best_long_02.csv'))
 
     
 
@@ -253,8 +278,8 @@ def main_feedforward():
 
 
 if __name__ == '__main__':
-    # grid_search_cnn()
+    grid_search_cnn()
     grid_search_ff()
-    # main_cnn()
-    # main_feedforward()
+    main_cnn()
+    main_feedforward()
     
