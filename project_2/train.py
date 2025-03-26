@@ -121,8 +121,9 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
 
             running_train_loss += loss.item()
             y_pred = outputs.cpu().detach().numpy()
-            running_train_mae += mean_absolute_error(y_true=y_train,y_pred=y_pred)
-            all_y_true.append(y_train.numpy())
+            y_t = y_train.cpu().detach().numpy()
+            running_train_mae += mean_absolute_error(y_true=y_t,y_pred=y_pred)
+            all_y_true.append(y_t)
             all_y_pred.append(y_pred)
 
         
@@ -152,8 +153,9 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
 
                 running_test_loss += loss.item()
                 y_pred = outputs.cpu().detach().numpy()
-                running_test_mae += mean_absolute_error(y_true=y_test,y_pred=y_pred)
-                all_y_true.append(y_test.numpy())
+                y_t = y_test.cpu().detach().numpy()
+                running_test_mae += mean_absolute_error(y_true=y_t,y_pred=y_pred)
+                all_y_true.append(y_t)
                 all_y_pred.append(y_pred)
 
         epoch_test_mse = running_test_loss/len(y_test)
