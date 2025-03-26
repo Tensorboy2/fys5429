@@ -49,7 +49,7 @@ class Trainer():
                 optimizer.step() # Update weights
 
                 running_train_loss += loss.item()
-                y_pred = outputs.detach().numpy()
+                y_pred = outputs.cpu().detach().numpy()
                 # running_train_mae += mean_absolute_error(y_true=y_train,y_pred=y_pred)
                 running_train_r2 += r2_score(y_true=y_train,y_pred=y_pred)
             
@@ -71,7 +71,7 @@ class Trainer():
 
                     loss = loss_fn(outputs.view(-1),y_test) # Calculate loss
                     running_test_loss += loss.item()
-                    y_pred = outputs.detach().numpy()
+                    y_pred = outputs.cpu().detach().numpy()
                     # running_train_mae += mean_absolute_error(y_true=y_train,y_pred=y_pred)
                     running_test_r2 += r2_score(y_true=y_test,y_pred=y_pred)
 
@@ -120,7 +120,7 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
             optimizer.step() # Update weights
 
             running_train_loss += loss.item()
-            y_pred = outputs.detach().numpy()
+            y_pred = outputs.cpu().detach().numpy()
             running_train_mae += mean_absolute_error(y_true=y_train,y_pred=y_pred)
             all_y_true.append(y_train.numpy())
             all_y_pred.append(y_pred)
@@ -151,7 +151,7 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
                 loss = loss_fn(outputs.view(-1),y_test) # Calculate loss
 
                 running_test_loss += loss.item()
-                y_pred = outputs.detach().numpy()
+                y_pred = outputs.cpu().detach().numpy()
                 running_test_mae += mean_absolute_error(y_true=y_test,y_pred=y_pred)
                 all_y_true.append(y_test.numpy())
                 all_y_pred.append(y_pred)
