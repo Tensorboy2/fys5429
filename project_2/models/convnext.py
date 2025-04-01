@@ -11,30 +11,32 @@ class ConvNeXtBlock(nn.Module):
         self.conv2 = nn.Conv2d(out_channels,out_channels,kernel_size=1,stride=1,padding=0,bias=False)
         self.ln2 = nn.LayerNorm(out_channels)
         self.out_channels = out_channels
-        self.mlp = nn.Sequential(nn.Linear(out_channels,out_channels**3),
-                                 nn.GELU(),
-                                 nn.Linear(out_channels**3,out_channels))
+        self.mlp = nn.Sequential(
+            nn.Conv2d(out_channels, out_channels * 4, kernel_size=1),
+            nn.GELU(),
+            nn.Conv2d(out_channels * 4, out_channels, kernel_size=1)
+        )
         self.downsample = None if stride == 1 else nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False)
 
     def forward(self,x):
         identity = x
         # print(x.shape)
         out = self.conv1(x)
-        out = self.ln1(out)
+        out = self.ln1(out.permute(0,2,3,1)).permute(0,3,1,2)
         out = self.gelu(out)
         out = self.conv2(out)
-        out = self.ln2(out)
+        out = self.ln2(out.permute(0,2,3,1)).permute(0,3,1,2)
 
         # out = out.flatten(1)
-        print(out.shape)
-        batch_size, channels, height, width = out.shape
-        out = out.view(batch_size, channels*height*width)
-        print(out.shape)
-        print(self.out_channels)
+        # print(out.shape)
+        # batch_size, channels, height, width = out.shape
+        # out = out.view(batch_size, channels*height*width)
+        # print(out.shape)
+        # print(self.out_channels)
         out = self.mlp(out)
-        print(out.shape)
+        # print(out.shape)
         # out = out.view_as(x)
-        out = out.view(batch_size, channels, height, width)
+        # out = out.view(batch_size, channels, height, width)
 
         if self.downsample is not None:
             identity = self.downsample(x)
@@ -85,7 +87,7 @@ class ConvNeXt(nn.Module):
         B,C,M,N = x.shape
 
         # Stem layer:
-        print(x.shape)
+        # print(x.shape)
         x = self.stem(x)
 
         x = self.stage_1(x)
