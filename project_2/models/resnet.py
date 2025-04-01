@@ -92,8 +92,10 @@ class ResNet(nn.Module):
         return x
 
 if __name__ == '__main__':
-    x = torch.randn((3,1,128,128))
-    model = ResNet()
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(device)
+    x = torch.randn((3,1,128,128)).to(device)
+    model = ResNet().to(device)
     # print(model)
     print(model(x).cpu().detach().numpy())
 
