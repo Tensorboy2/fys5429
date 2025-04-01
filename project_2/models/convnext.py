@@ -52,15 +52,19 @@ class ConvNeXt(nn.Module):
         self.stem = nn.Sequential(
             nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False),
             nn.LayerNorm(64),
-            nn.GELU()
-            # nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+            nn.GELU(),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         )
-
+        print('stem made')
         '''Block layers:'''
         self.stage_1 = nn.Sequential(*[ConvNeXtBlock(64,64)]*3)
+        print('1 made')
         self.stage_2 = nn.Sequential(ConvNeXtBlock(64,128,stride=2),*[ConvNeXtBlock(128,128)]*3)
+        print('2 made')
         self.stage_3 = nn.Sequential(ConvNeXtBlock(128,256,stride=2),*[ConvNeXtBlock(256,256)]*5)
+        print('3 made')
         self.stage_4 = nn.Sequential(ConvNeXtBlock(256,512,stride=2),*[ConvNeXtBlock(512,512)]*2)
+        print('4 made')
 
         '''Dummy forward pass to compute output size'''
         with torch.no_grad():
