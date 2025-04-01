@@ -9,7 +9,7 @@ import pandas as pd
 import os
 path = os.path.dirname(__file__)
 
-from cnn import CNN
+from project_2.models.cnn import CNN
 # from feedforward import FeedForward
 from train import train
 
