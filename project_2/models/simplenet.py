@@ -49,7 +49,7 @@ class SimpleNet(nn.Module):
             nn.MaxPool2d(2,2)
         )
         self.out = nn.Linear(2048,1)
-        self.relu = nn.ReLU(inplace=True)
+        self.activation = nn.Softplus()
 
     def forward(self,x):
         out = self.layer_1(x)
@@ -61,7 +61,7 @@ class SimpleNet(nn.Module):
         out = self.layer_7(out)
         out = out.flatten(1)
         out = self.out(out)
-        out = self.relu(out)
+        out = self.activation(out)
         return out
 
 if __name__ == '__main__':

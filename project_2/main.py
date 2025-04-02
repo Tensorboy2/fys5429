@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 torch.manual_seed(0)
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
@@ -8,6 +9,7 @@ import numpy as np
 import pandas as pd
 import os
 path = os.path.dirname(__file__)
+import torch.nn.init as init
 
 from models.cnn import CNN
 from models.simplenet import SimpleNet
@@ -97,6 +99,14 @@ def main_cnn():
     
     df_results = pd.DataFrame(results)
     df_results.to_csv(os.path.join(path,'cnn_long.csv'))
+
+def init_weights(m):
+    if isinstance(m, nn.Conv2d):
+        init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+    elif isinstance(m, nn.Linear):
+        init.xavier_uniform_(m.weight)  # Xavier works well for fully connected layers
+        init.zeros_(m.bias)  # Initialize biases to zero
+
 def main_simple():
     '''
     Longer training of CNN.
@@ -110,12 +120,13 @@ def main_simple():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = SimpleNet().to(device)
+    model.apply(init_weights)
     optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
 
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
-                                                   normalize=False,
-                                                   mask=True,
+                                                   normalize=True,
+                                                   mask=False,
                                                    grid_search=False,
                                                    device = device)
 
