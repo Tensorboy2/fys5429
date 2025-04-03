@@ -177,10 +177,46 @@ def main_graczyknet():
                                                                         lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
+def main_cnn():
+    '''
+    Longer training of CNN.
+    '''
+    # Hyper parameters:
+    num_epochs = 50
+    lr = 0.001
+    lr_step = 10
+    weight_decay = 0.0
+    batch_size = 32
+    cnns = [{'out_channels': 10, 'kernel_size': 5, 'stride': 2, 'pool': 'max'},
+             {'out_channels': 20, 'kernel_size': 7, 'stride': 1, 'pool': 'max'},
+             {'out_channels': 40, 'kernel_size': 5, 'stride': 1, 'pool': 'max'}]
+    model = CNN(conv_layers_params=cnns,
+                hidden_sizes=[2,4],
+                activation='leakyrelu',
+                use_batch_norm=True,
+                use_dropout=True)
+    optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
 
+    train_data_loader, test_data_loader = get_data(batch_size=batch_size,
+                                                   test_size=0.2,
+                                                   normalize=True,
+                                                   mask=False,
+                                                   grid_search=False)
+
+    results = []
+    start = time.time()
+    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+                                                                        optimizer,
+                                                                        train_data_loader,
+                                                                        test_data_loader, 
+                                                                        num_epochs=num_epochs,
+                                                                        lr_step = lr_step)
+    stop = time.time()
+    print(f'Total training time: {stop-start} seconds')
 
 if __name__ == '__main__':
     # main_simple()
     # main_resnet()
     # main_convnext()
-    main_graczyknet()
+    # main_graczyknet()
+    main_cnn()
