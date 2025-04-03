@@ -6,9 +6,9 @@ class CNN(nn.Module):
     def __init__(self,
                  image_size=128,
                  # Default convolution layout:
-                 conv_layers_params=[{'out_channels': 5, 'kernel_size': 3, 'stride': 2, 'pool': 'max','padding' : 'same', 'activation' : 'relu' },
-                                     {'out_channels': 10, 'kernel_size': 3, 'stride': 1, 'pool': 'max','padding' : 'same', 'activation' : 'relu' },
-                                     {'out_channels': 20, 'kernel_size': 3, 'stride': 1, 'pool': 'max','padding' : 'same', 'activation' : 'relu' }],
+                 conv_layers_params=[{'out_channels': 5, 'kernel_size': 7, 'stride': 2, 'pool': 'max','padding' : 3, 'activation' : 'relu' },
+                                     {'out_channels': 10, 'kernel_size': 7, 'stride': 1, 'pool': 'max','padding' : 3, 'activation' : 'relu' },
+                                     {'out_channels': 20, 'kernel_size': 7, 'stride': 1, 'pool': 'max','padding' : 3, 'activation' : 'relu' }],
                  # Default hidden layout:
                  hidden_sizes=[1,1],
                  activation='relu',

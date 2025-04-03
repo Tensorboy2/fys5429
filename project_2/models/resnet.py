@@ -77,7 +77,7 @@ class ResNet(nn.Module):
         B,C,M,N = x.shape
 
         # Stem layer:
-        print(x.shape)
+        # print(x.shape)
         x = self.stem(x)
 
         x = self.stage_1(x)
