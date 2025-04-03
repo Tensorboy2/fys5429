@@ -88,7 +88,7 @@ class ResNet(nn.Module):
         x = self.global_avg_pool(x)
         x = torch.flatten(x,start_dim=1)
         x = self.out(x)
-        x = nn.ReLU(inplace=True)(x)
+        # x = nn.ReLU(inplace=True)(x)
         return x
 
 if __name__ == '__main__':

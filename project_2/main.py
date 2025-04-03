@@ -15,6 +15,7 @@ from models.cnn import CNN
 from models.simplenet import SimpleNet
 from models.resnet import ResNet
 from models.convnext import ConvNeXt
+from models.graczyk import GraczykNet
 # from feedforward import FeedForward
 from train import train
 
@@ -144,9 +145,42 @@ def main_convnext():
                                                                         lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
+def main_graczyknet():
+    '''
+    Longer training of CNN.
+    '''
+    # Hyper parameters:
+    num_epochs = 100
+    lr = 1e-2
+    lr_step = 10
+    weight_decay = 0.0
+    batch_size = 32
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = GraczykNet().to(device)
+    optimizer = optim.SGD(params = model.parameters(), lr = lr, momentum=0.9, weight_decay=weight_decay)
+
+    train_data_loader, test_data_loader = get_data(batch_size=batch_size,
+                                                   test_size=0.2,
+                                                   normalize=True,
+                                                   mask=False,
+                                                   grid_search=False,
+                                                   device = device)
+
+    results = []
+    start = time.time()
+    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+                                                                        optimizer,
+                                                                        train_data_loader,
+                                                                        test_data_loader, 
+                                                                        num_epochs=num_epochs,
+                                                                        lr_step = lr_step)
+    stop = time.time()
+    print(f'Total training time: {stop-start} seconds')
 
 
 if __name__ == '__main__':
     # main_simple()
-    main_resnet()
-    main_convnext()
+    # main_resnet()
+    # main_convnext()
+    main_graczyknet()
