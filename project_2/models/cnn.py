@@ -6,9 +6,9 @@ class CNN(nn.Module):
     def __init__(self,
                  image_size=128,
                  # Default convolution layout:
-                 conv_layers_params=[{'out_channels': 5, 'kernel_size': 7, 'stride': 2, 'pool': 'max','padding' : 3, 'activation' : 'relu' },
-                                     {'out_channels': 10, 'kernel_size': 7, 'stride': 1, 'pool': 'max','padding' : 3, 'activation' : 'relu' },
-                                     {'out_channels': 20, 'kernel_size': 7, 'stride': 1, 'pool': 'max','padding' : 3, 'activation' : 'relu' }],
+                 conv_layers_params=[{'out_channels': 5, 'kernel_size': 3, 'stride': 2, 'pool': 'max'},
+                                     {'out_channels': 10, 'kernel_size': 3, 'stride': 1, 'pool': 'max'},
+                                     {'out_channels': 20, 'kernel_size': 3, 'stride': 1, 'pool': 'max'}],
                  # Default hidden layout:
                  hidden_sizes=[1,1],
                  activation='relu',
@@ -22,8 +22,6 @@ class CNN(nn.Module):
                 - kernel_size (int): Size of the convolution kernel.
                 - stride (int): Stride for the convolution.
                 - pool (str or None): Optional pooling method ('max' or 'avg').
-                - padding
-                - activation
             hidden_sizes (list): List of sizes for fully connected hidden layers.
             activation (str): Activation function to use ('relu', 'leakyrelu', 'sigmoid', 'tanh').
             use_dropout (bool): Whether to include dropout (p=0.5) after fully connected layers.
@@ -55,8 +53,7 @@ class CNN(nn.Module):
             conv = nn.Conv2d(in_channels=in_channels,
                              out_channels=params['out_channels'],
                              kernel_size=params['kernel_size'],
-                             stride=params['stride'],
-                             padding=params['padding'])
+                             stride=params['stride'])
             
             self.conv_layers.add_module(f"conv{idx+1}", conv)
 
@@ -66,8 +63,7 @@ class CNN(nn.Module):
                 bn = nn.BatchNorm2d(params['out_channels'])
                 self.conv_layers.add_module(f"batch_norm{idx+1}", bn)
 
-            self.conv_layers.add_module(f"activation{idx+1}", get_activation(params['activation'])) # Activation
-
+            self.conv_layers.add_module(f"activation{idx+1}", get_activation(activation)) # Activation
 
             
             if params.get('pool', None) is not None: # Optional pooling layer
@@ -104,7 +100,6 @@ class CNN(nn.Module):
             fc_input_dim = hidden_dim
 
         fc_layers.append(nn.Linear(fc_input_dim, 1)) # Output layer
-        fc_layers.append(get_activation(activation))
         self.fc_layers = nn.Sequential(*fc_layers)
 
     def forward(self, x):
