@@ -188,7 +188,7 @@ def main_cnn():
     lr_step = 10
     weight_decay = 0.0
     batch_size = 32
-    cnns = [{'out_channels': 10, 'kernel_size': 5, 'stride': 2, 'pool': 'max'},
+    cnns = [{'out_channels': 10, 'kernel_size': 9, 'stride': 2, 'pool': 'max'},
              {'out_channels': 20, 'kernel_size': 7, 'stride': 1, 'pool': 'max'},
              {'out_channels': 40, 'kernel_size': 5, 'stride': 1, 'pool': 'max'}]
     model = CNN(conv_layers_params=cnns,
