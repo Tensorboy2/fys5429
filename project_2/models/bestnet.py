@@ -16,10 +16,19 @@ class BestNet(nn.Module):
             nn.Conv2d(10,10,3,1,0),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
+            nn.Conv2d(10,10,3,1,0),
+            nn.BatchNorm2d(10),
+            nn.LeakyReLU(),
+            nn.Conv2d(10,10,3,1,0),
+            nn.BatchNorm2d(10),
+            nn.LeakyReLU(),
             # nn.MaxPool2d(2,2)
         )
         self.layer_2 = nn.Sequential(
             nn.Conv2d(10,20,7,2,0),
+            nn.BatchNorm2d(20),
+            nn.LeakyReLU(),
+            nn.Conv2d(20,20,3,1,0),
             nn.BatchNorm2d(20),
             nn.LeakyReLU(),
             nn.Conv2d(20,20,3,1,0),
@@ -40,16 +49,25 @@ class BestNet(nn.Module):
             nn.Conv2d(40,40,3,1,0),
             nn.BatchNorm2d(40),
             nn.LeakyReLU(),
+            nn.Conv2d(40,40,3,1,0),
+            nn.BatchNorm2d(40),
+            nn.LeakyReLU()
             # nn.MaxPool2d(2,2)
         )
         self.layer_4 = nn.Sequential(
-            nn.Conv2d(40,80,5,2,0),
+            nn.Conv2d(40,80,3,1,0),
             nn.BatchNorm2d(80),
             nn.LeakyReLU(),
-            nn.Conv2d(80,80,5,1,0),
+            nn.Conv2d(80,80,3,1,0),
             nn.BatchNorm2d(80),
             nn.LeakyReLU(),
-            nn.Conv2d(80,80,5,1,0),
+            nn.Conv2d(80,80,3,1,0),
+            nn.BatchNorm2d(80),
+            nn.LeakyReLU(),
+            nn.Conv2d(80,80,3,1,0),
+            nn.BatchNorm2d(80),
+            nn.LeakyReLU(),
+            nn.Conv2d(80,80,3,1,0),
             nn.BatchNorm2d(80),
             nn.LeakyReLU(),
             # nn.MaxPool2d(2,2)
