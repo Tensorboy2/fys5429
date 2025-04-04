@@ -183,7 +183,7 @@ def main_cnn():
     Longer training of CNN.
     '''
     # Hyper parameters:
-    num_epochs = 50
+    num_epochs = 200
     lr = 0.001
     lr_step = 10
     weight_decay = 0.0
@@ -197,7 +197,7 @@ def main_cnn():
                 use_batch_norm=True,
                 use_dropout=True)
     optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
-
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
@@ -226,7 +226,7 @@ def main_bestnet():
     batch_size = 32
     model = BestNet()
     optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
-
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
