@@ -221,8 +221,8 @@ def main_bestnet():
     # Hyper parameters:
     num_epochs = 200
     lr = 0.001
-    lr_step = 10
-    weight_decay = 1e-4
+    lr_step = 20
+    weight_decay = 1e-5
     batch_size = 32
     model = BestNet()
     optimizer = optim.AdamW(params = model.parameters(), lr = lr, weight_decay=weight_decay)
