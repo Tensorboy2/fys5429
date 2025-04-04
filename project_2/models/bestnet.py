@@ -21,8 +21,8 @@ class BestNetBlock(nn.Module):
         out1 = self.downsample(x)
 
         out2 = self.layers(out1)
-        out = out1+out2
-        return out
+        # out = out1+out2
+        return out2
 
 class BestNet(nn.Module):
     def __init__(self, image_size = 128):
