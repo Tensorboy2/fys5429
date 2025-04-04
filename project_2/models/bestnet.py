@@ -65,7 +65,13 @@ class BestNet(nn.Module):
             flattened_size = dummy_output.numel()
 
         self.out = nn.Sequential(
-            nn.Linear(flattened_size,1),
+            nn.Linear(flattened_size,flattened_size//2),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(flattened_size//2,flattened_size//4),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(flattened_size//4,1),
             nn.Dropout(p=0.2),
 
         )
