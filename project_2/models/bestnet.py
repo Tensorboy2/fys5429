@@ -6,18 +6,22 @@ class BestNetBlock(nn.Module):
     def __init__(self,first_kernel_size=9,in_channels=1,out_channels=10,
                  num_layers=3):
         super().__init__()
-        self.layers = nn.Sequential(
+        self.downsample = nn.Sequential(
             nn.Conv2d(in_channels,out_channels,first_kernel_size,2,0,bias=False),
             nn.BatchNorm2d(out_channels),
             nn.LeakyReLU(),
         )
+        self.layers = nn.Sequential()
         for i in range(num_layers):
             self.layers.add_module(f'conv{i}',nn.Conv2d(out_channels,out_channels,3,1,1,bias=False))
             self.layers.add_module(f'bn{i}',nn.BatchNorm2d(out_channels))
             self.layers.add_module(f'activation{i}',nn.LeakyReLU())
 
     def forward(self,x):
-        out = self.layers(x)
+        out1 = self.downsample(x)
+
+        out2 = self.layers(out1)
+        out = out1+out2
         return out
 
 class BestNet(nn.Module):
