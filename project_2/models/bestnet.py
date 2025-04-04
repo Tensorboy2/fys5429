@@ -7,7 +7,7 @@ class BestNet(nn.Module):
     def __init__(self, image_size = 128):
         super().__init__()
         self.layer_1 = nn.Sequential(
-            nn.Conv2d(1,10,5,2,0),
+            nn.Conv2d(1,10,9,2,0),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
             nn.MaxPool2d(2,2)
@@ -21,7 +21,7 @@ class BestNet(nn.Module):
         self.layer_3 = nn.Sequential(
             nn.Conv2d(20,40,5,1,0),
             nn.BatchNorm2d(40),
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
             nn.MaxPool2d(2,2)
         )
         '''Dummy forward pass to compute output size'''
