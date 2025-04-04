@@ -10,36 +10,63 @@ class BestNet(nn.Module):
             nn.Conv2d(1,10,9,2,0),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
-            nn.MaxPool2d(2,2)
+            nn.Conv2d(10,10,3,1,0),
+            nn.BatchNorm2d(10),
+            nn.LeakyReLU(),
+            nn.Conv2d(10,10,3,1,0),
+            nn.BatchNorm2d(10),
+            nn.LeakyReLU(),
+            # nn.MaxPool2d(2,2)
         )
         self.layer_2 = nn.Sequential(
-            nn.Conv2d(10,20,7,1,0),
+            nn.Conv2d(10,20,7,2,0),
             nn.BatchNorm2d(20),
             nn.LeakyReLU(),
-            nn.MaxPool2d(2,2)
+            nn.Conv2d(20,20,3,1,0),
+            nn.BatchNorm2d(20),
+            nn.LeakyReLU(),
+            nn.Conv2d(20,20,3,1,0),
+            nn.BatchNorm2d(20),
+            nn.LeakyReLU(),
+            # nn.MaxPool2d(2,2)
         )
         self.layer_3 = nn.Sequential(
-            nn.Conv2d(20,40,5,1,0),
+            nn.Conv2d(20,40,3,2,0),
             nn.BatchNorm2d(40),
-            nn.ReLU(),
-            nn.MaxPool2d(2,2)
+            nn.LeakyReLU(),
+            nn.Conv2d(40,40,3,1,0),
+            nn.BatchNorm2d(40),
+            nn.LeakyReLU(),
+            nn.Conv2d(40,40,3,1,0),
+            nn.BatchNorm2d(40),
+            nn.LeakyReLU(),
+            # nn.MaxPool2d(2,2)
         )
+        self.layer_4 = nn.Sequential(
+            nn.Conv2d(40,80,5,2,0),
+            nn.BatchNorm2d(80),
+            nn.LeakyReLU(),
+            nn.Conv2d(80,80,5,1,0),
+            nn.BatchNorm2d(80),
+            nn.LeakyReLU(),
+            nn.Conv2d(80,80,5,1,0),
+            nn.BatchNorm2d(80),
+            nn.LeakyReLU(),
+            # nn.MaxPool2d(2,2)
+        )
+        
         '''Dummy forward pass to compute output size'''
         with torch.no_grad():
             dummy_input = torch.randn(1, 1, image_size, image_size)
             dummy_output = self.layer_1(dummy_input)
             dummy_output = self.layer_2(dummy_output)
             dummy_output = self.layer_3(dummy_output)
+            # dummy_output = self.layer_4(dummy_output)
             flattened_size = dummy_output.numel()
 
         self.out = nn.Sequential(
-            nn.Linear(flattened_size,flattened_size//2),
+            nn.Linear(flattened_size,1),
             nn.Dropout(p=0.2),
-            nn.LeakyReLU(),
-            nn.Linear(flattened_size//2,flattened_size//4),
-            nn.Dropout(p=0.2),
-            nn.LeakyReLU(),
-            nn.Linear(flattened_size//4,1),
 
         )
 
@@ -47,6 +74,7 @@ class BestNet(nn.Module):
         out = self.layer_1(x)
         out = self.layer_2(out)
         out = self.layer_3(out)
+        # out = self.layer_4(out)
         out = out.view(x.size(0), -1)
         out = self.out(out)
         return out
