@@ -96,20 +96,20 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
     Returns metrics from training.
     '''
     train_mse = [] # Mean square error
-    train_mae = [] # Mean absolute error
+    # train_mae = [] # Mean absolute error
     train_r2 = [] # Coefficient of Determination
-    train_R = []
+    # train_R = []
     test_mse = [] # Mean square error
-    test_mae = [] # Mean absolute error
+    # test_mae = [] # Mean absolute error
     test_r2 = [] # Coefficient of Determination
-    test_R = []
+    # test_R = []
 
     loss_fn = torch.nn.MSELoss()
     scheduler = op.lr_scheduler.StepLR(optimizer,step_size=lr_step)
 
     for epoch in range(num_epochs):
         running_train_loss = 0
-        running_train_mae = 0
+        # running_train_mae = 0
         all_y_true = []
         all_y_pred = []
         for X_train, y_train in train_data_loader:
@@ -122,7 +122,7 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
             running_train_loss += loss.item()
             y_pred = outputs.cpu().detach().numpy()
             y_t = y_train.cpu().detach().numpy()
-            running_train_mae += mean_absolute_error(y_true=y_t,y_pred=y_pred)
+            # running_train_mae += mean_absolute_error(y_true=y_t,y_pred=y_pred)
             all_y_true.append(y_t)
             all_y_pred.append(y_pred)
 
@@ -130,8 +130,8 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_train_mse = running_train_loss/len(y_train)
         train_mse.append(epoch_train_mse)
 
-        epoch_train_mae = running_train_mae/len(y_train)
-        train_mae.append(epoch_train_mae)
+        # epoch_train_mae = running_train_mae/len(y_train)
+        # train_mae.append(epoch_train_mae)
 
 
         all_y_true = np.concatenate(all_y_true)
@@ -139,11 +139,11 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         epoch_train_r2 = r2_score(all_y_true, all_y_pred)
         train_r2.append(epoch_train_r2)
 
-        R_train = 1-np.mean(all_y_pred/all_y_true)
-        train_R.append(R_train)
+        # R_train = 1-np.mean(all_y_pred/all_y_true)
+        # train_R.append(R_train)
 
         running_test_loss = 0
-        running_test_mae = 0
+        # running_test_mae = 0
         all_y_true = []
         all_y_pred = []
         with torch.no_grad():
@@ -154,29 +154,29 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
                 running_test_loss += loss.item()
                 y_pred = outputs.cpu().detach().numpy()
                 y_t = y_test.cpu().detach().numpy()
-                running_test_mae += mean_absolute_error(y_true=y_t,y_pred=y_pred)
+                # running_test_mae += mean_absolute_error(y_true=y_t,y_pred=y_pred)
                 all_y_true.append(y_t)
                 all_y_pred.append(y_pred)
 
         epoch_test_mse = running_test_loss/len(y_test)
         test_mse.append(epoch_test_mse)
 
-        epoch_test_mae = running_test_mae/len(y_test)
-        test_mae.append(epoch_test_mae)
+        # epoch_test_mae = running_test_mae/len(y_test)
+        # test_mae.append(epoch_test_mae)
 
         all_y_true = np.concatenate(all_y_true)
         all_y_pred = np.concatenate(all_y_pred)
         epoch_test_r2 = r2_score(all_y_true, all_y_pred)
         test_r2.append(epoch_test_r2)
         
-        R_test = 1-np.mean(all_y_pred/all_y_true)
-        test_R.append(R_test)
+        # R_test = 1-np.mean(all_y_pred/all_y_true)
+        # test_R.append(R_test)
         
         print(f'Epoch {epoch},')
-        print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2}, MAE = {epoch_train_mae}, R = {R_train}')
-        print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}, MAE = {epoch_test_mae}, R = {R_test}')
+        print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2}')
+        print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}')
         print('')
         scheduler.step()
-    return train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R
+    return train_mse, test_mse, train_r2, test_r2
             
                     

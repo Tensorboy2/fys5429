@@ -74,7 +74,7 @@ def main_simple():
 
     results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+    train_mse, test_mse, train_r2, test_r2 = train(model,
                                                                         optimizer,
                                                                         train_data_loader,
                                                                         test_data_loader, 
@@ -106,7 +106,7 @@ def main_resnet():
 
     results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+    train_mse, test_mse, train_r2, test_r2 = train(model,
                                                                         optimizer,
                                                                         train_data_loader,
                                                                         test_data_loader, 
@@ -138,7 +138,7 @@ def main_convnext():
 
     results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+    train_mse, test_mse, train_r2, test_r2 = train(model,
                                                                         optimizer,
                                                                         train_data_loader,
                                                                         test_data_loader, 
@@ -170,7 +170,7 @@ def main_graczyknet():
 
     results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+    train_mse, test_mse, train_r2, test_r2 = train(model,
                                                                         optimizer,
                                                                         train_data_loader,
                                                                         test_data_loader, 
@@ -206,7 +206,7 @@ def main_cnn():
 
     results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+    train_mse, test_mse, train_r2, test_r2 = train(model,
                                                                         optimizer,
                                                                         train_data_loader,
                                                                         test_data_loader, 
@@ -235,7 +235,7 @@ def main_bestnet():
 
     results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2, train_mae, test_mae, train_R, test_R = train(model,
+    train_mse, test_mse, train_r2, test_r2 = train(model,
                                                                         optimizer,
                                                                         train_data_loader,
                                                                         test_data_loader, 
