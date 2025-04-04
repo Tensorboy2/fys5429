@@ -10,16 +10,16 @@ class BestNet(nn.Module):
             nn.Conv2d(1,10,9,2,0),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
-            nn.Conv2d(10,10,3,1,0),
+            nn.Conv2d(10,10,3,1,1),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
-            nn.Conv2d(10,10,3,1,0),
+            nn.Conv2d(10,10,3,1,1),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
-            nn.Conv2d(10,10,3,1,0),
+            nn.Conv2d(10,10,3,1,1),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
-            nn.Conv2d(10,10,3,1,0),
+            nn.Conv2d(10,10,3,1,1),
             nn.BatchNorm2d(10),
             nn.LeakyReLU(),
             # nn.MaxPool2d(2,2)
@@ -28,48 +28,30 @@ class BestNet(nn.Module):
             nn.Conv2d(10,20,7,2,0),
             nn.BatchNorm2d(20),
             nn.LeakyReLU(),
-            nn.Conv2d(20,20,3,1,0),
+            nn.Conv2d(20,20,3,1,1),
             nn.BatchNorm2d(20),
             nn.LeakyReLU(),
-            nn.Conv2d(20,20,3,1,0),
+            nn.Conv2d(20,20,3,1,1),
             nn.BatchNorm2d(20),
             nn.LeakyReLU(),
-            nn.Conv2d(20,20,3,1,0),
+            nn.Conv2d(20,20,3,1,1),
             nn.BatchNorm2d(20),
             nn.LeakyReLU(),
             # nn.MaxPool2d(2,2)
         )
         self.layer_3 = nn.Sequential(
-            nn.Conv2d(20,40,3,2,0),
+            nn.Conv2d(20,40,5,2,0),
             nn.BatchNorm2d(40),
             nn.LeakyReLU(),
-            nn.Conv2d(40,40,3,1,0),
+            nn.Conv2d(40,40,3,1,1),
             nn.BatchNorm2d(40),
             nn.LeakyReLU(),
-            nn.Conv2d(40,40,3,1,0),
+            nn.Conv2d(40,40,3,1,1),
             nn.BatchNorm2d(40),
             nn.LeakyReLU(),
-            nn.Conv2d(40,40,3,1,0),
+            nn.Conv2d(40,40,3,1,1),
             nn.BatchNorm2d(40),
             nn.LeakyReLU()
-            # nn.MaxPool2d(2,2)
-        )
-        self.layer_4 = nn.Sequential(
-            nn.Conv2d(40,80,3,1,0),
-            nn.BatchNorm2d(80),
-            nn.LeakyReLU(),
-            nn.Conv2d(80,80,3,1,0),
-            nn.BatchNorm2d(80),
-            nn.LeakyReLU(),
-            nn.Conv2d(80,80,3,1,0),
-            nn.BatchNorm2d(80),
-            nn.LeakyReLU(),
-            nn.Conv2d(80,80,3,1,0),
-            nn.BatchNorm2d(80),
-            nn.LeakyReLU(),
-            nn.Conv2d(80,80,3,1,0),
-            nn.BatchNorm2d(80),
-            nn.LeakyReLU(),
             # nn.MaxPool2d(2,2)
         )
         
@@ -106,7 +88,8 @@ class BestNet(nn.Module):
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
-    x = torch.randn((3,1,128,128)).to(device)
+    x = torch.randn((6,1,128,128)).to(device)
     model = BestNet().to(device)
+    print(model)
     # print(model)
     print(model(x).cpu().detach().numpy())
