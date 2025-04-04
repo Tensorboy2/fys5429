@@ -13,7 +13,7 @@ class BestNetBlock(nn.Module):
         )
         self.layers = nn.Sequential()
         for i in range(num_layers):
-            self.layers.add_module(f'conv{i}',nn.Conv2d(out_channels,out_channels,3,1,1,bias=False))
+            self.layers.add_module(f'conv{i}',nn.Conv2d(out_channels,out_channels,5,1,2,bias=False))
             self.layers.add_module(f'bn{i}',nn.BatchNorm2d(out_channels))
             self.layers.add_module(f'activation{i}',nn.LeakyReLU())
 
