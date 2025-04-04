@@ -95,7 +95,7 @@ class CNN(nn.Module):
             fc_layers.append(nn.Linear(fc_input_dim, hidden_dim))
 
             if use_dropout: # Apply dropout if given.
-                fc_layers.append(nn.Dropout(p=0.5))
+                fc_layers.append(nn.Dropout(p=0.2))
             fc_layers.append(get_activation(activation))
             fc_input_dim = hidden_dim
 
