@@ -10,8 +10,17 @@ def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
     """
     Jit'ed rd score function
     """
+    y_true = y_true.view(-1)
+    y_pred = y_pred.view(-1)
+    
+    mean_y_true = torch.mean(y_true)
+    ss_tot = torch.sum((y_true - mean_y_true) ** 2)
     ss_res = torch.sum((y_true - y_pred) ** 2)
-    ss_tot = torch.sum((y_true - torch.mean(y_true)) ** 2)
+    
+    # Prevent divide by zero
+    if ss_tot < 1e-8:
+        return torch.tensor(0.0, device=y_true.device)
+    
     r2 = 1 - ss_res / ss_tot
     return r2
 
