@@ -34,8 +34,8 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
 
     for epoch in range(num_epochs):
         running_train_loss = 0
-        all_y_true = []
-        all_y_pred = []
+        all_y_true_train = []
+        all_y_pred_train = []
 
         for X_train, y_train in train_data_loader:
             optimizer.zero_grad() # Zero gradients for every batch
@@ -45,18 +45,18 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
             optimizer.step() # Update weights
 
             running_train_loss += loss.item()
-            all_y_true.append(y_train.detach())
-            all_y_pred.append(outputs.detach())
+            all_y_true_train.append(y_train.detach())
+            all_y_pred_train.append(outputs.detach())
 
         
         epoch_train_mse = running_train_loss/len(train_data_loader)
-        y_true_tensor = torch.cat(all_y_true)
-        y_pred_tensor = torch.cat(all_y_pred)
+        y_true_tensor = torch.cat(all_y_true_train)
+        y_pred_tensor = torch.cat(all_y_pred_train)
         epoch_train_r2 = r2_score_torch(y_true_tensor, y_pred_tensor).item()
 
         running_test_loss = 0
-        all_y_true = []
-        all_y_pred = []
+        all_y_true_test = []
+        all_y_pred_test = []
 
         with torch.no_grad():
             for X_test, y_test in test_data_loader:
@@ -64,12 +64,12 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
                 loss = loss_fn(outputs.view(-1),y_test) # Calculate loss
 
                 running_test_loss += loss.item()
-                all_y_true.append(y_train.detach())
-                all_y_pred.append(outputs.detach())
+                all_y_true_test.append(y_train.detach())
+                all_y_pred_test.append(outputs.detach())
 
         epoch_test_mse = running_test_loss/len(test_data_loader)
-        y_true_tensor = torch.cat(all_y_true)
-        y_pred_tensor = torch.cat(all_y_pred)
+        y_true_tensor = torch.cat(all_y_true_test)
+        y_pred_tensor = torch.cat(all_y_pred_test)
         epoch_test_r2 = r2_score_torch(y_true_tensor, y_pred_tensor).item()
         
         metrics["epoch"].append(epoch)
