@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import re
 
 # Model names
-model_names = ["bestnet", "simplenet","resnet","convnext","convnext_bn"]
+model_names = ["bestnet","resnet","convnext_bn","resnet50"]
 
 # Storage for all models
 all_data = []
@@ -78,10 +78,10 @@ plt.savefig("mse_all_models.pdf")
 plt.figure(figsize=(10, 6))
 # sns.lineplot(data=df_r2, x="epoch", y="R2", hue="model", style="type", markers=False)
 # Plot the train lines with reduced visibility
-sns.lineplot(data=df_r2[df_r2['type'] == 'train_r2'], x="epoch", y="R2", hue="model", linewidth=1, alpha=0.5, markers=False, legend=False)
+sns.lineplot(data=df_r2[df_r2['type'] == 'train_r2'], x="epoch", y="R2", hue="model",palette="viridis", linewidth=1, alpha=0.5, markers=False, legend=False)
 
 # Plot the test lines with normal visibility
-sns.lineplot(data=df_r2[df_r2['type'] == 'test_r2'], x="epoch", y="R2", hue="model", linewidth=2, markers=False)
+sns.lineplot(data=df_r2[df_r2['type'] == 'test_r2'], x="epoch", y="R2", hue="model",palette="viridis", linewidth=2, markers=False)
 plt.title("Train/Test R2 over Epochs")
 plt.grid(True)
 plt.ylim(bottom=0)
