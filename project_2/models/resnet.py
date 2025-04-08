@@ -152,7 +152,7 @@ class ResNet(nn.Module):
         self.stage4 = self._make_stage(1024, 2048, num_blocks=3)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Sequential(nn.Dropout(0.2),nn.Linear(2048, num_classes))
+        self.fc = nn.Sequential(nn.Linear(2048, num_classes))
 
     def _make_stage(self, in_channels, out_channels, num_blocks, first_stride=2):
         layers = [ResNetDownsampleBlock(in_channels, out_channels, stride=first_stride)]
