@@ -14,7 +14,7 @@ import torch.nn.init as init
 from models.cnn import CNN
 from models.simplenet import SimpleNet
 from models.resnet import ResNet
-from models.convnext import ConvNeXt
+from models.convnext import ConvNeXtTiny
 from models.graczyk import GraczykNet
 from models.bestnet import BestNet
 # from feedforward import FeedForward
@@ -128,7 +128,7 @@ def main_convnext():
     batch_size = 32
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = ConvNeXt().to(device)
+    model = ConvNeXtTiny().to(device)
     optimizer = optim.AdamW(params = model.parameters(),
                              lr = lr, 
                              weight_decay=weight_decay)
@@ -252,8 +252,8 @@ def main_bestnet():
 
 if __name__ == '__main__':
     # main_simple()
-    main_resnet()
-    # main_convnext()
+    # main_resnet()
+    main_convnext()
     # main_graczyknet()
     # main_cnn()
     # main_bestnet()
