@@ -56,9 +56,9 @@ def main_simple():
     '''
     # Hyper parameters:
     num_epochs = 200
-    lr = 0.0001
+    lr = 0.001
     lr_step = num_epochs
-    weight_decay = 1e-6
+    weight_decay = 1e-5
     batch_size = 32
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -221,9 +221,9 @@ def main_bestnet():
     '''
     # Hyper parameters:
     num_epochs = 200
-    lr = 0.0001
+    lr = 0.001
     lr_step = num_epochs
-    weight_decay = 1e-6
+    weight_decay = 1e-5
     batch_size = 32
     model = BestNet()
     optimizer = optim.AdamW(params = model.parameters(),
