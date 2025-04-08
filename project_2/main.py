@@ -247,9 +247,9 @@ def main_bestnet():
     print(f'Total training time: {stop-start} seconds')
 
 if __name__ == '__main__':
-    # main_simple()
+    main_simple()
     # main_resnet()
     # main_convnext()
     # main_graczyknet()
     # main_cnn()
-    main_bestnet()
+    # main_bestnet()
