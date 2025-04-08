@@ -57,16 +57,16 @@ class ConvNeXt(nn.Module):
             nn.GELU(),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         )
-        print('stem made')
+        # print('stem made')
         '''Block layers:'''
         self.stage_1 = nn.Sequential(*[ConvNeXtBlock(64,64)]*3)
-        print('1 made')
+        # print('1 made')
         self.stage_2 = nn.Sequential(ConvNeXtBlock(64,128,stride=2),*[ConvNeXtBlock(128,128)]*3)
-        print('2 made')
-        self.stage_3 = nn.Sequential(ConvNeXtBlock(128,256,stride=2),*[ConvNeXtBlock(256,256)]*5)
-        print('3 made')
-        self.stage_4 = nn.Sequential(ConvNeXtBlock(256,512,stride=2),*[ConvNeXtBlock(512,512)]*2)
-        print('4 made')
+        # print('2 made')
+        self.stage_3 = nn.Sequential(ConvNeXtBlock(128,256,stride=2),*[ConvNeXtBlock(256,256)]*9)
+        # print('3 made')
+        self.stage_4 = nn.Sequential(ConvNeXtBlock(256,512,stride=2),*[ConvNeXtBlock(512,512)]*3)
+        # print('4 made')
 
         '''Dummy forward pass to compute output size'''
         with torch.no_grad():
@@ -81,7 +81,7 @@ class ConvNeXt(nn.Module):
         
         '''Out layer'''
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.out = nn.Linear(flattened_size,1)
+        self.out = nn.Sequential(nn.Linear(flattened_size,1),nn.Dropout(p=0.2))
 
     def forward(self,x):
         B,C,M,N = x.shape
@@ -104,7 +104,7 @@ class ConvNeXt(nn.Module):
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
-    x = torch.randn((1,1,128,128)).to(device)
+    x = torch.randn((3,1,128,128)).to(device)
     model = ConvNeXt().to(device)
     # print(model)
     print(model(x).cpu().detach().numpy())

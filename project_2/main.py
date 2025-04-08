@@ -88,10 +88,10 @@ def main_resnet():
     Longer training of CNN.
     '''
     # Hyper parameters:
-    num_epochs = 100
-    lr = 1e-6
+    num_epochs = 200
+    lr = 0.001
     lr_step = num_epochs
-    weight_decay = 0.0
+    weight_decay = 1e-5
     batch_size = 32
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -121,10 +121,10 @@ def main_convnext():
     Longer training of CNN.
     '''
     # Hyper parameters:
-    num_epochs = 100
-    lr = 1e-6
+    num_epochs = 200
+    lr = 0.001
     lr_step = num_epochs
-    weight_decay = 0.0
+    weight_decay = 1e-5
     batch_size = 32
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -252,8 +252,8 @@ def main_bestnet():
 
 if __name__ == '__main__':
     # main_simple()
-    main_resnet()
-    # main_convnext()
+    # main_resnet()
+    main_convnext()
     # main_graczyknet()
     # main_cnn()
     # main_bestnet()
