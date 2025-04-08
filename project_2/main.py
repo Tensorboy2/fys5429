@@ -63,23 +63,23 @@ def main_simple():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = SimpleNet().to(device)
-    optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
-
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False,
-                                                   device = device)
+                                                   grid_search=False)
 
-    results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2 = train(model,
-                                                                        optimizer,
-                                                                        train_data_loader,
-                                                                        test_data_loader, 
-                                                                        num_epochs=num_epochs,
-                                                                        lr_step = lr_step)
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 def main_resnet():
@@ -95,23 +95,23 @@ def main_resnet():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = ResNet().to(device)
-    optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
-
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False,
-                                                   device = device)
+                                                   grid_search=False)
 
-    results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2 = train(model,
-                                                                        optimizer,
-                                                                        train_data_loader,
-                                                                        test_data_loader, 
-                                                                        num_epochs=num_epochs,
-                                                                        lr_step = lr_step)
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 def main_convnext():
@@ -127,23 +127,23 @@ def main_convnext():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = ConvNeXt().to(device)
-    optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
-
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False,
-                                                   device = device)
+                                                   grid_search=False)
 
-    results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2 = train(model,
-                                                                        optimizer,
-                                                                        train_data_loader,
-                                                                        test_data_loader, 
-                                                                        num_epochs=num_epochs,
-                                                                        lr_step = lr_step)
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 def main_graczyknet():
@@ -159,23 +159,23 @@ def main_graczyknet():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = GraczykNet().to(device)
-    optimizer = optim.SGD(params = model.parameters(), lr = lr, momentum=0.9, weight_decay=weight_decay)
-
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False,
-                                                   device = device)
+                                                   grid_search=False)
 
-    results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2 = train(model,
-                                                                        optimizer,
-                                                                        train_data_loader,
-                                                                        test_data_loader, 
-                                                                        num_epochs=num_epochs,
-                                                                        lr_step = lr_step)
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 def main_cnn():
@@ -196,7 +196,9 @@ def main_cnn():
                 activation='leakyrelu',
                 use_batch_norm=True,
                 use_dropout=True)
-    optimizer = optim.Adam(params = model.parameters(), lr = lr, weight_decay=weight_decay)
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
     print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
@@ -204,28 +206,29 @@ def main_cnn():
                                                    mask=False,
                                                    grid_search=False)
 
-    results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2 = train(model,
-                                                                        optimizer,
-                                                                        train_data_loader,
-                                                                        test_data_loader, 
-                                                                        num_epochs=num_epochs,
-                                                                        lr_step = lr_step)
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 def main_bestnet():
     '''
-    Longer training of CNN.
+    Longer training of BestNet.
     '''
     # Hyper parameters:
     num_epochs = 200
-    lr = 0.001
-    lr_step = 20
-    weight_decay = 1e-5
+    lr = 0.0001
+    lr_step = num_epochs
+    weight_decay = 1e-6
     batch_size = 32
     model = BestNet()
-    optimizer = optim.AdamW(params = model.parameters(), lr = lr, weight_decay=weight_decay)
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
     print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
@@ -233,14 +236,13 @@ def main_bestnet():
                                                    mask=False,
                                                    grid_search=False)
 
-    results = []
     start = time.time()
-    train_mse, test_mse, train_r2, test_r2 = train(model,
-                                                                        optimizer,
-                                                                        train_data_loader,
-                                                                        test_data_loader, 
-                                                                        num_epochs=num_epochs,
-                                                                        lr_step = lr_step)
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 

@@ -25,15 +25,15 @@ class BestNetBlock(nn.Module):
         return out2
 
 class BestNet(nn.Module):
-    def __init__(self, image_size = 128):
+    def __init__(self, image_size = 128, k=10):
         super().__init__()
         # self.layer_1 = BestNetBlock(9,1,10,5)
         # self.layer_2 = BestNetBlock(7,10,20,4)
         # self.layer_3 = BestNetBlock(5,20,40,4)
-        self.layer_1 = BestNetBlock(9,1,10,3)
-        self.layer_2 = BestNetBlock(7,10,20,4)
-        self.layer_3 = BestNetBlock(5,20,40,6)
-        self.layer_4 = BestNetBlock(3,40,80,3)
+        self.layer_1 = BestNetBlock(9,1,k,3)
+        self.layer_2 = BestNetBlock(7,k,k*2,4)
+        self.layer_3 = BestNetBlock(5,k*2,k*4,6)
+        self.layer_4 = BestNetBlock(3,k*4,k*8,3)
         
         '''Dummy forward pass to compute output size'''
         with torch.no_grad():
