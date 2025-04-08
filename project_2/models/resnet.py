@@ -52,9 +52,9 @@ class ResNet(nn.Module):
 
         '''Block layers:'''
         self.stage_1 = nn.Sequential(*[ResidualBlock(64, 64)] * 3)
-        self.stage_2 = nn.Sequential(ResidualBlock(64, 128, stride=2), *[ResidualBlock(128, 128)] * 3)
-        self.stage_3 = nn.Sequential(ResidualBlock(128, 256, stride=2), *[ResidualBlock(256, 256)] * 5)
-        self.stage_4 = nn.Sequential(ResidualBlock(256, 512, stride=2), *[ResidualBlock(512, 512)] * 2)
+        self.stage_2 = nn.Sequential(ResidualBlock(64, 128, stride=2), *[ResidualBlock(128, 128)] * 4)
+        self.stage_3 = nn.Sequential(ResidualBlock(128, 256, stride=2), *[ResidualBlock(256, 256)] * 6)
+        self.stage_4 = nn.Sequential(ResidualBlock(256, 512, stride=2), *[ResidualBlock(512, 512)] * 3)
 
 
         '''Dummy forward pass to compute output size'''
@@ -70,8 +70,8 @@ class ResNet(nn.Module):
         
         '''Out layer'''
         self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.out = nn.Linear(flattened_size,1)
-    
+        self.out = nn.Sequential(nn.Linear(flattened_size,1),nn.Dropout(p=0.2))
+
 
     def forward(self,x):
         B,C,M,N = x.shape

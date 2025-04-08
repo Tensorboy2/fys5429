@@ -104,7 +104,8 @@ def main_resnet():
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False)
+                                                   grid_search=False,
+                                                   device=device)
 
     start = time.time()
     train(model,
@@ -136,7 +137,8 @@ def main_convnext():
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False)
+                                                   grid_search=False,
+                                                   device=device)
 
     start = time.time()
     train(model,
@@ -168,7 +170,8 @@ def main_graczyknet():
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False)
+                                                   grid_search=False,
+                                                   device=device)
 
     start = time.time()
     train(model,
@@ -248,8 +251,8 @@ def main_bestnet():
     print(f'Total training time: {stop-start} seconds')
 
 if __name__ == '__main__':
-    main_simple()
-    # main_resnet()
+    # main_simple()
+    main_resnet()
     # main_convnext()
     # main_graczyknet()
     # main_cnn()

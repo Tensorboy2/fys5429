@@ -1,74 +1,81 @@
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 import re
 
-# Prepare storage
-epochs = []
-train_mse = []
-train_r2 = []
-test_mse = []
-test_r2 = []
+# Model names
+model_names = ["bestnet", "simplenet"]
 
-# Read and parse the file
-with open("train_data.txt", "r") as f:
-    lines = f.readlines()
+# Storage for all models
+all_data = []
 
-for i in range(0, len(lines), 3):  # every 3 lines = 1 epoch block
+# Read and parse each model's file
+for model_name in model_names:
+    epochs = []
+    train_mse = []
+    train_r2 = []
+    test_mse = []
+    test_r2 = []
+
     try:
-        epoch_line = lines[i].strip()
-        train_line = lines[i+1].strip()
-        test_line = lines[i+2].strip()
+        with open(f"train_data_{model_name}.txt", "r") as f:
+            lines = f.readlines()
 
-        # Extract epoch number
-        epoch = int(re.search(r'Epoch (\d+)', epoch_line).group(1))
+        for i in range(0, 1000, 3):  # every 3 lines = 1 epoch block
+            try:
+                epoch_line = lines[i].strip()
+                train_line = lines[i + 1].strip()
+                test_line = lines[i + 2].strip()
 
-        # Extract train MSE and R2
-        train_mse_val = float(re.search(r'MSE = ([\d.]+)', train_line).group(1))
-        train_r2_val = float(re.search(r'R2 = ([\d.-]+)', train_line).group(1))
+                epoch = int(re.search(r'Epoch (\d+)', epoch_line).group(1))
+                train_mse_val = float(re.search(r'MSE = ([\d.]+)', train_line).group(1))
+                train_r2_val = float(re.search(r'R2 = ([\d.-]+)', train_line).group(1))
+                test_mse_val = float(re.search(r'MSE = ([\d.]+)', test_line).group(1))
+                test_r2_val = float(re.search(r'R2 = ([\d.-]+)', test_line).group(1))
 
-        # Extract test MSE and R2
-        test_mse_val = float(re.search(r'MSE = ([\d.]+)', test_line).group(1))
-        test_r2_val = float(re.search(r'R2 = ([\d.-]+)', test_line).group(1))
+                # Append to storage
+                all_data.append({
+                    "model": model_name,
+                    "epoch": epoch,
+                    "train_mse": train_mse_val,
+                    "train_r2": train_r2_val,
+                    "test_mse": test_mse_val,
+                    "test_r2": test_r2_val
+                })
 
-        # Store values
-        epochs.append(epoch)
-        train_mse.append(train_mse_val)
-        train_r2.append(train_r2_val)
-        test_mse.append(test_mse_val)
-        test_r2.append(test_r2_val)
+            except Exception as e:
+                print(f"Skipping block at line {i} in {model_name}: {e}")
 
-    except Exception as e:
-        print(f"Skipping block at line {i}: {e}")
+    except FileNotFoundError:
+        print(f"File for {model_name} not found!")
 
-# Make DataFrame
-df = pd.DataFrame({
-    "epoch": epochs,
-    "train_mse": train_mse,
-    "train_r2": train_r2,
-    "test_mse": test_mse,
-    "test_r2": test_r2
-})
+# Convert to DataFrame
+df = pd.DataFrame(all_data)
 
-print(df.head())
+# Melt data for seaborn
+df_mse = df.melt(id_vars=["epoch", "model"], value_vars=["train_mse", "test_mse"],
+                 var_name="type", value_name="MSE")
 
-# Plotting
+df_r2 = df.melt(id_vars=["epoch", "model"], value_vars=["train_r2", "test_r2"],
+                var_name="type", value_name="R2")
+
+# Seaborn MSE plot
 plt.figure(figsize=(10, 6))
-plt.plot(df['epoch'], df['train_mse'], label='Train MSE')
-plt.plot(df['epoch'], df['test_mse'], label='Test MSE')
-plt.xlabel("Epoch")
-plt.ylabel("MSE")
-plt.title("Training and Test MSE over Epochs")
-plt.legend()
+sns.lineplot(data=df_mse, x="epoch", y="MSE", hue="model", style="type", markers=False, palette="viridis")
+plt.title("Train/Test MSE over Epochs")
+plt.yscale("log")
+plt.xscale("log")
 plt.grid(True)
 plt.tight_layout()
-plt.show()
+plt.savefig("mse_all_models.pdf")
+
+# Seaborn R2 plot
 plt.figure(figsize=(10, 6))
-plt.plot(df['epoch'], df['train_r2'], label='Train R2')
-plt.plot(df['epoch'], df['test_r2'], label='Test R2')
-plt.xlabel("Epoch")
-plt.ylabel("MSE")
-plt.title("Training and Test R2 over Epochs")
-plt.legend()
+sns.lineplot(data=df_r2, x="epoch", y="R2", hue="model", style="type", markers=False, palette="viridis")
+plt.title("Train/Test R2 over Epochs")
 plt.grid(True)
+plt.ylim(bottom=0)
+# plt.xscale("log")
+# plt.yscale("log")
 plt.tight_layout()
-plt.show()
+plt.savefig("r2_all_models.pdf")
