@@ -61,7 +61,7 @@ def main_simple():
     weight_decay = 1e-5
     batch_size = 32
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+    print(device)
     model = SimpleNet().to(device)
     optimizer = optim.AdamW(params = model.parameters(),
                              lr = lr, 
@@ -71,7 +71,8 @@ def main_simple():
                                                    test_size=0.2,
                                                    normalize=True,
                                                    mask=False,
-                                                   grid_search=False)
+                                                   grid_search=False,
+                                                   device=device)
 
     start = time.time()
     train(model,
