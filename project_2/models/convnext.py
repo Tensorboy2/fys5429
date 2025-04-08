@@ -5,16 +5,16 @@ torch.manual_seed(0)
 class ConvNeXtBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride = 1):
         super().__init__()
-        self.conv1 = nn.Conv2d(in_channels,out_channels,kernel_size=3,stride=stride,padding=1,bias=False)
-        self.ln1 = nn.LayerNorm(out_channels)
+        self.conv1 = nn.Conv2d(in_channels,out_channels,kernel_size=7,stride=stride,padding=3,bias=False)
+        self.ln1 = nn.LayerNorm(out_channels,eps=1e-6)
         self.gelu = nn.GELU()
-        self.conv2 = nn.Conv2d(out_channels,out_channels,kernel_size=1,stride=1,padding=0,bias=False)
-        self.ln2 = nn.LayerNorm(out_channels)
-        self.out_channels = out_channels
+        # self.conv2 = nn.Conv2d(out_channels,out_channels,kernel_size=1,stride=1,padding=0,bias=False)
+        # self.ln2 = nn.LayerNorm(out_channels)
+        # self.out_channels = out_channels
         self.mlp = nn.Sequential(
-            nn.Conv2d(out_channels, out_channels * 4, kernel_size=1),
+            nn.Linear(out_channels, out_channels * 4),
             nn.GELU(),
-            nn.Conv2d(out_channels * 4, out_channels, kernel_size=1)
+            nn.Linear(out_channels * 4, out_channels)
         )
         self.downsample = None if stride == 1 else nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False)
 
@@ -22,10 +22,13 @@ class ConvNeXtBlock(nn.Module):
         identity = x
         # print(x.shape)
         out = self.conv1(x)
-        out = self.ln1(out.permute(0,2,3,1)).permute(0,3,1,2)
-        out = self.gelu(out)
-        out = self.conv2(out)
-        out = self.ln2(out.permute(0,2,3,1)).permute(0,3,1,2)
+        out = out.permute(0,2,3,1)
+        out = self.ln1(out)
+        # out = self.gelu(out)
+        out = self.mlp(out)
+        out = out.permute(0,3,1,2)
+        # out = self.conv2(out)
+        # out = self.ln2(out.permute(0,2,3,1)).permute(0,3,1,2)
 
         # out = out.flatten(1)
         # print(out.shape)
@@ -33,7 +36,6 @@ class ConvNeXtBlock(nn.Module):
         # out = out.view(batch_size, channels*height*width)
         # print(out.shape)
         # print(self.out_channels)
-        out = self.mlp(out)
         # print(out.shape)
         # out = out.view_as(x)
         # out = out.view(batch_size, channels, height, width)
