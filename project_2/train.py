@@ -73,7 +73,7 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
                 loss = loss_fn(outputs.view(-1),y_test) # Calculate loss
 
                 running_test_loss += loss.item()
-                all_y_true_test.append(y_train.detach())
+                all_y_true_test.append(y_test.detach())
                 all_y_pred_test.append(outputs.detach())
 
         epoch_test_mse = running_test_loss/len(test_data_loader)
