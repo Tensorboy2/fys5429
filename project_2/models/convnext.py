@@ -7,23 +7,28 @@ class ConvNeXtBlock(nn.Module):
         super().__init__()
         self.conv1 = nn.Conv2d(in_channels,out_channels,kernel_size=7,stride=stride,padding=3,bias=False)
         self.ln1 = nn.LayerNorm(out_channels,eps=1e-6)
-        self.gelu = nn.GELU()
+        self.bn = nn.BatchNorm2d(out_channels)
+
+        self.leakyrelu = nn.LeakyReLU()
         # self.conv2 = nn.Conv2d(out_channels,out_channels,kernel_size=1,stride=1,padding=0,bias=False)
         # self.ln2 = nn.LayerNorm(out_channels)
         # self.out_channels = out_channels
         self.mlp = nn.Sequential(
             nn.Linear(out_channels, out_channels * 4),
-            nn.GELU(),
+            nn.LeakyReLU(),
             nn.Linear(out_channels * 4, out_channels)
         )
-        self.downsample = None if stride == 1 else nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False)
+        self.downsample = None if stride == 1 else nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
+            nn.BatchNorm2d(out_channels))
 
     def forward(self,x):
         identity = x
         # print(x.shape)
         out = self.conv1(x)
+        # out = out.permute(0,2,3,1)
+        out = self.bn(out)
         out = out.permute(0,2,3,1)
-        out = self.ln1(out)
         # out = self.gelu(out)
         out = self.mlp(out)
         out = out.permute(0,3,1,2)
@@ -44,7 +49,7 @@ class ConvNeXtBlock(nn.Module):
             identity = self.downsample(x)
 
         out+=identity
-        out = self.gelu(out)
+        out = self.leakyrelu(out)
         return out
 
 

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import re
 
 # Model names
-model_names = ["bestnet", "simplenet","resnet"]
+model_names = ["bestnet", "simplenet","resnet","convnext"]
 
 # Storage for all models
 all_data = []
