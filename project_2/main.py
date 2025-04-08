@@ -252,8 +252,8 @@ def main_bestnet():
 
 if __name__ == '__main__':
     # main_simple()
-    # main_resnet()
-    main_convnext()
+    main_resnet()
+    # main_convnext()
     # main_graczyknet()
     # main_cnn()
     # main_bestnet()
