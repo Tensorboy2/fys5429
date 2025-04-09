@@ -1,9 +1,9 @@
 '''Training module for CNN.'''
 import torch
 import torch.optim as op
-import numpy as np
-from sklearn.metrics import r2_score
-import csv
+import pandas
+import os
+path = os.path.dirname(__file__)
 
 @torch.jit.script
 def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
@@ -93,11 +93,8 @@ def train(model = None, optimizer = None, train_data_loader = None, test_data_lo
         print('')
         scheduler.step()
 
-    with open(save_path, mode="w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(metrics.keys())
-        rows = zip(*metrics.values())
-        writer.writerows(rows)
+    df = pandas.DataFrame(metrics)
+    df.to_csv(os.path.join(path,"results",save_path))
     print(f"Metrics saved to {save_path}")
             
                     

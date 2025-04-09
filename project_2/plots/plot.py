@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import re
 
 # Model names
-model_names = ["bestnet","resnet","convnext_bn","resnet50"]
+model_names = ["bestnet","resnet","convnext_bn","resnet50","convnexttiny"]
 
 # Storage for all models
 all_data = []
@@ -16,9 +16,8 @@ for model_name in model_names:
     train_r2 = []
     test_mse = []
     test_r2 = []
-
     try:
-        with open(f"train_data_{model_name}.txt", "r") as f:
+        with open(f"/home/sigvar/2_semester/fys5429/project_2/results/train_data_{model_name}.txt", "r") as f:
             lines = f.readlines()
 
         for i in range(0, 1000, 3):  # every 3 lines = 1 epoch block
@@ -72,7 +71,7 @@ plt.yscale("log")
 plt.xscale("log")
 plt.grid(True)
 plt.tight_layout()
-plt.savefig("mse_all_models.pdf")
+plt.savefig("/home/sigvar/2_semester/fys5429/project_2/plots/mse_all_models.pdf")
 
 # Seaborn R2 plot
 plt.figure(figsize=(10, 6))
@@ -85,7 +84,7 @@ sns.lineplot(data=df_r2[df_r2['type'] == 'test_r2'], x="epoch", y="R2", hue="mod
 plt.title("Train/Test R2 over Epochs")
 plt.grid(True)
 plt.ylim(bottom=0)
-# plt.xscale("log")
+plt.xscale("log")
 # plt.yscale("log")
 plt.tight_layout()
-plt.savefig("r2_all_models.pdf")
+plt.savefig("/home/sigvar/2_semester/fys5429/project_2/plots/r2_all_models.pdf")

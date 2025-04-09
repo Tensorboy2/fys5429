@@ -5,36 +5,33 @@ from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 import time
-# import numpy as np
-# import pandas as pd
 import os
 path = os.path.dirname(__file__)
-import torch.nn.init as init
+# import torch.nn.init as init
 
 from models.cnn import CNN
 from models.simplenet import SimpleNet
-from models.resnet import ResNet
-from models.convnext import ConvNeXtTiny
+
 from models.graczyk import GraczykNet
 from models.bestnet import BestNet
 # from feedforward import FeedForward
 from train import train
 
-def get_data(batch_size = 32,test_size=0.2,normalize=True, mask=False, grid_search=False, device=None):
+def get_data(batch_size = 32,test_size=0.2,normalize=True, mask=False, grid_search=None, device=None):
     '''
     Function for getting data and turning them into the train and test loader.
     Optional: normalization, grid search size, mask outliers.
     '''
-    if grid_search: # Less data for grid search
-        images = torch.load(os.path.join(path,'data/images.pt'),weights_only=False)[1000:] # Load generated images
-        params = torch.load(os.path.join(path,'data/k.pt'),weights_only=False)[1000:] # Load calculated permeability
+    if not None: # Less data for grid search
+        images = torch.load(os.path.join(path,'data/images.pt'),weights_only=False)[:grid_search] # Load generated images
+        params = torch.load(os.path.join(path,'data/k.pt'),weights_only=False)[:grid_search] # Load calculated permeability
     else:
         images = torch.load(os.path.join(path,'data/images.pt'),weights_only=False) # Load generated images
         params = torch.load(os.path.join(path,'data/k.pt'),weights_only=False) # Load calculated permeability
 
     
     if mask: # Mask outliers
-        mask = (params >= 0) & (params <= 0.05)
+        mask = (params > 0) #& (params <= 0.05)
         images, params = images[mask], params[mask]
 
     if normalize: # Normalize
@@ -102,8 +99,8 @@ def main_resnet():
     print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
-                                                   normalize=True,
-                                                   mask=False,
+                                                   normalize=False,
+                                                   mask=True,
                                                    grid_search=False,
                                                    device=device)
 
@@ -250,10 +247,85 @@ def main_bestnet():
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 
+def main(model, hyperparameters, data, save_path="metrics.csv"):
+    num_epochs = hyperparameters["num_epochs"]
+    lr = hyperparameters["lr"]
+    lr_step = hyperparameters["lr_step"]
+    weight_decay = hyperparameters["weight_decay"]
+    batch_size = hyperparameters["batch_size"]
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(device)
+    optimizer = optim.AdamW(params = model.parameters(),
+                             lr = lr, 
+                             weight_decay=weight_decay)
+    model.to(device)
+    print(model)
+    train_data_loader, test_data_loader = get_data(batch_size=batch_size,
+                                                   test_size=0.2,
+                                                   normalize=data["normalize"],
+                                                   mask=data["mask"],
+                                                   grid_search=data["grid_search"])
+    start = time.time()
+    train(model,
+            optimizer,
+            train_data_loader,
+            test_data_loader, 
+            num_epochs=num_epochs,
+            lr_step = lr_step,
+            save_path=save_path)
+    stop = time.time()
+    print(f'Total training time: {stop-start} seconds')
+
+
+from models.resnet import ResNet50, ResNet101
+from models.convnext import ConvNeXtTiny, ConvNeXtSmall
+
 if __name__ == '__main__':
+
+    model = ResNet50()
+    hyperparameters = {"num_epochs":200,
+                    "lr":0.001,
+                    "lr_step":200,
+                    "weight_decay":1e-2,
+                    "batch_size":32}
+    data = {"normalize":True,
+            "mask":True,
+            "grid_search":None}
+    main(model, hyperparameters, data)
+
+    """
+    Test different data set sizes:
+    """
+    # for i in range(1000,9001,1000):
+    #     print(i)
+    #     model = ResNet50()
+    #     hyperparameters = {"num_epochs":200,
+    #                     "lr":0.001,
+    #                     "lr_step":200,
+    #                     "weight_decay":1e-2,
+    #                     "batch_size":32}
+    #     data = {"normalize":True,
+    #             "mask":True,
+    #             "grid_search":i}
+    #     main(model, hyperparameters, data)
+
+        # model = ConvNeXtTiny()
+        # hyperparameters = {"num_epochs":200,
+        #                 "lr":0.0001,
+        #                 "lr_step":200,
+        #                 "weight_decay":1e-5,
+        #                 "batch_size":32}
+        # data = {"normalize":True,
+        #         "mask":True,
+        #         "grid_search":i}
+        # main(model, hyperparameters, data)
+    
+
+
+
     # main_simple()
     # main_resnet()
-    main_convnext()
+    # main_convnext()
     # main_graczyknet()
     # main_cnn()
     # main_bestnet()
