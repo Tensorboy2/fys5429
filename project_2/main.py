@@ -264,7 +264,8 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
                                                    test_size=0.2,
                                                    normalize=data["normalize"],
                                                    mask=data["mask"],
-                                                   grid_search=data["grid_search"])
+                                                   grid_search=data["grid_search"],
+                                                   device=device)
     start = time.time()
     train(model,
             optimizer,
