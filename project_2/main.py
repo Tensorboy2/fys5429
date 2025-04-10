@@ -283,7 +283,7 @@ from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
 
 if __name__ == '__main__':
 
-    model = ()
+    model = ConvNeXtXL()
     hyperparameters = {"num_epochs":1,
                     "lr":0.001,
                     "lr_step":200,
