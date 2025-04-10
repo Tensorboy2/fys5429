@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import re
 
 # Model names
-model_names = ["bestnet","resnet","convnext_bn","resnet50","convnexttiny"]
+model_names = ["resnet50","resnet50_wd0.01","resnet50_wd0.05","resnet101"]
 
 # Storage for all models
 all_data = []
@@ -67,7 +67,7 @@ sns.lineplot(data=df_mse[df_mse['type'] == 'train_mse'], x="epoch", y="MSE", hue
 # Plot the test lines with normal visibility
 sns.lineplot(data=df_mse[df_mse['type'] == 'test_mse'], x="epoch", y="MSE", hue="model", linewidth=2, markers=False)
 plt.title("Train/Test MSE over Epochs")
-plt.yscale("log")
+# plt.yscale("log")
 plt.xscale("log")
 plt.grid(True)
 plt.tight_layout()
@@ -83,7 +83,7 @@ sns.lineplot(data=df_r2[df_r2['type'] == 'train_r2'], x="epoch", y="R2", hue="mo
 sns.lineplot(data=df_r2[df_r2['type'] == 'test_r2'], x="epoch", y="R2", hue="model",palette="viridis", linewidth=2, markers=False)
 plt.title("Train/Test R2 over Epochs")
 plt.grid(True)
-plt.ylim(bottom=0)
+plt.ylim(bottom=0.5)
 plt.xscale("log")
 # plt.yscale("log")
 plt.tight_layout()

@@ -279,12 +279,12 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
 
 
 from models.resnet import ResNet50, ResNet101
-from models.convnext import ConvNeXtTiny, ConvNeXtSmall
+from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
 
 if __name__ == '__main__':
 
-    model = ResNet50()
-    hyperparameters = {"num_epochs":200,
+    model = ()
+    hyperparameters = {"num_epochs":1,
                     "lr":0.001,
                     "lr_step":200,
                     "weight_decay":1e-2,
@@ -292,7 +292,7 @@ if __name__ == '__main__':
     data = {"normalize":True,
             "mask":True,
             "grid_search":None}
-    main(model, hyperparameters, data)
+    main(model, hyperparameters, data,save_path=f"convnextxl_lr{hyperparameters["lr"]}_metrics.csv")
 
     """
     Test different data set sizes:

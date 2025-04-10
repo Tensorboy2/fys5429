@@ -85,10 +85,13 @@ def ConvNeXtTiny():
 def ConvNeXtSmall():
     return ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 27, 3])
 
+def ConvNeXtXL():
+    return ConvNeXt(dims = [256, 512, 1024, 2048],depths = [3, 3, 27, 3])
+
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
     x = torch.randn((3,1,128,128)).to(device)
-    model = ConvNeXtSmall().to(device)
-    # print(model)
+    model = ConvNeXtXL().to(device)
+    print(model)
     print(model(x).cpu().detach().numpy())
