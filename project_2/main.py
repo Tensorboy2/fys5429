@@ -283,32 +283,32 @@ from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
 
 if __name__ == '__main__':
 
-    model = ConvNeXtXL()
-    hyperparameters = {"num_epochs":1,
-                    "lr":0.001,
-                    "lr_step":200,
-                    "weight_decay":1e-2,
-                    "batch_size":32}
-    data = {"normalize":True,
-            "mask":True,
-            "grid_search":None}
-    main(model, hyperparameters, data,save_path=f"convnextxl_metrics.csv")
+    # model = ConvNeXtXL()
+    # hyperparameters = {"num_epochs":1,
+    #                 "lr":0.001,
+    #                 "lr_step":200,
+    #                 "weight_decay":1e-2,
+    #                 "batch_size":32}
+    # data = {"normalize":True,
+    #         "mask":True,
+    #         "grid_search":None}
+    # main(model, hyperparameters, data,save_path=f"convnextxl_metrics.csv")
 
     """
     Test different data set sizes:
     """
-    # for i in range(1000,9001,1000):
-    #     print(i)
-    #     model = ResNet50()
-    #     hyperparameters = {"num_epochs":200,
-    #                     "lr":0.001,
-    #                     "lr_step":200,
-    #                     "weight_decay":1e-2,
-    #                     "batch_size":32}
-    #     data = {"normalize":True,
-    #             "mask":True,
-    #             "grid_search":i}
-    #     main(model, hyperparameters, data)
+    for i in range(1000,9001,1000):
+        print(i)
+        model = ResNet50()
+        hyperparameters = {"num_epochs":100,
+                        "lr":0.001,
+                        "lr_step":200,
+                        "weight_decay":1e-2,
+                        "batch_size":32}
+        data = {"normalize":True,
+                "mask":True,
+                "grid_search":i}
+        main(model, hyperparameters, data,save_path=f"resnet50_{i}.csv")
 
         # model = ConvNeXtTiny()
         # hyperparameters = {"num_epochs":200,
