@@ -292,7 +292,7 @@ if __name__ == '__main__':
     data = {"normalize":True,
             "mask":True,
             "grid_search":None}
-    main(model, hyperparameters, data,save_path=f"convnextxl_lr{hyperparameters["lr"]}_metrics.csv")
+    main(model, hyperparameters, data,save_path=f"convnextxl_metrics.csv")
 
     """
     Test different data set sizes:
