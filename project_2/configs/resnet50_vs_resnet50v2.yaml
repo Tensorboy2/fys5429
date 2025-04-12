@@ -1,0 +1,25 @@
+experiments:
+  - model: ResNet50
+      save_path: "resnet50_metrics.csv"
+      hyperparameters:
+        num_epochs: 300
+        lr: 0.0001
+        lr_step: 100
+        weight_decay: 0.001
+        batch_size: 128
+      data:
+        normalize: true
+        mask: true
+        grid_search: null
+  - model: ResNet50V2
+      save_path: "resnet50v2_metrics.csv"
+      hyperparameters:
+        num_epochs: 300
+        lr: 0.0001
+        lr_step: 100
+        weight_decay: 0.001
+        batch_size: 128
+      data:
+        normalize: true
+        mask: true
+        grid_search: null

@@ -28,7 +28,7 @@ for model_name in model_names:
                 test_r2_val = float(re.search(r'R2 = ([\d.-]+)', test_line).group(1))
 
                 all_data.append({
-                    "Data amount:": model_name,
+                    "Data points:": model_name,
                     "epoch": epoch,
                     "train_mse": train_mse_val,
                     "train_r2": train_r2_val,
@@ -44,31 +44,31 @@ for model_name in model_names:
 
 # Convert to DataFrame
 df = pd.DataFrame(all_data)
-
+df.to_csv("/home/sigvar/2_semester/fys5429/project_2/results/diff_data_amounts/resnet50_diff_data_points.csv")
 # Melt R2 values
-df_r2 = df.melt(id_vars=["epoch", "Data amount:"], value_vars=["train_r2", "test_r2"],
+df_r2 = df.melt(id_vars=["epoch", "Data points:"], value_vars=["train_r2", "test_r2"],
                 var_name="type", value_name="R2")
 
 # R2 over epochs plot
 plt.figure(figsize=(10, 6))
 sns.lineplot(data=df_r2[df_r2['type'] == 'test_r2'], x="epoch", y="R2",
-             hue="Data amount:", palette="viridis", linewidth=2, markers=False)
+             hue="Data points:", palette="viridis", linewidth=2, markers=False)
 plt.title("Test R2 over Epochs for different data set sizes")
 plt.grid(True)
 plt.ylim(bottom=0)
 plt.xscale("log")
 plt.tight_layout()
-plt.savefig("/home/sigvar/2_semester/fys5429/project_2/plots/r2_diff_data_amounts.pdf")
+plt.savefig("/home/sigvar/2_semester/fys5429/project_2/plots/r2_diff_data_pointss.pdf")
 
 # --- NEW: Heatmap plot of test R² ---
 # Pivot the data to prepare for heatmap
-heatmap_df = df.pivot(index="epoch", columns="Data amount:", values="test_r2")
+heatmap_df = df.pivot(index="epoch", columns="Data points:", values="test_r2")
 
 # Plot the heatmap
 plt.figure(figsize=(10, 8))
 sns.heatmap(heatmap_df, cmap="viridis", cbar_kws={"label": "Test R2"}, linewidths=1.0)
-plt.title("Test R2 Heatmap: Epoch vs Data Amount")
-plt.xlabel("Data Amount")
+plt.title("Test R2 Heatmap: Epoch vs Data points")
+plt.xlabel("Data Points")
 plt.ylabel("Epoch")
 plt.tight_layout()
 plt.savefig("/home/sigvar/2_semester/fys5429/project_2/plots/heatmap_r2_epochs_vs_data.pdf")

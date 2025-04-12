@@ -8,11 +8,12 @@ path = os.path.dirname(__file__)
 
 
 from train import train
-from models.resnet import ResNet50, ResNet101
+from models.resnet import ResNet50, ResNet101, ResNet50V2
 from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
 
 model_registry = {
     "ResNet50": ResNet50,
+    "ResNet50V2": ResNet50V2,
     "ResNet101": ResNet101,
     "ConvNeXtTiny": ConvNeXtTiny,
     "ConvNeXtSmall": ConvNeXtSmall,
@@ -50,11 +51,9 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
             save_path=save_path)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
-
 import yaml
-
 if __name__ == '__main__':
-    with open("config.yaml", "r") as f:
+    with open("configs/resnet50_vs_resnet50v2.yaml", "r") as f:
         config = yaml.safe_load(f)
 
     for exp in config["experiments"]:
