@@ -87,6 +87,8 @@ def compute_porosity(blobs):
     return 1-np.sum(blobs)/blobs.shape[-1]**2
 
 def demo():
+    from matplotlib.colors import ListedColormap, BoundaryNorm
+
     # Parameter grid
     sigmas = [2.0, 4.0, 6.0]
     densities = [0.1, 0.3, 0.5]
@@ -102,9 +104,16 @@ def demo():
                                             blob_density=density, 
                                             sigma=sigma,seed=6)
             p_x, p_y, labeled = find_percolating_clusters(blobs)
+            num_labels = labeled.max()
+            jet_colors = plt.cm.jet(np.linspace(0, 1, num_labels))
+            colors = np.vstack(([1, 1, 1, 1], jet_colors))  # white for label 0 (solid region)
+            custom_cmap = ListedColormap(colors)
+            norm = BoundaryNorm(np.arange(-0.5, num_labels + 1.5), len(colors))
+
             # blobs = make_img(img_size=128, blob_density=density, sigma=sigma,seed = 42)
             filled = fill_non_percolating(blobs)
             porosity = compute_porosity(filled)
+            # ax.imshow(labeled, cmap=custom_cmap, norm=norm)
             ax.imshow(filled, cmap='gray')
             ax.set_title(f"sigma={sigma}, blob_density={density}\n porosity={porosity:.2f}, px: {p_x} py: {p_y}")
             ax.axis('off')
