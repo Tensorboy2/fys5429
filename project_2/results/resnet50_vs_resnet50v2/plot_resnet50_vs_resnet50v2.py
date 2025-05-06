@@ -9,8 +9,8 @@ sns.set_theme(style="whitegrid", palette="muted", font_scale=1.2)
 # Read data
 path = os.path.dirname(__file__)
 
-resnet50 = pd.read_csv(os.path.join(path, "resnet50_metrics.csv"))
-resnet50v2 = pd.read_csv(os.path.join(path, "resnet50v2_metrics.csv"))
+resnet50 = pd.read_csv(os.path.join(path, "resnet50_metrics_run2.csv"))
+resnet50v2 = pd.read_csv(os.path.join(path, "resnet50v2_metrics_run2.csv"))
 # Add model identifier
 resnet50["model"] = "ResNet50"
 resnet50v2["model"] = "ResNet50v2"
@@ -41,7 +41,7 @@ sns.lineplot(data=r2_df, x="epoch", y="value", hue="model", style="dataset", lin
 plt.title("Train vs Test R² over Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("R² Score")
-plt.xscale("log")
+# plt.xscale("log")
 # plt.yscale("log")
 plt.grid(True, which="both", linestyle="--", linewidth=0.5)
 plt.tight_layout()
