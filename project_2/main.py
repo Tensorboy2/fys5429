@@ -49,7 +49,8 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
             num_epochs=num_epochs,
             warmup_epochs=warmup_epochs,
             decay=decay,
-            save_path=save_path)
+            save_path=save_path,
+            device=device)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
 
