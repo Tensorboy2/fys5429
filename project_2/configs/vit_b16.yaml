@@ -1,5 +1,5 @@
 experiments:
-  - model: ResNet50
+  - model: ViT_B16
     save_path: "vit_b16_metrics_vit_test.csv"
     hyperparameters:
       num_epochs: 200
