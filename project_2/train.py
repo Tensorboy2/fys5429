@@ -4,6 +4,7 @@ import torch.optim as op
 import pandas
 import os
 path = os.path.dirname(__file__)
+import math
 
 @torch.jit.script
 def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
@@ -68,7 +69,7 @@ def train(model = None,
             if decay=="linear":
                 return max(0.0, 1.0 - decay_progress)
             elif decay=="cosine":
-                return 0.5 * (1 + torch.cos(torch.pi * decay_progress))
+                return 0.5 * (1 + math.cos(math.pi * decay_progress))
             else:
                 return 1
 
