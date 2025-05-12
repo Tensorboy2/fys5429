@@ -1,6 +1,7 @@
 """Module for Vision Transformer"""
 import torch
 import torch.nn as nn
+torch.manual_seed(0)
 import os
 path = os.path.dirname(__file__)
 
