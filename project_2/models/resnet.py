@@ -177,7 +177,7 @@ def ResNet50V2():
     return ResNetV2(depth=[3,4,6,3], width=[64,256,512,1024,2048])
 
 
-def ResNet50(image_size=128, num_classes=1, pre_trained=False):
+def ResNet50(image_size=128, num_classes=4, pre_trained=False):
     '''
     ResNet50 architecture
 
@@ -196,7 +196,7 @@ def ResNet50(image_size=128, num_classes=1, pre_trained=False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ResNet101(image_size=128, num_classes=1, pre_trained = False):
+def ResNet101(image_size=128, num_classes=4, pre_trained = False):
     '''
     ResNet101 architecture
 

@@ -1,0 +1,60 @@
+experiments:
+  - model: ResNet50
+    save_path: "resnet50_metrics_resnet_vs_vit.csv"
+    hyperparameters:
+      num_epochs: 200
+      lr: 0.001
+      warmup_epochs: 0
+      weight_decay: 0.001
+      batch_size: 128
+    data:
+      normalize: false
+      num_samples: null
+
+  - model: ResNet101
+    save_path: "resnet101_metrics_resnet_vs_vit.csv"
+    hyperparameters:
+      num_epochs: 200
+      lr: 0.001
+      warmup_epochs: 0
+      weight_decay: 0.001
+      batch_size: 128
+    data:
+      normalize: false
+      num_samples: null
+
+  - model: ViT_B16
+    save_path: "vit_b16_metrics_resnet_vs_vit.csv"
+    hyperparameters:
+      num_epochs: 200
+      lr: 0.001
+      warmup_epochs: 0
+      weight_decay: 0.001
+      batch_size: 128
+    data:
+      normalize: false
+      num_samples: null
+
+  - model: ViT_L16
+    save_path: "vit_l16_metrics_resnet_vs_vit.csv"
+    hyperparameters:
+      num_epochs: 200
+      lr: 0.001
+      warmup_epochs: 0
+      weight_decay: 0.001
+      batch_size: 128
+    data:
+      normalize: false
+      num_samples: null
+
+  - model: ViT_H16
+    save_path: "vit_h16_metrics_resnet_vs_vit.csv"
+    hyperparameters:
+      num_epochs: 200
+      lr: 0.001
+      warmup_epochs: 0
+      weight_decay: 0.001
+      batch_size: 128
+    data:
+      normalize: false
+      num_samples: null

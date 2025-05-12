@@ -78,7 +78,7 @@ class Patchify(nn.Module):
         return x
 
 class ViT(nn.Module):
-    def __init__(self, image_size, patch_size, embed_dim, depth, num_heads, mlp_ratio, dropout=0.0):
+    def __init__(self, image_size, patch_size, embed_dim, depth, num_heads, mlp_ratio, num_classes, dropout=0.0):
         super().__init__()
         self.name = ""
         assert image_size % patch_size == 0, "Image size must be divisible by patch size"
@@ -91,7 +91,7 @@ class ViT(nn.Module):
             for _ in range(depth)
         ])
         self.norm = nn.LayerNorm(embed_dim)
-        self.head = nn.Linear(embed_dim, 1)  # Example: for regression task
+        self.head = nn.Linear(embed_dim, num_classes)  # Example: for regression task
 
     def forward(self, x):
         x = self.patchify(x)  # (B, N, embed_dim)
@@ -101,7 +101,7 @@ class ViT(nn.Module):
         x = x.mean(dim=1)  # Global average pooling over patches
         return self.head(x)
 
-def ViT_B16(image_size=128, num_classes=1, pre_trained = False):
+def ViT_B16(image_size=128, num_classes=4, pre_trained = False):
     """
     Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
     """
@@ -112,6 +112,7 @@ def ViT_B16(image_size=128, num_classes=1, pre_trained = False):
         depth=12,
         num_heads=12,
         mlp_ratio=4,
+        num_classes=num_classes
     )
     model.name = "ViT_B16"
     if pre_trained:
@@ -124,7 +125,7 @@ def ViT_B16(image_size=128, num_classes=1, pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_L16(image_size=128, num_classes=1, pre_trained = False):
+def ViT_L16(image_size=128, num_classes=4, pre_trained = False):
     """
     Large ViT with 24 layers, 16 heads, 1024 embedding dim, patch size 16
     """
@@ -135,6 +136,7 @@ def ViT_L16(image_size=128, num_classes=1, pre_trained = False):
         depth=24,
         num_heads=16,
         mlp_ratio=4,
+        num_classes=num_classes
     )
     model.name = "ViT_L16"
 
@@ -148,7 +150,7 @@ def ViT_L16(image_size=128, num_classes=1, pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_H16(image_size=128, num_classes=1, pre_trained = False):
+def ViT_H16(image_size=128, num_classes=4, pre_trained = False):
     """
     Huge ViT with 32 layers, 16 heads, 1280 embedding dim, patch size 16
     """
@@ -158,6 +160,7 @@ def ViT_H16(image_size=128, num_classes=1, pre_trained = False):
         embed_dim=1280,
         depth=32,
         num_heads=16,
+        num_classes=num_classes,
         mlp_ratio=4,
     )
     model.name = "ViT_H16"
@@ -178,3 +181,4 @@ if __name__ == "__main__":
     model = ViT_B16()
     out = model(x)
     print(out.shape)  # Should be (2, 1)
+    print(model(x).cpu().detach().numpy())

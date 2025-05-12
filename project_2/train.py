@@ -34,6 +34,7 @@ def train(model = None,
           device = 'cpu',
           save_path="metrics.csv",
           warmup_epochs=0,
+          decay="",
           save_model_path=None):
     '''
     Training function.
@@ -60,7 +61,12 @@ def train(model = None,
         if epoch < warmup_epochs:
             return (epoch + 1)/ warmup_epochs
         else:
-            return 1
+            if decay=="linear":
+                decay_epochs = num_epochs - warmup_epochs
+                decay_progress = (epoch - warmup_epochs) / decay_epochs
+                return max(0.0, 1.0 - decay_progress)
+            else:
+                return 1
 
     scheduler = op.lr_scheduler.LambdaLR(optimizer,lr_lambda)
 
@@ -72,11 +78,11 @@ def train(model = None,
         all_y_pred_train = []
 
         for X_train, y_train in train_data_loader:
-            X_train, y_train = X_train.to(device), y_train.to(device)
+            X_train, y_train = X_train.to(device), y_train.to(device) # Send to device
 
             optimizer.zero_grad() # Zero gradients for every batch
             outputs = model(X_train) # Make predictions
-            loss = loss_fn(outputs.view(-1),y_train)  # Calculate loss
+            loss = loss_fn(outputs,y_train)  # Calculate loss
             loss.backward() # Calculate gradients
             optimizer.step() # Update weights
 
@@ -100,7 +106,7 @@ def train(model = None,
             for X_test, y_test in test_data_loader:
                 X_test, y_test = X_test.to(device), y_test.to(device)
                 outputs = model(X_test) # Make predictions
-                loss = loss_fn(outputs.view(-1),y_test) # Calculate loss
+                loss = loss_fn(outputs,y_test) # Calculate loss
 
                 running_test_loss += loss.item()
                 all_y_true_test.append(y_test.detach())

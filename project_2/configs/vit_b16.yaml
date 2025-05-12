@@ -1,0 +1,13 @@
+experiments:
+  - model: ResNet50
+    save_path: "vit_b16_metrics_vit_test.csv"
+    hyperparameters:
+      num_epochs: 200
+      lr: 0.001
+      warmup_epochs: 20
+      weight_decay: 0.001
+      batch_size: 128
+      decay: "linear"
+    data:
+      normalize: false
+      num_samples: null
