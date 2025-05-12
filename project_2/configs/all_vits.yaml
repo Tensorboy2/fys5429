@@ -6,7 +6,7 @@ experiments:
       lr: 0.0003
       warmup_steps: 300
       weight_decay: 0.1
-      batch_size: 256
+      batch_size: 128
       decay: "linear"
     data:
       normalize: false
@@ -20,7 +20,7 @@ experiments:
       lr: 0.0004
       warmup_steps: 300
       weight_decay: 0.1
-      batch_size: 256
+      batch_size: 128
       decay: "linear"
     data:
       normalize: false
@@ -34,7 +34,7 @@ experiments:
       lr: 0.0008
       warmup_steps: 300
       weight_decay: 0.1
-      batch_size: 256
+      batch_size: 128
       decay: "linear"
     data:
       normalize: false
