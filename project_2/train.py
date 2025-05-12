@@ -4,6 +4,7 @@ import torch.optim as op
 import pandas
 import os
 path = os.path.dirname(__file__)
+from tqdm import tqdm
 
 @torch.jit.script
 def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
@@ -33,7 +34,7 @@ def train(model = None,
           num_epochs = 5, 
           device = 'cpu',
           save_path="metrics.csv",
-          warmup_epochs=0,
+          warmup_steps=0,
           decay="",
           save_model_path=None):
     '''
@@ -57,18 +58,24 @@ def train(model = None,
 
     best_test_mse = float("inf")
     
-    def lr_lambda(epoch):
-        if epoch < warmup_epochs:
-            return (epoch + 1)/ warmup_epochs
+    total_steps = num_epochs*(len(train_data_loader))
+
+    def lr_lambda(step):
+        if step < warmup_steps:
+            return (step + 1)/ warmup_steps
         else:
+            decay_epochs = total_steps - warmup_steps
+            decay_progress = (step - warmup_steps) / decay_epochs
             if decay=="linear":
-                decay_epochs = num_epochs - warmup_epochs
-                decay_progress = (epoch - warmup_epochs) / decay_epochs
                 return max(0.0, 1.0 - decay_progress)
+            elif decay=="cosine":
+                return 0.5 * (1 + torch.cos(torch.pi * decay_progress))
             else:
                 return 1
 
     scheduler = op.lr_scheduler.LambdaLR(optimizer,lr_lambda)
+
+
 
     for epoch in range(num_epochs):
         '''Training:'''
@@ -77,18 +84,23 @@ def train(model = None,
         all_y_true_train = []
         all_y_pred_train = []
 
-        for X_train, y_train in train_data_loader:
-            X_train, y_train = X_train.to(device), y_train.to(device) # Send to device
+        for image_train, image_filled_train, k_train in tqdm(train_data_loader, leave=False):
+            image_train, image_filled_train, k_train = image_train.to(device), image_filled_train.to(device), k_train.to(device) # Send to device
 
             optimizer.zero_grad() # Zero gradients for every batch
-            outputs = model(X_train) # Make predictions
-            loss = loss_fn(outputs,y_train)  # Calculate loss
+            outputs_image = model(image_train) # Make predictions
+            outputs_image_filled = model(image_filled_train) # Make predictions
+
+            loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
+
             loss.backward() # Calculate gradients
             optimizer.step() # Update weights
 
             running_train_loss += loss.item()
-            all_y_true_train.append(y_train.detach())
-            all_y_pred_train.append(outputs.detach())
+            all_y_true_train.append(k_train.detach())
+            all_y_pred_train.append(((outputs_image+outputs_image_filled)/2).detach())
+
+            scheduler.step()
 
         
         epoch_train_mse = running_train_loss/len(train_data_loader)
@@ -103,14 +115,16 @@ def train(model = None,
         all_y_pred_test = []
 
         with torch.no_grad():
-            for X_test, y_test in test_data_loader:
-                X_test, y_test = X_test.to(device), y_test.to(device)
-                outputs = model(X_test) # Make predictions
-                loss = loss_fn(outputs,y_test) # Calculate loss
+            for image_test, image_filled_test, k_test in tqdm(test_data_loader, leave=False):
+                image_test, image_filled_test, k_test = image_test.to(device), image_filled_test.to(device), k_test.to(device)
+                outputs_image = model(image_test) # Make predictions
+                outputs_image_filled = model(image_filled_test) # Make predictions
+
+                loss =  (loss_fn(outputs_image,k_test)+ loss_fn(outputs_image_filled,k_test))/2 # Calculate loss
 
                 running_test_loss += loss.item()
-                all_y_true_test.append(y_test.detach())
-                all_y_pred_test.append(outputs.detach())
+                all_y_true_test.append(k_test.detach())
+                all_y_pred_test.append(((outputs_image+outputs_image_filled)/2).detach())
 
         epoch_test_mse = running_test_loss/len(test_data_loader)
         y_true_tensor = torch.cat(all_y_true_test)
@@ -134,7 +148,6 @@ def train(model = None,
         print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}')
         print('')
 
-        scheduler.step()
 
     df = pandas.DataFrame(metrics)
     df.to_csv(os.path.join(path,"results",save_path))

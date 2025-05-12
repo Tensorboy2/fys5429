@@ -34,7 +34,7 @@ class CustomDataset(Dataset):
         if self.target_transform:
             label = self.target_transform(label)
 
-        return image_filled, label
+        return image, image_filled, label
 
 
 

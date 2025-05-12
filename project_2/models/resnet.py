@@ -189,7 +189,7 @@ def ResNet50(image_size=128, num_classes=4, pre_trained=False):
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 
-        if os.path.exists(weights_path):
+        if os.path.exists(weights_path, map_location="cpu"):
             state_dict = torch.load(weights_path)
             model.load_state_dict(state_dict)
         else:
@@ -210,18 +210,35 @@ def ResNet101(image_size=128, num_classes=4, pre_trained = False):
         weights_path = os.path.join(path, f'{model.name}.pth')
 
         if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path)
+            state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
+def ResNet152(image_size=128, num_classes=4, pre_trained=False, path=None):
+    model = ResNet(depth=[3, 8, 36, 3], width=[64, 256, 512, 1024, 2048] , num_classes=num_classes)
+    model.name = "ResNet152"
+
+    if pre_trained:
+        if path is None:
+            raise ValueError("Path must be provided for loading pretrained weights.")
+
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    
+    return model
 
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
     x = torch.randn((3,1,128,128)).to(device)
-    model = ResNet50().to(device)
+    model = ResNet152().to(device)
     # print(model)
     print(model(x).cpu().detach().numpy())
 

@@ -119,7 +119,7 @@ def ViT_B16(image_size=128, num_classes=4, pre_trained = False):
         weights_path = os.path.join(path, f'{model.name}.pth')
 
         if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path)
+            state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
@@ -144,7 +144,7 @@ def ViT_L16(image_size=128, num_classes=4, pre_trained = False):
         weights_path = os.path.join(path, f'{model.name}.pth')
 
         if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path)
+            state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
@@ -168,7 +168,7 @@ def ViT_H16(image_size=128, num_classes=4, pre_trained = False):
         weights_path = os.path.join(path, f'{model.name}.pth')
 
         if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path)
+            state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
@@ -178,7 +178,7 @@ def ViT_H16(image_size=128, num_classes=4, pre_trained = False):
 if __name__ == "__main__":
     x = torch.rand((2, 1, 128, 128))
     # model = ViT(image_size=128, patch_size=16, embed_dim=512, depth=12, num_heads=8, mlp_ratio=4)
-    model = ViT_B16()
+    model = ViT_B16(pre_trained=True)
     out = model(x)
     print(out.shape)  # Should be (2, 1)
     print(model(x).cpu().detach().numpy())

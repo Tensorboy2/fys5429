@@ -26,19 +26,21 @@ model_registry = {
 def main(model, hyperparameters, data, save_path="metrics.csv"):
     num_epochs = hyperparameters["num_epochs"]
     lr = hyperparameters["lr"]
-    warmup_epochs = hyperparameters["warmup_epochs"]
+    warmup_steps = hyperparameters["warmup_steps"]
     weight_decay = hyperparameters["weight_decay"]
     batch_size = hyperparameters["batch_size"]
     decay = hyperparameters["decay"]
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(device)
+
+    print(f"Device: {device}")
     optimizer = optim.AdamW(params = model.parameters(),
                              lr = lr, 
                              weight_decay=weight_decay)
     model.to(device)
     print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
-                                                   test_size=0.2,
+                                                   test_size=data["test_size"],
                                                    normalize=data["normalize"],
                                                    num_samples=data["num_samples"])
     start = time.time()
@@ -47,7 +49,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
             train_data_loader,
             test_data_loader, 
             num_epochs=num_epochs,
-            warmup_epochs=warmup_epochs,
+            warmup_steps=warmup_steps,
             decay=decay,
             save_path=save_path,
             device=device)
