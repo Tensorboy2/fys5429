@@ -4,7 +4,6 @@ import torch.optim as op
 import pandas
 import os
 path = os.path.dirname(__file__)
-from tqdm import tqdm
 
 @torch.jit.script
 def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
@@ -84,7 +83,7 @@ def train(model = None,
         all_y_true_train = []
         all_y_pred_train = []
 
-        for image_train, image_filled_train, k_train in tqdm(train_data_loader, leave=False):
+        for image_train, image_filled_train, k_train in train_data_loader:
             image_train, image_filled_train, k_train = image_train.to(device), image_filled_train.to(device), k_train.to(device) # Send to device
 
             optimizer.zero_grad() # Zero gradients for every batch
@@ -115,7 +114,7 @@ def train(model = None,
         all_y_pred_test = []
 
         with torch.no_grad():
-            for image_test, image_filled_test, k_test in tqdm(test_data_loader, leave=False):
+            for image_test, image_filled_test, k_test in test_data_loader:
                 image_test, image_filled_test, k_test = image_test.to(device), image_filled_test.to(device), k_test.to(device)
                 outputs_image = model(image_test) # Make predictions
                 outputs_image_filled = model(image_filled_test) # Make predictions
