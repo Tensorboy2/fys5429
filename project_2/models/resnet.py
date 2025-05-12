@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 torch.manual_seed(0)
+import os
+path = os.path.dirname(__file__)
+
 
 class ResNetBlock(nn.Module):
     def __init__(self, channels, expansion=4):
@@ -47,6 +50,7 @@ class ResNetDownsampleBlock(nn.Module):
 class ResNet(nn.Module):
     def __init__(self, depth=[3,4,6,3], width=[64,256,512,1024,2048], num_classes=1, input_channels=1):
         super().__init__()
+        self.name = ""
         self.stem = nn.Sequential(
             nn.Conv2d(input_channels, width[0], kernel_size=9, stride=2, padding=4, padding_mode="circular", bias=False),
             nn.BatchNorm2d(width[0]),
@@ -79,8 +83,6 @@ class ResNet(nn.Module):
         x = torch.flatten(x, 1)
         return self.fc(x)
 
-import torch
-import torch.nn as nn
 
 class PreActResNetBlock(nn.Module):
     def __init__(self, channels, expansion=4):
@@ -133,7 +135,7 @@ class PreActResNetDownsampleBlock(nn.Module):
         return identity + out  # No activation here
 
 class ResNetV2(nn.Module):
-    def __init__(self, depth=[3,4,6,3], width=[64,256,512,1024,2048], num_classes=1, input_channels=1):
+    def __init__(self, depth=[3,4,6,3], width=[64,256,512,1024,2048], num_classes=4, input_channels=1):
         super().__init__()
         self.stem = nn.Sequential(
             nn.Conv2d(input_channels, width[0], kernel_size=9, stride=2, padding=4, padding_mode="circular", bias=False),
@@ -174,11 +176,45 @@ class ResNetV2(nn.Module):
 def ResNet50V2():
     return ResNetV2(depth=[3,4,6,3], width=[64,256,512,1024,2048])
 
-def ResNet50():
-    return ResNet(depth=[3,4,6,3], width=[64,256,512,1024,2048])
 
-def ResNet101():
-    return ResNet(depth=[3,4,23,3], width=[64,256,512,1024,2048])
+def ResNet50(image_size=128, num_classes=1, pre_trained=False):
+    '''
+    ResNet50 architecture
+
+    # Parameter:
+    - pre_trained (bool) wether or not to look for existing model weights.
+    '''
+    model = ResNet(depth=[3,4,6,3], width=[64,256,512,1024,2048],num_classes=num_classes)
+    model.name = "ResNet50"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path)
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
+
+def ResNet101(image_size=128, num_classes=1, pre_trained = False):
+    '''
+    ResNet101 architecture
+
+    # Parameter:
+    - pre_trained (bool) wether or not to look for existing model weights.
+    '''
+    model = ResNet(depth=[3,4,23,3], width=[64,256,512,1024,2048], num_classes=num_classes)
+    model.name = "ResNet101"
+
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path)
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
 
 
 if __name__ == '__main__':

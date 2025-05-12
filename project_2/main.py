@@ -10,6 +10,7 @@ path = os.path.dirname(__file__)
 from train import train
 from models.resnet import ResNet50, ResNet101, ResNet50V2
 from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
+from models.vit import ViT_B16, ViT_L16, ViT_H16
 
 model_registry = {
     "ResNet50": ResNet50,
@@ -18,6 +19,9 @@ model_registry = {
     "ConvNeXtTiny": ConvNeXtTiny,
     "ConvNeXtSmall": ConvNeXtSmall,
     "ConvNeXtXL": ConvNeXtXL,
+    "ViT_B16": ViT_B16,
+    "ViT_L16": ViT_L16,
+    "ViT_H16": ViT_H16
 }
 
 from data_loader import get_data
@@ -38,8 +42,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=0.2,
                                                    normalize=data["normalize"],
-                                                   mask=data["mask"],
-                                                   grid_search=data["grid_search"],
+                                                   num_samples=data["num_samples"],
                                                    device=device)
     start = time.time()
     train(model,
@@ -51,6 +54,8 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
             save_path=save_path)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
+
+
 import yaml
 if __name__ == '__main__':
     with open("configs/resnet50_vs_resnet50v2.yaml", "r") as f:
