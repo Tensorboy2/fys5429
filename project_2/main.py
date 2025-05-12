@@ -59,7 +59,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
 
 import yaml
 if __name__ == '__main__':
-    with open("configs/vit-b16.yaml", "r") as f:
+    with open("configs/vit_b16.yaml", "r") as f:
         config = yaml.safe_load(f)
 
     for exp in config["experiments"]:
