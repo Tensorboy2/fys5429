@@ -8,20 +8,29 @@ path = os.path.dirname(__file__)
 
 
 from train import train
-from models.resnet import ResNet50, ResNet101, ResNet50V2
+from models.resnet import ResNet50, ResNet101, ResNet152
 # from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
 from models.vit import ViT_B16, ViT_L16, ViT_H16
 from data_loader import get_data
 
 model_registry = {
     "ResNet50": ResNet50,
-    "ResNet50V2": ResNet50V2,
     "ResNet101": ResNet101,
+    "ResNet152": ResNet152,
     "ViT_B16": ViT_B16,
     "ViT_L16": ViT_L16,
     "ViT_H16": ViT_H16
 }
 
+def get_model_size(model):
+    param_size = 0
+    for param in model.parameters():
+        param_size += param.nelement() * param.element_size()
+    buffer_size = 0
+    for buffer in model.buffers():
+        buffer_size += buffer.nelement() * buffer.element_size()
+    size_all_mb = (param_size + buffer_size) / 1024**2
+    return size_all_mb
 
 def main(model, hyperparameters, data, save_path="metrics.csv"):
     num_epochs = hyperparameters["num_epochs"]
@@ -31,6 +40,8 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
     batch_size = hyperparameters["batch_size"]
     decay = hyperparameters["decay"]
 
+    torch.cuda.empty_cache() # Make available space
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     print(f"Device: {device}")
@@ -38,7 +49,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
                              lr = lr, 
                              weight_decay=weight_decay)
     model.to(device)
-    print(model)
+    # print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=data["test_size"],
                                                    normalize=data["normalize"],
@@ -66,5 +77,7 @@ if __name__ == '__main__':
         model_name = exp["model"]
         model_class = model_registry[model_name]
         model = model_class()
+        print(f"Model size: {get_model_size(model):.2f} MB")
+
         main(model, exp["hyperparameters"], exp["data"], save_path=exp["save_path"])
     
