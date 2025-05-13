@@ -17,7 +17,7 @@ experiments:
     save_path: "resnet101_metrics_vit_test.csv"
     hyperparameters:
       num_epochs: 30
-      lr: 0.0008
+      lr: 0.0006
       warmup_steps: 300
       weight_decay: 0.1
       batch_size: 128
@@ -31,7 +31,7 @@ experiments:
     save_path: "resnet152_metrics_vit_test.csv"
     hyperparameters:
       num_epochs: 30
-      lr: 0.0008
+      lr: 0.0004
       warmup_steps: 300
       weight_decay: 0.1
       batch_size: 128
