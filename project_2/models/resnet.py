@@ -189,8 +189,8 @@ def ResNet50(image_size=128, num_classes=4, pre_trained=False):
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 
-        if os.path.exists(weights_path, map_location="cpu"):
-            state_dict = torch.load(weights_path)
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")

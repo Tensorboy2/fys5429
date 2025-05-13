@@ -45,7 +45,7 @@ class ConvNeXtStage(nn.Module):
 
 
 class ConvNeXt(nn.Module):
-    def __init__(self,dims = [96, 192, 384, 768],depths = [3, 3, 9, 3], in_channels=1, num_classes=1):
+    def __init__(self,dims = [96, 192, 384, 768],depths = [3, 3, 9, 3], in_channels=1, num_classes=4):
         super().__init__()
         
         # Patchify stem

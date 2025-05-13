@@ -9,7 +9,7 @@ path = os.path.dirname(__file__)
 
 from train import train
 from models.resnet import ResNet50, ResNet101, ResNet152
-# from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
+from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtXL
 from models.vit import ViT_B16, ViT_L16, ViT_H16
 from data_loader import get_data
 
@@ -17,6 +17,9 @@ model_registry = {
     "ResNet50": ResNet50,
     "ResNet101": ResNet101,
     "ResNet152": ResNet152,
+    "ConvNeXtTiny": ConvNeXtTiny,
+    "ConvNeXtSmall": ConvNeXtSmall,
+    "ConvNeXtXL": ConvNeXtXL,
     "ViT_B16": ViT_B16,
     "ViT_L16": ViT_L16,
     "ViT_H16": ViT_H16
