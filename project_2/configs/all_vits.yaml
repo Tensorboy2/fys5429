@@ -1,4 +1,18 @@
 experiments:
+  - model: ViT_H16
+    save_path: "vit_h16_metrics_all_vit.csv"
+    hyperparameters:
+      num_epochs: 30
+      lr: 0.0003
+      warmup_steps: 300
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "linear"
+    data:
+      normalize: false
+      num_samples: null
+      test_size: 0.2
+
   - model: ViT_L16
     save_path: "vit_l16_metrics_all_vit.csv"
     hyperparameters:
