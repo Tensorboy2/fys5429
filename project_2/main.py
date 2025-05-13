@@ -69,8 +69,13 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
 
 
 import yaml
+import argparse
+
 if __name__ == '__main__':
-    with open("configs/vit_b16.yaml", "r") as f:
+    parser = argparse.ArgumentParser(description="Load a YAML config file.")
+    parser.add_argument("config_file", type=str, help="Path to the YAML configuration file")
+    args = parser.parse_args()
+    with open(args.config_file, "r") as f:
         config = yaml.safe_load(f)
 
     for exp in config["experiments"]:
