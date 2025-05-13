@@ -47,7 +47,7 @@ class ConvNeXtStage(nn.Module):
 class ConvNeXt(nn.Module):
     def __init__(self,dims = [96, 192, 384, 768],depths = [3, 3, 9, 3], in_channels=1, num_classes=4):
         super().__init__()
-        
+        self.name = ""
         # Patchify stem
         self.stem = nn.Sequential(
             nn.Conv2d(in_channels, dims[0], kernel_size=4, stride=4),
@@ -79,13 +79,44 @@ class ConvNeXt(nn.Module):
 
         return self.head(x)
 
-def ConvNeXtTiny():
-    return ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 9, 3])
+import os
+def ConvNeXtTiny(pre_trained = False, path = None):
+    model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 9, 3])
+    model.name = "ConvNeXtTiny"
 
-def ConvNeXtSmall():
-    return ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 27, 3])
+    if pre_trained:
+        if path is None:
+            raise ValueError("Path must be provided for loading pretrained weights.")
 
-def ConvNeXtXL():
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    
+    return model
+
+def ConvNeXtSmall(pre_trained = False, path = None):
+    model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 27, 3])
+    model.name = "ConvNeXtSmall"
+
+    if pre_trained:
+        if path is None:
+            raise ValueError("Path must be provided for loading pretrained weights.")
+
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    
+    return model
+
+def ConvNeXtXL(pre_trained = False, path = None):
     return ConvNeXt(dims = [256, 512, 1024, 2048],depths = [3, 3, 27, 3])
 
 if __name__ == '__main__':
