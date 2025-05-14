@@ -1,10 +1,35 @@
 from torch.utils.data import DataLoader, Dataset, TensorDataset
 from sklearn.model_selection import train_test_split
 import torch
+import torchvision.transforms.functional as tf
 import os
 import pandas as pd
 import numpy as np
 path = os.path.dirname(__file__)
+import random
+
+class DataAugmentation:
+    '''Data agumentation class for flipping images and flipping label'''
+    def __init__(self, hflip=True, vflip=True, p=0.5):
+        self.hflip = hflip
+        self.vflip = vflip
+        self.p = p
+    
+    def __call__(self, image, image_filled, label, *args, **kwds):
+        if self.hflip and random.random() < self.p:
+            image = tf.hflip(image)
+            image_filled = tf.hflip(image_filled)
+            label[1] *= -1
+            label[2] *= -1
+            
+        if self.vflip and random.random() < self.p:
+            image = tf.vflip(image)
+            image_filled = tf.vflip(image_filled)
+            label[1] *= -1
+            label[2] *= -1
+
+        return image, image_filled, label
+        
 
 class CustomDataset(Dataset):
     '''
@@ -29,8 +54,7 @@ class CustomDataset(Dataset):
         label = torch.from_numpy(self.labels[idx].flatten()).float()  # shape: (2, 2)
 
         if self.transform:
-            image = self.transform(image)
-            image_filled = self.transform(image_filled)
+            image, image_filled, label = self.transform(image, image_filled, label)
         if self.target_transform:
             label = self.target_transform(label)
 
@@ -38,7 +62,7 @@ class CustomDataset(Dataset):
 
 
 
-def get_data(batch_size = 32,test_size=0.2, normalize=False, num_samples=None, num_workers=1):
+def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, num_workers=0):
     '''
     Function for getting data and turning them into the train and test loader.
     Optional: normalization, grid search size, mask outliers.
@@ -48,12 +72,17 @@ def get_data(batch_size = 32,test_size=0.2, normalize=False, num_samples=None, n
     image_filled_path = os.path.join(path, 'data/images_filled.npz')
     label_path = os.path.join(path, 'data/k.npz')
 
+    if use_hv_flip:
+        hv_flip = DataAugmentation(hflip=True, vflip=True, p=0.5)
+    else: 
+        hv_flip=None
+
     dataset = CustomDataset(
         image_path=image_path,
         image_filled_path=image_filled_path,
         label_path=label_path,
         num_samples=num_samples,
-        transform=None,
+        transform=hv_flip,
         target_transform=None
     )
 
@@ -78,5 +107,5 @@ def get_data(batch_size = 32,test_size=0.2, normalize=False, num_samples=None, n
 
 if __name__ == "__main__":
     print("Getting data...")
-    train_data_loader, test_data_loader = get_data(num_workers=4)
+    train_data_loader, test_data_loader = get_data(num_workers=0)
     print("Data loaders ready, with lazy loading.")
