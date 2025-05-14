@@ -62,7 +62,7 @@ class CustomDataset(Dataset):
 
 
 
-def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, num_workers=0):
+def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, num_workers=4):
     '''
     Function for getting data and turning them into the train and test loader.
     Optional: normalization, grid search size, mask outliers.
@@ -107,5 +107,5 @@ def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, 
 
 if __name__ == "__main__":
     print("Getting data...")
-    train_data_loader, test_data_loader = get_data(num_workers=0)
+    train_data_loader, test_data_loader = get_data(num_workers=4)
     print("Data loaders ready, with lazy loading.")
