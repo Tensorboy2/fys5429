@@ -13,10 +13,10 @@ sns.set_theme(style="whitegrid")
 path = os.path.dirname(__file__)
 
 models_info = {
-    "ViT-B16": {
-        "file": "vit_b16_metrics_conv_res_vit.csv",
-        "color": cm.plasma(0.75)
-    },
+    # "ViT-B16": {
+    #     "file": "vit_b16_metrics_conv_res_vit.csv",
+    #     "color": cm.plasma(0.75)
+    # },
     "ResNet50": {
         "file": "resnet50_metrics_conv_res_vit.csv",
         "color": cm.viridis(0.4)
@@ -32,6 +32,10 @@ models_info = {
     "ConvNeXt-Small": {
         "file": "convnextsmall_metrics_conv_res_vit.csv",
         "color": cm.cividis(0.7)
+    },
+    "ResNet50-DataAug": {
+        "file": "resnet50_metrics_dataaugmentation_test.csv",
+        "color": cm.viridis(0.0)
     }
 }
 
@@ -59,10 +63,10 @@ plt.legend(handles=legend_elements, title="Models", fontsize=8)
 plt.xlabel("Epochs")
 plt.ylabel("R² Score")
 plt.yscale("log")
-plt.xscale("log")
+# plt.xscale("log")
 
 # plt.xlim(0, 31)
-plt.ylim(0.9, 1)
+plt.ylim(0.95, 1)
 plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 # plt.show()
@@ -87,7 +91,7 @@ plt.legend(handles=legend_elements, title="Models", fontsize=8)
 plt.xlabel("Epochs")
 plt.ylabel("MSE")
 plt.yscale("log")
-plt.xscale("log")
+# plt.xscale("log")
 
 # plt.xlim(0, 31)
 # plt.ylim(0.9, 1)
