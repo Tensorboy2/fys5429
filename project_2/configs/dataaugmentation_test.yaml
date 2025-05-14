@@ -1,6 +1,6 @@
 experiments:
   - model: ResNet50
-    save_path: "resnet50_metrics_vit_test.csv"
+    save_path: "resnet50_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 50
       lr: 0.0008
