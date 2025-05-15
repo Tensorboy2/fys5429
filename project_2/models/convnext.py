@@ -85,9 +85,6 @@ def ConvNeXtTiny(pre_trained = False, path = None):
     model.name = "ConvNeXtTiny"
 
     if pre_trained:
-        if path is None:
-            raise ValueError("Path must be provided for loading pretrained weights.")
-
         weights_path = os.path.join(path, f'{model.name}.pth')
 
         if os.path.exists(weights_path):
@@ -103,9 +100,6 @@ def ConvNeXtSmall(pre_trained = False, path = None):
     model.name = "ConvNeXtSmall"
 
     if pre_trained:
-        if path is None:
-            raise ValueError("Path must be provided for loading pretrained weights.")
-
         weights_path = os.path.join(path, f'{model.name}.pth')
 
         if os.path.exists(weights_path):
