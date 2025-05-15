@@ -17,24 +17,24 @@ models_info = {
     #     "file": "vit_b16_metrics_conv_res_vit.csv",
     #     "color": cm.plasma(0.75)
     # },
-    "ResNet50": {
-        "file": "resnet50_metrics_conv_res_vit.csv",
-        "color": cm.viridis(0.4)
-    },
-    "ResNet101": {
-        "file": "resnet101_metrics_conv_res_vit.csv",
-        "color": cm.viridis(0.7)
-    },
+    # "ResNet50": {
+    #     "file": "resnet50_metrics_conv_res_vit.csv",
+    #     "color": cm.viridis(0.4)
+    # },
+    # "ResNet101": {
+    #     "file": "resnet101_metrics_conv_res_vit.csv",
+    #     "color": cm.viridis(0.7)
+    # },
     "ConvNeXt-Tiny": {
-        "file": "convnexttiny_metrics_conv_res_vit.csv",
+        "file": "convnexttiny_metrics_conv_res.csv",
         "color": cm.cividis(0.4)
     },
     "ConvNeXt-Small": {
-        "file": "convnextsmall_metrics_conv_res_vit.csv",
+        "file": "convnextsmall_metrics_conv_res.csv",
         "color": cm.cividis(0.7)
     },
-    "ResNet50-DataAug": {
-        "file": "resnet50_metrics_dataaugmentation_test.csv",
+    "ResNet50": {
+        "file": "resnet50_metrics_conv_res.csv",
         "color": cm.viridis(0.0)
     }
 }
@@ -66,7 +66,7 @@ plt.yscale("log")
 # plt.xscale("log")
 
 # plt.xlim(0, 31)
-plt.ylim(0.95, 1)
+plt.ylim(0.99, 1)
 plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 # plt.show()

@@ -10,25 +10,44 @@ import random
 
 class DataAugmentation:
     '''Data agumentation class for flipping images and flipping label'''
-    def __init__(self, hflip=True, vflip=True, p=0.5):
+    def __init__(self, hflip=True, vflip=True, rotate=True, p=0.5):
         self.hflip = hflip
         self.vflip = vflip
+        self.rotate = rotate
         self.p = p
     
     def __call__(self, image, image_filled, label, *args, **kwds):
+        K = label.clone()
         if self.hflip and random.random() < self.p:
             image = tf.hflip(image)
             image_filled = tf.hflip(image_filled)
-            label[1] *= -1
-            label[2] *= -1
+            K[1] *= -1
+            K[2] *= -1
             
         if self.vflip and random.random() < self.p:
             image = tf.vflip(image)
             image_filled = tf.vflip(image_filled)
-            label[1] *= -1
-            label[2] *= -1
+            K[1] *= -1
+            K[2] *= -1
+        
+        if self.rotate and random.random() < self.p:
+            '''
+            Rotation of image with corresponding permutation of K.
+            '''
+            angle = random.choice([90,180,270])
+            image = tf.rotate(image, angle=angle)
+            image_filled = tf.rotate(image_filled, angle=angle)
 
-        return image, image_filled, label
+            Kxx, Kxy, Kyx, Kyy = K
+
+            if angle == 90:
+                K = torch.tensor([Kyy, -Kyx, -Kxy, Kxx])
+            elif angle == 180:
+                K = torch.tensor([Kxx, -Kxy, -Kyx, Kyy])
+            elif angle == 270:
+                K = torch.tensor([Kyy, Kyx, Kxy, Kxx])
+
+        return image, image_filled, K
         
 
 class CustomDataset(Dataset):
