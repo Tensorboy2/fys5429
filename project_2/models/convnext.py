@@ -80,7 +80,9 @@ class ConvNeXt(nn.Module):
         return self.head(x)
 
 import os
-def ConvNeXtTiny(pre_trained = False, path = None):
+path = os.path.dirname(__file__)
+
+def ConvNeXtTiny(pre_trained = False):
     model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 9, 3])
     model.name = "ConvNeXtTiny"
 
@@ -95,7 +97,7 @@ def ConvNeXtTiny(pre_trained = False, path = None):
     
     return model
 
-def ConvNeXtSmall(pre_trained = False, path = None):
+def ConvNeXtSmall(pre_trained = False):
     model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 27, 3])
     model.name = "ConvNeXtSmall"
 
