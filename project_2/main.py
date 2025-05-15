@@ -91,4 +91,8 @@ if __name__ == '__main__':
         print(f"Model size: {get_model_size(model):.2f} MB")
 
         main(model, exp["hyperparameters"], exp["data"], save_path=exp["save_path"])
+
+        del model
+        torch.cuda.empty_cache()
+        torch.cuda.ipc_collect()
     
