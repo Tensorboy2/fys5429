@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import os
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 
 from data_loader import get_data
 from models.resnet import ResNet50
@@ -58,55 +58,55 @@ else:
     print(f"Predictions saved to {save_path}")
 
 # --- Plotting Utilities ---
-def plot_scatter(preds, label, cmap):
-    plt.figure(figsize=(10, 8))
-    for i in range(4):
-        plt.subplot(2, 2, i + 1)
-        error = np.abs(preds[:, i] - targets[:, i])
-        sns.scatterplot(x=targets[:, i], y=preds[:, i], hue=error, palette=cmap, alpha=0.4, legend=False)
-        min_val = min(targets[:, i].min(), preds[:, i].min())
-        max_val = max(targets[:, i].max(), preds[:, i].max())
-        plt.plot([min_val, max_val], [min_val, max_val], 'r--', label="Ideal")
-        plt.xlabel("Actual")
-        plt.ylabel("Predicted")
-        plt.title(f"{label}: k[{i // 2}, {i % 2}]")
-        plt.grid(True)
-    plt.suptitle(f"{label} - Predicted vs Actual", fontsize=14)
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
-    plt.savefig(os.path.join(path,f"similarity_{label}.pdf"))
+# def plot_scatter(preds, label, cmap):
+#     plt.figure(figsize=(10, 8))
+#     for i in range(4):
+#         plt.subplot(2, 2, i + 1)
+#         error = np.abs(preds[:, i] - targets[:, i])
+#         sns.scatterplot(x=targets[:, i], y=preds[:, i], hue=error, palette=cmap, alpha=0.4, legend=False)
+#         min_val = min(targets[:, i].min(), preds[:, i].min())
+#         max_val = max(targets[:, i].max(), preds[:, i].max())
+#         plt.plot([min_val, max_val], [min_val, max_val], 'r--', label="Ideal")
+#         plt.xlabel("Actual")
+#         plt.ylabel("Predicted")
+#         plt.title(f"{label}: k[{i // 2}, {i % 2}]")
+#         plt.grid(True)
+#     plt.suptitle(f"{label} - Predicted vs Actual", fontsize=14)
+#     plt.tight_layout(rect=[0, 0, 1, 0.96])
+#     plt.savefig(os.path.join(path,f"similarity_plot_{label}.pdf"))
 
 
-def plot_histogram(relative_errors, label):
-    plt.figure(figsize=(10, 8))
-    for i in range(4):
-        plt.subplot(2, 2, i + 1)
-        sns.histplot(relative_errors[:, i], kde=True, stat="density", bins=50, alpha=0.7)
-        plt.axvline(0, color='black', linestyle='--', linewidth=1)
-        plt.xlabel("1 - Predicted / Actual")
-        plt.ylabel("Density")
-        plt.title(f"{label}: Relative Error for k[{i // 2}, {i % 2}]")
-        plt.grid(True)
-    plt.suptitle(f"{label} - Relative Error Histograms", fontsize=14)
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
-    plt.savefig(os.path.join(path,f"histogram_{label}.pdf"))
+# def plot_histogram(relative_errors, label):
+#     plt.figure(figsize=(10, 8))
+#     for i in range(4):
+#         plt.subplot(2, 2, i + 1)
+#         sns.histplot(relative_errors[:, i], kde=True, stat="density", bins=50, alpha=0.7)
+#         plt.axvline(0, color='black', linestyle='--', linewidth=1)
+#         plt.xlabel("1 - Predicted / Actual")
+#         plt.ylabel("Density")
+#         plt.title(f"{label}: Relative Error for k[{i // 2}, {i % 2}]")
+#         plt.grid(True)
+#     plt.suptitle(f"{label} - Relative Error Histograms", fontsize=14)
+#     plt.tight_layout(rect=[0, 0, 1, 0.96])
+#     plt.savefig(os.path.join(path,f"histogram_{label}.pdf"))
 
-# --- Relative Errors ---
-epsilon = 1e-8
-threshold = 50.0
-relative_errors_vit = np.clip(1 - preds_vit / (targets + epsilon), -threshold, threshold)
-relative_errors_resnet = np.clip(1 - preds_resnet / (targets + epsilon), -threshold, threshold)
-relative_errors_tiny = np.clip(1 - preds_tiny / (targets + epsilon), -threshold, threshold)
-relative_errors_small = np.clip(1 - preds_small / (targets + epsilon), -threshold, threshold)
+# # --- Relative Errors ---
+# epsilon = 1e-8
+# threshold = 50.0
+# relative_errors_vit = np.clip(1 - preds_vit / (targets + epsilon), -threshold, threshold)
+# relative_errors_resnet = np.clip(1 - preds_resnet / (targets + epsilon), -threshold, threshold)
+# relative_errors_tiny = np.clip(1 - preds_tiny / (targets + epsilon), -threshold, threshold)
+# relative_errors_small = np.clip(1 - preds_small / (targets + epsilon), -threshold, threshold)
 
-# --- Plot ---
-plot_scatter(preds_resnet, label="ResNet50", cmap="viridis_r")
-plot_scatter(preds_vit, label="ViT_B16", cmap="plasma_r")
-plot_scatter(preds_tiny, label="ConvNeXtTiny", cmap="viridis_r")
-plot_scatter(preds_small, label="ConvNeXtSmall", cmap="plasma_r")
+# # --- Plot ---
+# plot_scatter(preds_resnet, label="ResNet50", cmap="viridis_r")
+# plot_scatter(preds_vit, label="ViT_B16", cmap="plasma_r")
+# plot_scatter(preds_tiny, label="ConvNeXtTiny", cmap="viridis_r")
+# plot_scatter(preds_small, label="ConvNeXtSmall", cmap="plasma_r")
 
-plot_histogram(relative_errors_resnet, label="ResNet50")
-plot_histogram(relative_errors_vit, label="ViT_B16")
-plot_histogram(relative_errors_tiny, label="ConvNeXtTiny")
-plot_histogram(relative_errors_small, label="ConvNeXtSmall")
+# plot_histogram(relative_errors_resnet, label="ResNet50")
+# plot_histogram(relative_errors_vit, label="ViT_B16")
+# plot_histogram(relative_errors_tiny, label="ConvNeXtTiny")
+# plot_histogram(relative_errors_small, label="ConvNeXtSmall")
 
 # plt.show()
