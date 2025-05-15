@@ -1,7 +1,7 @@
 # Data
 Inside this folder the data generation is done. 
 
-The full pipeline requires a few executions. The first is *make_images.py*, which is set to generate $20\_000$ images. This image is then filled using flood fill to remove disconected pores that can lead to instabilities in the simulation later. This "image$\_$filled" is then checked for percolation on a binary dilution of that image. The reason for dilution is that if a channel is one pixel in width, it can lead to numerical instability while percolating. Dilution fills these tight channels so that only percolating images that percolate with minimum 3 pixels in width truly percolates. The image, the filled image is then stored in folders *images/*, *images_filled/* and *porosities/* with each image having a 5 digit id on the name of the saved npy object. 
+The full pipeline requires a few executions. The first is *make_images.py*, which is set to generate 20 000 images. This image is then filled using flood fill to remove disconected pores that can lead to instabilities in the simulation later. This "image$\_$filled" is then checked for percolation on a binary dilution of that image. The reason for dilution is that if a channel is one pixel in width, it can lead to numerical instability while percolating. Dilution fills these tight channels so that only percolating images that percolate with minimum 3 pixels in width truly percolates. The image, the filled image is then stored in folders *images/*, *images_filled/* and *porosities/* with each image having a 5 digit id on the name of the saved npy object. 
 
 Once the images are stored, they can be converted to *.npz* format for use of lazy loading later. 
 
