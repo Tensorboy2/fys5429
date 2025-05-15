@@ -13,10 +13,10 @@ sns.set_theme(style="whitegrid")
 path = os.path.dirname(__file__)
 
 models_info = {
-    # "ViT-B16": {
-    #     "file": "vit_b16_metrics_conv_res_vit.csv",
-    #     "color": cm.plasma(0.75)
-    # },
+    "ViT-B16": {
+        "file": "vit_b16_metrics_conv_res_vit.csv",
+        "color": cm.plasma(0.75)
+    },
     # "ResNet50": {
     #     "file": "resnet50_metrics_conv_res_vit.csv",
     #     "color": cm.viridis(0.4)
@@ -69,6 +69,7 @@ plt.yscale("log")
 plt.ylim(0.99, 1)
 plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
+plt.savefig(os.path.join(path,"r2.pdf"))
 # plt.show()
 
 plt.figure(figsize=(10, 6))
@@ -97,5 +98,7 @@ plt.yscale("log")
 # plt.ylim(0.9, 1)
 plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
-plt.show()
+plt.savefig(os.path.join(path,"mse.pdf"))
+
+# plt.show()
 

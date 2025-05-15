@@ -1,42 +1,42 @@
 experiments:
-  - model: ResNet50
-    save_path: "resnet50_metrics_vit_test.csv"
+  - model: ViT_B4
+    save_path: "ViT_B4_metrics_vit_patch_size.csv"
     hyperparameters:
-      num_epochs: 30
+      num_epochs: 100
       lr: 0.0008
-      warmup_steps: 300
+      warmup_steps: 1000
       weight_decay: 0.1
       batch_size: 128
-      decay: "linear"
+      decay: "cosine"
     data:
-      normalize: false
+      use_hv_flip: true
       num_samples: null
       test_size: 0.2
 
-  - model: ResNet101
-    save_path: "resnet101_metrics_vit_test.csv"
+  - model: ViT_B8
+    save_path: "ViT_B8_metrics_vit_patch_size.csv"
     hyperparameters:
-      num_epochs: 30
-      lr: 0.0006
-      warmup_steps: 300
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
       weight_decay: 0.1
       batch_size: 128
-      decay: "linear"
+      decay: "cosine"
     data:
-      normalize: false
+      use_hv_flip: true
       num_samples: null
       test_size: 0.2
 
-  - model: ResNet152
-    save_path: "resnet152_metrics_vit_test.csv"
+  - model: ViT_B16
+    save_path: "ViT_B16_metrics_vit_patch_size.csv"
     hyperparameters:
-      num_epochs: 30
-      lr: 0.0004
-      warmup_steps: 300
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
       weight_decay: 0.1
       batch_size: 128
-      decay: "linear"
+      decay: "cosine"
     data:
-      normalize: false
+      use_hv_flip: true
       num_samples: null
       test_size: 0.2

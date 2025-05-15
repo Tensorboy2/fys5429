@@ -102,13 +102,13 @@ class ViT(nn.Module):
         x = x.mean(dim=1)  # Global average pooling over patches
         return self.head(x)
 
-def ViT_B16(image_size=128, num_classes=4, pre_trained = False):
+def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained = False):
     """
     Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
     """
     model = ViT(
         image_size=image_size,
-        patch_size=16,
+        patch_size=patch_size,
         embed_dim=768,
         depth=12,
         num_heads=12,
@@ -116,6 +116,53 @@ def ViT_B16(image_size=128, num_classes=4, pre_trained = False):
         num_classes=num_classes
     )
     model.name = "ViT_B16"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
+
+def ViT_B8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
+    """
+    Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
+    """
+    model = ViT(
+        image_size=image_size,
+        patch_size=patch_size,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        mlp_ratio=4,
+        num_classes=num_classes
+    )
+    model.name = "ViT_B8"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
+def ViT_B4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
+    """
+    Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
+    """
+    model = ViT(
+        image_size=image_size,
+        patch_size=patch_size,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        mlp_ratio=4,
+        num_classes=num_classes
+    )
+    model.name = "ViT_B4"
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 

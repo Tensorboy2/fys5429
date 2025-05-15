@@ -112,8 +112,36 @@ def ConvNeXtSmall(pre_trained = False):
     
     return model
 
-def ConvNeXtXL(pre_trained = False, path = None):
-    return ConvNeXt(dims = [256, 512, 1024, 2048],depths = [3, 3, 27, 3])
+def ConvNeXtBase(pre_trained = False):
+    model = ConvNeXt(dims = [128, 256, 512, 1024],depths = [3, 3, 27, 3])
+    model.name = "ConvNeXtBase"
+
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    
+    return model
+
+def ConvNeXtLarge(pre_trained = False):
+    model = ConvNeXt(dims = [192, 384, 768, 1536],depths = [3, 3, 27, 3])
+    model.name = "ConvNeXtSmall"
+
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    
+    return model
+
 
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
