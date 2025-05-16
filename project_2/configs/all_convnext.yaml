@@ -7,7 +7,7 @@ experiments:
       lr: 0.0004
       warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 1024
+      batch_size: 256
       decay: "cosine"
     data:
       use_hv_flip: false
@@ -21,7 +21,7 @@ experiments:
       lr: 0.0004
       warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 1024
+      batch_size: 256
       decay: "cosine"
     data:
       use_hv_flip: false
@@ -35,7 +35,7 @@ experiments:
       lr: 0.0004
       warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 1024
+      batch_size: 256
       decay: "cosine"
     data:
       use_hv_flip: false
@@ -49,7 +49,7 @@ experiments:
       lr: 0.0004
       warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 1024
+      batch_size: 256
       decay: "cosine"
     data:
       use_hv_flip: false
