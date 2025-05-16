@@ -58,7 +58,9 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
     print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=data["test_size"],
-                                                   use_hv_flip=data["use_hv_flip"],
+                                                   rotate=data["rotate"],
+                                                   hflip=data["hflip"],
+                                                   vflip=data["vflip"],
                                                    num_samples=data["num_samples"])
     start = time.time()
     train(model,

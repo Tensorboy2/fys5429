@@ -1,4 +1,4 @@
-'''Training module for CNN.'''
+'''Training module.'''
 import torch
 import torch.optim as op
 import pandas

@@ -10,7 +10,9 @@ experiments:
       batch_size: 32
       decay: "cosine"
     data:
-      use_hv_flip: True
+      hflip: True
+      vflip: True
+      rotate: False
       num_samples: null
       test_size: 0.2
 
@@ -38,7 +40,9 @@ experiments:
       batch_size: 128
       decay: "cosine"
     data:
-      use_hv_flip: True
+      hflip: True
+      vflip: True
+      rotate: False
       num_samples: null
       test_size: 0.2
 

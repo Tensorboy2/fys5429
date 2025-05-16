@@ -95,7 +95,13 @@ class CustomDataset(Dataset):
 
 
 
-def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, num_workers=0):
+def get_data(batch_size = 32,
+             test_size=0.2, 
+             hflip=True, 
+             vflip=True, 
+             rotate=True, 
+             num_samples=None, 
+             num_workers=0):
     '''
     Function for getting data and turning them into the train and test loader.
     Optional: normalization, grid search size, mask outliers.
@@ -105,10 +111,11 @@ def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, 
     image_filled_path = os.path.join(path, 'data/images_filled.npz')
     label_path = os.path.join(path, 'data/k.npz')
 
-    if use_hv_flip:
-        hv_flip = DataAugmentation(hflip=True, vflip=True, p=0.5)
-    else: 
-        hv_flip=None
+    hv_flip = DataAugmentation(hflip=hflip, 
+                               vflip=vflip,
+                               rotate=rotate,
+                               p=0.5)
+
 
     dataset = CustomDataset(
         image_path=image_path,
