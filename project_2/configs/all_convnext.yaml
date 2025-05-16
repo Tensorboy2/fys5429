@@ -5,9 +5,9 @@ experiments:
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 2500
+      warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 128
+      batch_size: 1024
       decay: "cosine"
     data:
       use_hv_flip: false
@@ -19,9 +19,9 @@ experiments:
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 2500
+      warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 128
+      batch_size: 1024
       decay: "cosine"
     data:
       use_hv_flip: false
@@ -33,9 +33,9 @@ experiments:
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 2500
+      warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 128
+      batch_size: 1024
       decay: "cosine"
     data:
       use_hv_flip: false
@@ -47,9 +47,9 @@ experiments:
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 2500
+      warmup_steps: 250
       weight_decay: 0.05
-      batch_size: 128
+      batch_size: 1024
       decay: "cosine"
     data:
       use_hv_flip: false
