@@ -56,18 +56,18 @@ class CustomDataset(Dataset):
     Gives image, image_filled and label(2 by 2 permeability tensor.)
     '''
     def __init__(self, label_path, image_path, image_filled_path, num_samples = None, transform = None, target_transform=None):
-        # self.images = np.load(image_path, mmap_mode='r')['images']
-        # self.images_filled = np.load(image_filled_path, mmap_mode='r')['images_filled']
-        # self.labels = np.load(label_path, mmap_mode='r')['k']
-        self.image_path = image_path
-        self.image_filled_path = image_filled_path
-        self.label_path = label_path
+        self.images = np.load(image_path, mmap_mode='r')['images']
+        self.images_filled = np.load(image_filled_path, mmap_mode='r')['images_filled']
+        self.labels = np.load(label_path, mmap_mode='r')['k']
+        # self.image_path = image_path
+        # self.image_filled_path = image_filled_path
+        # self.label_path = label_path
 
-        if num_samples == None:
-            with np.load(label_path, mmap_mode='r') as data:
-                self.num_samples = data['k'].shape[0]
+        # if num_samples == None:
+        #     with np.load(label_path, mmap_mode='r') as data:
+        #         self.num_samples = data['k'].shape[0]
 
-        # self.num_samples = num_samples or len(self.images)
+        self.num_samples = num_samples or self.labels.shape[0]
         self.transform = transform
         self.target_transform = target_transform
     
@@ -75,16 +75,16 @@ class CustomDataset(Dataset):
         return self.num_samples
 
     def __getitem__(self, idx):
-        # image = torch.from_numpy(self.images[idx]).float().unsqueeze(0)
-        # image_filled = torch.from_numpy(self.images_filled[idx]).float().unsqueeze(0)
-        # label = torch.from_numpy(self.labels[idx].flatten()).float()  # shape: (2, 2)
+        image = torch.from_numpy(self.images[idx]).float().unsqueeze(0)
+        image_filled = torch.from_numpy(self.images_filled[idx]).float().unsqueeze(0)
+        label = torch.from_numpy(self.labels[idx].flatten()).float()  # shape: (2, 2)
 
-        with np.load(self.image_path, mmap_mode='r') as f_img:
-            image = torch.from_numpy(f_img['images'][idx]).float().unsqueeze(0)
-        with np.load(self.image_filled_path, mmap_mode='r') as f_imgf:
-            image_filled = torch.from_numpy(f_imgf['images_filled'][idx]).float().unsqueeze(0)
-        with np.load(self.label_path, mmap_mode='r') as f_label:
-            label = torch.from_numpy(f_label['k'][idx].flatten()).float()
+        # with np.load(self.image_path, mmap_mode='r') as f_img:
+        #     image = torch.from_numpy(f_img['images'][idx]).float().unsqueeze(0)
+        # with np.load(self.image_filled_path, mmap_mode='r') as f_imgf:
+        #     image_filled = torch.from_numpy(f_imgf['images_filled'][idx]).float().unsqueeze(0)
+        # with np.load(self.label_path, mmap_mode='r') as f_label:
+        #     label = torch.from_numpy(f_label['k'][idx].flatten()).float()
 
         if self.transform:
             image, image_filled, label = self.transform(image, image_filled, label)
@@ -95,7 +95,7 @@ class CustomDataset(Dataset):
 
 
 
-def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, num_workers=2):
+def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, num_workers=1):
     '''
     Function for getting data and turning them into the train and test loader.
     Optional: normalization, grid search size, mask outliers.
@@ -145,5 +145,5 @@ def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, 
 
 if __name__ == "__main__":
     print("Getting data...")
-    train_data_loader, test_data_loader = get_data(num_workers=2)
+    train_data_loader, test_data_loader = get_data(num_workers=1)
     print("Data loaders ready, with lazy loading.")
