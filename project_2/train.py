@@ -100,7 +100,7 @@ def train(model = None,
                 loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
 
             scaler.scale(loss).backward() # Calculate gradients
-            scaler.step(optimizer) # Update weights
+            scaler.step(optimizer) # Update weights (Torch might warn that lr.step should be called after optimizer.step, but it just does not see scaler.step, so this is ok.)
             scaler.update()
 
             running_train_loss += loss.item()
@@ -109,8 +109,7 @@ def train(model = None,
 
             scheduler.step()
 
-            # print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | "
-            #       f"GPU Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB", flush=True)
+            print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | ", flush=True)
             
             del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
             torch.cuda.empty_cache()
