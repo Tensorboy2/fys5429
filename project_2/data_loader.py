@@ -131,14 +131,14 @@ def get_data(batch_size = 32,test_size=0.2, use_hv_flip=True, num_samples=None, 
                                    batch_size=batch_size, 
                                    shuffle=True, 
                                    num_workers=num_workers,
-                                   persistent_workers=True, 
+                                #    persistent_workers=True, 
                                    pin_memory=True)
     
     test_data_loader = DataLoader(test_dataset, 
                                   batch_size=batch_size, 
                                   shuffle=False, 
                                   num_workers=num_workers,
-                                  persistent_workers=True, 
+                                #   persistent_workers=True, 
                                   pin_memory=True)
 
     return train_data_loader, test_data_loader
