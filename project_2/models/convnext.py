@@ -129,7 +129,7 @@ def ConvNeXtBase(pre_trained = False):
 
 def ConvNeXtLarge(pre_trained = False):
     model = ConvNeXt(dims = [192, 384, 768, 1536],depths = [3, 3, 27, 3])
-    model.name = "ConvNeXtSmall"
+    model.name = "ConvNeXtLarge"
 
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
