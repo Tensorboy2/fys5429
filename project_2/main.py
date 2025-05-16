@@ -55,7 +55,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
                              lr = lr, 
                              weight_decay=weight_decay)
     model.to(device)
-    # print(model)
+    print(model)
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=data["test_size"],
                                                    use_hv_flip=data["use_hv_flip"],
