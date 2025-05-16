@@ -109,7 +109,7 @@ def train(model = None,
 
             scheduler.step()
 
-            print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | ", flush=True)
+            # print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | ", flush=True)
             
             del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
             torch.cuda.empty_cache()
