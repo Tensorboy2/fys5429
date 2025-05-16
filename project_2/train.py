@@ -104,7 +104,7 @@ def train(model = None,
             all_y_pred_train.append(((outputs_image+outputs_image_filled)/2).detach())
 
             scheduler.step()
-            print(f"Batch {batch_idx}/{num_batches}",flush=True)
+            print(f"Batch {batch_idx}/{num_batches}")
 
         
         epoch_train_mse = running_train_loss/len(train_data_loader)
