@@ -104,7 +104,10 @@ def train(model = None,
             all_y_pred_train.append(((outputs_image+outputs_image_filled)/2).detach())
 
             scheduler.step()
-            print(f"Batch {batch_idx}/{num_batches}")
+            print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | "
+                  f"GPU Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB", flush=True)
+            del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
+            torch.cuda.empty_cache()
 
         
         epoch_train_mse = running_train_loss/len(train_data_loader)
