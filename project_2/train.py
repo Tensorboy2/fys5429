@@ -5,6 +5,7 @@ import pandas
 import os
 path = os.path.dirname(__file__)
 import math
+from torch.amp import autocast, GradScaler
 
 @torch.jit.script
 def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
@@ -36,7 +37,8 @@ def train(model = None,
           save_path="metrics.csv",
           warmup_steps=0,
           decay="",
-          save_model_path=None):
+          save_model_path=None,
+          use_amp=True):
     '''
     Training function.
     Performs adams optimization to model on train data loader and predicts on test data loader.
@@ -75,7 +77,7 @@ def train(model = None,
 
     scheduler = op.lr_scheduler.LambdaLR(optimizer,lr_lambda)
 
-
+    scaler = GradScaler(enabled=use_amp)
 
     for epoch in range(num_epochs):
         '''Training:'''
@@ -91,21 +93,25 @@ def train(model = None,
             image_train, image_filled_train, k_train = image_train.to(device), image_filled_train.to(device), k_train.to(device) # Send to device
 
             optimizer.zero_grad() # Zero gradients for every batch
-            outputs_image = model(image_train) # Make predictions
-            outputs_image_filled = model(image_filled_train) # Make predictions
 
-            loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
+            with autocast(enabled=use_amp):
+                outputs_image = model(image_train) # Make predictions
+                outputs_image_filled = model(image_filled_train) # Make predictions
+                loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
 
-            loss.backward() # Calculate gradients
-            optimizer.step() # Update weights
+            scaler.scale(loss).backward() # Calculate gradients
+            scaler.step(optimizer) # Update weights
+            scaler.update()
 
             running_train_loss += loss.item()
             all_y_true_train.append(k_train.detach())
             all_y_pred_train.append(((outputs_image+outputs_image_filled)/2).detach())
 
             scheduler.step()
+            
             print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | "
                   f"GPU Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB", flush=True)
+            
             del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
             torch.cuda.empty_cache()
 
