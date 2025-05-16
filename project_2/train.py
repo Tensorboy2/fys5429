@@ -94,7 +94,7 @@ def train(model = None,
 
             optimizer.zero_grad() # Zero gradients for every batch
 
-            with autocast(device_type=device,enabled=use_amp):
+            with autocast(device_type="cuda",enabled=use_amp):
                 outputs_image = model(image_train) # Make predictions
                 outputs_image_filled = model(image_filled_train) # Make predictions
                 loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
