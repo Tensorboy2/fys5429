@@ -94,7 +94,7 @@ def train(model = None,
 
             optimizer.zero_grad() # Zero gradients for every batch
 
-            with autocast(enabled=use_amp):
+            with autocast(device_type=device,enabled=use_amp):
                 outputs_image = model(image_train) # Make predictions
                 outputs_image_filled = model(image_filled_train) # Make predictions
                 loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
@@ -108,7 +108,7 @@ def train(model = None,
             all_y_pred_train.append(((outputs_image+outputs_image_filled)/2).detach())
 
             scheduler.step()
-            
+
             print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | "
                   f"GPU Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB", flush=True)
             
