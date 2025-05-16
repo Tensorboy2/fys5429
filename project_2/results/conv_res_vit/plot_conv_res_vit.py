@@ -5,6 +5,17 @@ import seaborn as sns
 import os
 import matplotlib.cm as cm
 from matplotlib.lines import Line2D
+import matplotlib as mpl
+
+mpl.rcParams.update({
+    # "text.usetex": True,  # Requires LaTeX installed
+    "font.family": "serif",
+    "font.size": 9,
+    "axes.labelsize": 9,
+    "xtick.labelsize": 8,
+    "ytick.labelsize": 8,
+    "legend.fontsize": 8,
+})
 
 # Set a nice seaborn theme
 sns.set_theme(style="whitegrid")
@@ -14,7 +25,7 @@ path = os.path.dirname(__file__)
 
 models_info = {
     "ViT-B16": {
-        "file": "vit_b16_metrics_conv_res_vit.csv",
+        "file": "ViT_B16_metrics_vit.csv",
         "color": cm.plasma(0.75)
     },
     # "ResNet50": {
@@ -43,62 +54,58 @@ models_info = {
 for model in models_info:
     models_info[model]["df"] = pd.read_csv(os.path.join(path, models_info[model]["file"]))
 
-plt.figure(figsize=(10, 6))
+fig_width, fig_height = 6.4, 6.4  # or 6.4 for full width
+plt.figure(figsize=(fig_width, fig_height))
 
 for name, info in models_info.items():
     df = info["df"]
     color = info["color"]
-    plt.plot(df["epoch"], df["test_r2"], c=color, label=f"{name} - Test R²", linestyle="-")
-    plt.plot(df["epoch"], df["train_r2"], c=color, label=f"{name} - Train R²", linestyle="--", alpha=0.5)
+    plt.plot(df["epoch"], df["test_r2"], c=color, linestyle="-")
+    plt.plot(df["epoch"], df["train_r2"], c=color, linestyle="--", alpha=0.5)
 
 legend_elements = [
     Line2D([0], [0], color=info["color"], lw=2, label=name)
     for name, info in models_info.items()
 ] + [
     Line2D([0], [0], color='black', linestyle='-', lw=2, label='Test'),
-    Line2D([0], [0], color='black', linestyle='--', lw=2, label='Train')
+    Line2D([0], [0], color='black', linestyle='--', lw=2, alpha=0.5, label='Train')
 ]
 
-plt.legend(handles=legend_elements, title="Models", fontsize=8)
+plt.legend(handles=legend_elements, fontsize=8, title="Models", frameon=False)
 plt.xlabel("Epochs")
-plt.ylabel("R² Score")
+plt.ylabel(r"$R^2$ Score")
 plt.yscale("log")
-# plt.xscale("log")
-
-# plt.xlim(0, 31)
 plt.ylim(0.99, 1)
-plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()
-plt.savefig(os.path.join(path,"r2.pdf"))
+plt.savefig(os.path.join(path, "r2.pdf"), bbox_inches='tight')
 # plt.show()
 
-plt.figure(figsize=(10, 6))
+fig_width, fig_height = 6.4, 6.4  # or 6.4 for full width
+plt.figure(figsize=(fig_width, fig_height))
 
 for name, info in models_info.items():
     df = info["df"]
     color = info["color"]
-    plt.plot(df["epoch"], df["test_mse"], c=color, label=f"{name} - Test MSE", linestyle="-")
-    plt.plot(df["epoch"], df["train_mse"], c=color, label=f"{name} - Train MSE", linestyle="--", alpha=0.5)
+    plt.plot(df["epoch"], df["test_mse"], c=color, linestyle="-")
+    plt.plot(df["epoch"], df["train_mse"], c=color, linestyle="--", alpha=0.5)
 
 legend_elements = [
     Line2D([0], [0], color=info["color"], lw=2, label=name)
     for name, info in models_info.items()
 ] + [
     Line2D([0], [0], color='black', linestyle='-', lw=2, label='Test'),
-    Line2D([0], [0], color='black', linestyle='--', lw=2, label='Train')
+    Line2D([0], [0], color='black', linestyle='--', lw=2, alpha=0.5, label='Train')
 ]
 
-plt.legend(handles=legend_elements, title="Models", fontsize=8)
+plt.legend(handles=legend_elements, fontsize=8, title="Models", frameon=False)
 plt.xlabel("Epochs")
-plt.ylabel("MSE")
+plt.ylabel(r"MSE Score")
 plt.yscale("log")
-# plt.xscale("log")
-
-# plt.xlim(0, 31)
-# plt.ylim(0.9, 1)
-plt.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.5)
+# plt.ylim(0.99, 1)
+plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()
-plt.savefig(os.path.join(path,"mse.pdf"))
+plt.savefig(os.path.join(path, "mse.pdf"), bbox_inches='tight')
 
 # plt.show()
 
