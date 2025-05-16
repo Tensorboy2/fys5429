@@ -86,8 +86,8 @@ def train(model = None,
         all_y_true_train = []
         all_y_pred_train = []
 
-        print(f"[{model_name}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB")
-        print(f"[{model_name}] Reserved: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
+        # print(f"[{model_name}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB")
+        # print(f"[{model_name}] Reserved: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
 
         for batch_idx, (image_train, image_filled_train, k_train) in enumerate(train_data_loader):
             image_train, image_filled_train, k_train = image_train.to(device), image_filled_train.to(device), k_train.to(device) # Send to device
@@ -109,8 +109,8 @@ def train(model = None,
 
             scheduler.step()
 
-            print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | "
-                  f"GPU Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB", flush=True)
+            # print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | "
+            #       f"GPU Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB", flush=True)
             
             del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
             torch.cuda.empty_cache()
