@@ -4,7 +4,7 @@ experiments:
     save_path: "convnextlarge_metrics_all_convnext.csv"
     hyperparameters:
       num_epochs: 300
-      lr: 4e-3
+      lr: 0.0004
       warmup_steps: 2500
       weight_decay: 0.05
       batch_size: 128
@@ -18,7 +18,7 @@ experiments:
     save_path: "convnextbase_metrics_all_convnext.csv"
     hyperparameters:
       num_epochs: 300
-      lr: 4e-3
+      lr: 0.0004
       warmup_steps: 2500
       weight_decay: 0.05
       batch_size: 128
@@ -32,7 +32,7 @@ experiments:
     save_path: "convnextsmall_metrics_all_convnext.csv"
     hyperparameters:
       num_epochs: 300
-      lr: 4e-3
+      lr: 0.0004
       warmup_steps: 2500
       weight_decay: 0.05
       batch_size: 128
@@ -46,7 +46,7 @@ experiments:
     save_path: "convnexttiny_metrics_all_convnext.csv"
     hyperparameters:
       num_epochs: 300
-      lr: 4e-3
+      lr: 0.0004
       warmup_steps: 2500
       weight_decay: 0.05
       batch_size: 128
