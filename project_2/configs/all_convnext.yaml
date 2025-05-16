@@ -1,25 +1,11 @@
 experiments:
 
-  - model: ConvNeXtLarge
-    save_path: "convnextlarge_metrics_all_convnext.csv"
-    hyperparameters:
-      num_epochs: 300
-      lr: 0.0004
-      warmup_steps: 250
-      weight_decay: 0.05
-      batch_size: 64
-      decay: "cosine"
-    data:
-      use_hv_flip: false
-      num_samples: null
-      test_size: 0.2
-
   - model: ConvNeXtBase
     save_path: "convnextbase_metrics_all_convnext.csv"
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 250
+      warmup_steps: 2000
       weight_decay: 0.05
       batch_size: 64
       decay: "cosine"
@@ -33,7 +19,7 @@ experiments:
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 250
+      warmup_steps: 2000
       weight_decay: 0.05
       batch_size: 64
       decay: "cosine"
@@ -47,7 +33,7 @@ experiments:
     hyperparameters:
       num_epochs: 300
       lr: 0.0004
-      warmup_steps: 250
+      warmup_steps: 2000
       weight_decay: 0.05
       batch_size: 64
       decay: "cosine"
