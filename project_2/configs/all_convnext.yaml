@@ -7,10 +7,10 @@ experiments:
       lr: 0.0008
       warmup_steps: 1000
       weight_decay: 0.1
-      batch_size: 64
+      batch_size: 128
       decay: "cosine"
     data:
-      use_hv_flip: false
+      use_hv_flip: True
       num_samples: null
       test_size: 0.2
 
@@ -24,7 +24,7 @@ experiments:
       batch_size: 128
       decay: "cosine"
     data:
-      use_hv_flip: false
+      use_hv_flip: True
       num_samples: null
       test_size: 0.2
 
@@ -38,7 +38,7 @@ experiments:
       batch_size: 128
       decay: "cosine"
     data:
-      use_hv_flip: false
+      use_hv_flip: True
       num_samples: null
       test_size: 0.2
 
@@ -52,6 +52,6 @@ experiments:
       batch_size: 128
       decay: "cosine"
     data:
-      use_hv_flip: false
+      use_hv_flip: True
       num_samples: null
       test_size: 0.2
