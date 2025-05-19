@@ -15,7 +15,6 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-experiments:
   - model: ConvNeXtSmall
     save_path: "convnextsmall_vflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
@@ -32,7 +31,6 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-experiments:
   - model: ConvNeXtSmall
     save_path: "convnextsmall_rotate_metrics_dataaugmentation_test.csv"
     hyperparameters:
@@ -49,7 +47,6 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-experiments:
   - model: ConvNeXtSmall
     save_path: "convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test.csv"
     hyperparameters:
@@ -66,7 +63,6 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-experiments:
   - model: ConvNeXtSmall
     save_path: "convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
