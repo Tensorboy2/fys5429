@@ -1,4 +1,4 @@
-result_dir: "dataaug"
+# result_dir: "dataaug"
 
 experiments:
   # - model: ConvNeXtSmall
