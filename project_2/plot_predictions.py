@@ -6,18 +6,13 @@ import seaborn as sns
 import matplotlib as mpl
 
 mpl.rcParams.update({
-    # "text.usetex": False,  # Set to True if you want LaTeX-style math formatting (requires LaTeX install)
+    # "text.usetex": True,  # Requires LaTeX installed
     "font.family": "serif",
-    "font.size": 10,
-    "axes.titlesize": 11,
-    "axes.labelsize": 10,
-    "legend.fontsize": 9,
-    "xtick.labelsize": 9,
-    "ytick.labelsize": 9,
-    "figure.dpi": 300,       # High-res for crisp images
-    "savefig.dpi": 300,
-    "figure.autolayout": True,
-    "pdf.fonttype": 42,      # Avoids type-3 fonts in PDFs (LaTeX likes this)
+    "font.size": 12,
+    "axes.labelsize": 12,
+    "xtick.labelsize": 12,
+    "ytick.labelsize": 12,
+    "legend.fontsize": 12,
 })
 
 from data_loader import get_data
@@ -75,7 +70,7 @@ else:
 
 # --- Plotting Utilities ---
 def plot_scatter(preds, label, cmap):
-    fig, axes = plt.subplots(2, 2, figsize=(6.5, 5.5), dpi=300)
+    fig, axes = plt.subplots(2, 2, figsize=(6.4, 6.4))
     for i in range(4):
         ax = axes[i // 2, i % 2]
         error = np.abs(preds[:, i] - targets[:, i])
@@ -88,17 +83,17 @@ def plot_scatter(preds, label, cmap):
         ax.plot([min_val, max_val], [min_val, max_val], 'r--', lw=1)
         ax.set_xlabel("Actual")
         ax.set_ylabel("Predicted")
-        ax.set_title(f"$k_{{{i // 2}{i % 2}}}$", fontsize=10)
+        ax.set_title(f"$k_{{{i // 2}{i % 2}}}$")
         ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
-    fig.suptitle(f"{label} - Predicted vs Actual", fontsize=11)
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.savefig(os.path.join(path, "plots/prediction_plots", f"similarity_plot_{label}.pdf"))
+    # fig.suptitle(f"{label} - Predicted vs Actual", fontsize=11)
+    plt.tight_layout()#rect=[0, 0, 1, 0.95])
+    plt.savefig(os.path.join(path, "plots/prediction_plots", f"similarity_plot_{label}.pdf"), bbox_inches='tight')
     plt.close()
 
 
 def plot_histogram(relative_errors, label):
-    fig, axes = plt.subplots(2, 2, figsize=(6.5, 5.5), dpi=300)
+    fig, axes = plt.subplots(2, 2, figsize=(6.4, 6.4))
     for i in range(4):
         ax = axes[i // 2, i % 2]
         sns.histplot(
@@ -108,12 +103,12 @@ def plot_histogram(relative_errors, label):
         ax.axvline(0, color='black', linestyle='--', linewidth=1)
         ax.set_xlabel(r"$1 - \hat{k} / k$")
         ax.set_ylabel("Density")
-        ax.set_title(f"$k_{{{i // 2}{i % 2}}}$", fontsize=10)
+        ax.set_title(f"$k_{{{i // 2}{i % 2}}}$")
         ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
-    fig.suptitle(f"{label} - Relative Error Distribution", fontsize=11)
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.savefig(os.path.join(path, "plots/prediction_plots", f"histogram_{label}.pdf"))
+    # fig.suptitle(f"{label} - Relative Error Distribution", fontsize=11)
+    plt.tight_layout()#rect=[0, 0, 1, 0.95])
+    plt.savefig(os.path.join(path, "plots/prediction_plots", f"histogram_{label}.pdf"), bbox_inches='tight')
     plt.close()
 
 # --- Relative Errors ---

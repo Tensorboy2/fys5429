@@ -86,13 +86,14 @@ if __name__ == '__main__':
     with open(args.config_file, "r") as f:
         config = yaml.safe_load(f)
 
+    result_dir = config["result_dir"]
     for exp in config["experiments"]:
         model_name = exp["model"]
         model_class = model_registry[model_name]
         model = model_class()
         print(f"Model size: {get_model_size(model):.2f} MB")
 
-        main(model, exp["hyperparameters"], exp["data"], save_path=exp["save_path"])
+        main(model, exp["hyperparameters"], exp["data"], save_path=os.path.join(result_dir,exp["save_path"]))
 
         del model
         torch.cuda.empty_cache()

@@ -32,10 +32,10 @@ models_info = {
     #     "file": "resnet50_metrics_conv_res_vit.csv",
     #     "color": cm.viridis(0.4)
     # },
-    # "ResNet101": {
-    #     "file": "resnet101_metrics_conv_res_vit.csv",
-    #     "color": cm.viridis(0.7)
-    # },
+    "ResNet101": {
+        "file": "resnet101_metrics_conv_res_vit.csv",
+        "color": cm.viridis(0.7)
+    },
     "ConvNeXt-Tiny": {
         "file": "convnexttiny_metrics_conv_res.csv",
         "color": cm.cividis(0.4)
@@ -61,6 +61,7 @@ for name, info in models_info.items():
     df = info["df"]
     color = info["color"]
     plt.plot(df["epoch"], df["test_r2"], c=color, linestyle="-")
+    print(f"model: {name}, test r2: {np.max(df['test_r2']):.5f}, train r2: {np.max(df['train_r2']):.5f}, test mse: {np.min(df['test_mse']):.6f}, train mse: {np.min(df['train_mse']):.6f}, ")
     plt.plot(df["epoch"], df["train_r2"], c=color, linestyle="--", alpha=0.5)
 
 legend_elements = [
@@ -74,8 +75,8 @@ legend_elements = [
 plt.legend(handles=legend_elements, fontsize=8, title="Models", frameon=False)
 plt.xlabel("Epochs")
 plt.ylabel(r"$R^2$ Score")
-plt.yscale("log")
-plt.ylim(0.99, 1)
+# plt.yscale("log")
+plt.ylim(0.92, 1)
 plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()
 plt.savefig(os.path.join(path, "r2.pdf"), bbox_inches='tight')
