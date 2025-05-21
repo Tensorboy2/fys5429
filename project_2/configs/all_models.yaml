@@ -1,0 +1,80 @@
+experiments:
+  - model: ResNet50
+    save_path: "resnet50_metrics_all_models.csv"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: False
+      num_samples: null
+      test_size: 0.2
+
+  - model: ResNet101
+    save_path: "resnet101_metrics_all_models.csv"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: False
+      num_samples: null
+      test_size: 0.2
+
+  - model: ViT_B16
+    save_path: "vit_b16_metrics_all_models.csv"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: False
+      num_samples: null
+      test_size: 0.2
+
+  - model: ConvNeXtTiny
+    save_path: "convnexttiny_metrics_all_models.csv"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: False
+      num_samples: null
+      test_size: 0.2
+
+  - model: ConvNeXtSmall
+    save_path: "convnextsmall_metrics_all_models.csv"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: False
+      num_samples: null
+      test_size: 0.2

@@ -61,7 +61,9 @@ for name, info in models_info.items():
     df = info["df"]
     color = info["color"]
     plt.plot(df["epoch"], df["test_r2"], c=color, linestyle="-")
-    print(f"model: {name}, test r2: {np.max(df['test_r2']):.5f}, train r2: {np.max(df['train_r2']):.5f}, test mse: {np.min(df['test_mse']):.6f}, train mse: {np.min(df['train_mse']):.6f}, ")
+    idx_max = np.argmax(df['test_r2'])
+    print(f"model: {name}, test r2: {df['test_r2'][idx_max]:.5f}, train r2: {df['train_r2'][idx_max]:.5f}, test mse: {df['test_mse'][idx_max]:.6f}, train mse: {df['train_mse'][idx_max]:.6f}, ")
+
     plt.plot(df["epoch"], df["train_r2"], c=color, linestyle="--", alpha=0.5)
 
 legend_elements = [
