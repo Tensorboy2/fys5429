@@ -1,6 +1,6 @@
 experiments:
-  - model: ResNet50
-    save_path: "resnet50_metrics_all_models.csv"
+  - model: ResNet101
+    save_path: "resnet101_metrics_all_models.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -15,8 +15,8 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-  - model: ResNet101
-    save_path: "resnet101_metrics_all_models.csv"
+  - model: ResNet50
+    save_path: "resnet50_metrics_all_models.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
