@@ -1,12 +1,11 @@
+import os
 import numpy as np
 import torch
-import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib as mpl
 
 mpl.rcParams.update({
-    # "text.usetex": True,  # Requires LaTeX installed
     "font.family": "serif",
     "font.size": 12,
     "axes.labelsize": 12,
@@ -15,13 +14,37 @@ mpl.rcParams.update({
     "legend.fontsize": 12,
 })
 
-from data_loader import get_data
-from models.resnet import ResNet50
+from models.resnet import ResNet50, ResNet101
 from models.vit import ViT_B16
 from models.convnext import ConvNeXtTiny, ConvNeXtSmall
 
-path = os.path.dirname(__file__)
-save_path = os.path.join(path, "plots/prediction_plots/predictions.npz")
+ROOT = os.path.dirname(__file__)
+SAVE_PATH = os.path.join(ROOT, "plots/prediction_plots/predictions.npz")
+IMAGES_PATH = os.path.join(ROOT, "data/images_filled.npz")
+K_PATH = os.path.join(ROOT, "data/k.npz")
+
+MODELS_INFO = {
+    "ViT-B16": {
+        "class": ViT_B16,
+        "key": "preds_vit"
+    },
+    "ResNet50": {
+        "class": ResNet50,
+        "key": "preds_resnet50"
+    },
+    "ResNet101": {
+        "class": ResNet101,
+        "key": "preds_resnet101"
+    },
+    "ConvNeXt-Tiny": {
+        "class": ConvNeXtTiny,
+        "key": "preds_tiny"
+    },
+    "ConvNeXt-Small": {
+        "class": ConvNeXtSmall,
+        "key": "preds_small"
+    }
+}
 
 def run_inference(model, images, device):
     preds = []
@@ -34,42 +57,7 @@ def run_inference(model, images, device):
                 print(f"[{model.__class__.__name__}] Processed {i}/{len(images)} samples")
     return np.array(preds)
 
-if os.path.exists(save_path):
-    data = np.load(save_path, mmap_mode="r")
-    preds_vit = data["preds_vit"]
-    preds_resnet = data["preds_resnet"]
-    preds_tiny = data["preds_tiny"]
-    preds_small = data["preds_small"]
-    targets = data["targets"]
-    print(f"Loaded cached predictions from {save_path}")
-else:
-    # Setup
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # Load models
-    model_r = ResNet50(pre_trained=True).eval().to(device)
-    model_v = ViT_B16(pre_trained=True).eval().to(device)
-    # Uncomment if you want ConvNeXtTiny or Small:
-    model_tiny = ConvNeXtTiny(pre_trained=True).eval().to(device)
-    model_small = ConvNeXtSmall(pre_trained=True).eval().to(device)
-
-    # Load data
-    images = np.load(os.path.join(path, "data/images_filled.npz"), mmap_mode="r")["images_filled"]
-    k = np.load(os.path.join(path, "data/k.npz"), mmap_mode="r")["k"]
-
-    # Inference
-    preds_resnet = run_inference(model_r, images, device)
-    preds_vit = run_inference(model_v, images, device)
-    preds_tiny = run_inference(model_tiny, images, device)
-    preds_small = run_inference(model_small, images, device)
-    targets = k.reshape(len(k), -1)
-
-    # Save predictions
-    np.savez_compressed(save_path, preds_vit=preds_vit, preds_resnet=preds_resnet, preds_tiny=preds_tiny, preds_small=preds_small, targets=targets)
-    print(f"Predictions saved to {save_path}")
-
-# --- Plotting Utilities ---
-def plot_scatter(preds, label, cmap):
+def plot_scatter(preds, targets, label, cmap):
     fig, axes = plt.subplots(2, 2, figsize=(6.4, 6.4))
     for i in range(4):
         ax = axes[i // 2, i % 2]
@@ -86,9 +74,8 @@ def plot_scatter(preds, label, cmap):
         ax.set_title(f"$k_{{{i // 2}{i % 2}}}$")
         ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
-    # fig.suptitle(f"{label} - Predicted vs Actual", fontsize=11)
-    plt.tight_layout()#rect=[0, 0, 1, 0.95])
-    plt.savefig(os.path.join(path, "plots/prediction_plots", f"similarity_plot_{label}.pdf"), bbox_inches='tight')
+    plt.tight_layout()
+    plt.savefig(os.path.join(ROOT, "plots/prediction_plots", f"similarity_plot_{label}.pdf"), bbox_inches='tight')
     plt.close()
 
 
@@ -106,28 +93,70 @@ def plot_histogram(relative_errors, label):
         ax.set_title(f"$k_{{{i // 2}{i % 2}}}$")
         ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
-    # fig.suptitle(f"{label} - Relative Error Distribution", fontsize=11)
-    plt.tight_layout()#rect=[0, 0, 1, 0.95])
-    plt.savefig(os.path.join(path, "plots/prediction_plots", f"histogram_{label}.pdf"), bbox_inches='tight')
+    plt.tight_layout()
+    plt.savefig(os.path.join(ROOT, "plots/prediction_plots", f"histogram_{label}.pdf"), bbox_inches='tight')
     plt.close()
 
-# --- Relative Errors ---
-epsilon = 1e-8
-threshold = 50.0
-relative_errors_vit = np.clip(1 - preds_vit / (targets + epsilon), -threshold, threshold)
-relative_errors_resnet = np.clip(1 - preds_resnet / (targets + epsilon), -threshold, threshold)
-relative_errors_tiny = np.clip(1 - preds_tiny / (targets + epsilon), -threshold, threshold)
-relative_errors_small = np.clip(1 - preds_small / (targets + epsilon), -threshold, threshold)
 
-# --- Plot ---
-plot_scatter(preds_resnet, label="ResNet50", cmap="viridis_r")
-plot_scatter(preds_vit, label="ViT_B16", cmap="plasma_r")
-plot_scatter(preds_tiny, label="ConvNeXtTiny", cmap="viridis_r")
-plot_scatter(preds_small, label="ConvNeXtSmall", cmap="plasma_r")
+def compute_relative_errors(preds, targets, threshold=50.0, epsilon=1e-8):
+    return np.clip(1 - preds / (targets + epsilon), -threshold, threshold)
 
-plot_histogram(relative_errors_resnet, label="ResNet50")
-plot_histogram(relative_errors_vit, label="ViT_B16")
-plot_histogram(relative_errors_tiny, label="ConvNeXtTiny")
-plot_histogram(relative_errors_small, label="ConvNeXtSmall")
 
-# plt.show()
+def generate_all_plots(predictions, targets):
+    colormaps = {
+        "ResNet50": "viridis_r",
+        "ViT-B16": "plasma_r",
+        "ConvNeXt-Tiny": "viridis_r",
+        "ConvNeXt-Small": "plasma_r"
+    }
+
+    for model_name, config in MODELS_INFO.items():
+        label = model_name
+        key = config["key"]
+        if key not in predictions:
+            print(f"Skipping {label} – no predictions found.")
+            continue
+
+        preds = predictions[key]
+        rel_errors = compute_relative_errors(preds, targets)
+
+        plot_scatter(preds, targets, label=label, cmap=colormaps.get(label, "viridis"))
+        plot_histogram(rel_errors, label=label)
+        print(f"Plots generated for {label}")
+
+
+def main():
+    if os.path.exists(SAVE_PATH):
+        data = np.load(SAVE_PATH, mmap_mode="r")
+        predictions = {
+            "preds_vit": data["preds_vit"],
+            "preds_resnet": data["preds_resnet"],
+            "preds_tiny": data["preds_tiny"],
+            "preds_small": data["preds_small"]
+        }
+        targets = data["targets"]
+        print(f"Loaded cached predictions from {SAVE_PATH}")
+    else:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Load data
+        images = np.load(IMAGES_PATH, mmap_mode="r")["images_filled"]
+        k = np.load(K_PATH, mmap_mode="r")["k"]
+        targets = k.reshape(len(k), -1)
+
+        # Load models and run inference
+        predictions = {}
+        for name, config in MODELS_INFO.items():
+            print(f"Running inference for {name}")
+            model = config["class"](pre_trained=True).eval().to(device)
+            preds = run_inference(model, images, device)
+            predictions[config["key"]] = preds
+
+        np.savez_compressed(SAVE_PATH, **predictions, targets=targets)
+        print(f"Predictions saved to {SAVE_PATH}")
+
+    generate_all_plots(predictions, targets)
+
+
+if __name__ == "__main__":
+    main()

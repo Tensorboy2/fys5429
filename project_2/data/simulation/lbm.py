@@ -9,6 +9,7 @@ def big_LBM(solid, T, force_dir):
     A Lattice Boltzmann simulation.
     This single function inlines equilibrium, collision, streaming,
     bounce-back, and macroscopic updates to optimize njit performance.
+
     
     # Parameters:
     - solid : 2D numpy array (Nx, Ny) of type bool
@@ -19,6 +20,36 @@ def big_LBM(solid, T, force_dir):
     # Returns:
     - u            : 3D numpy array (Nx, Ny, 2) velocity field.
     - k            : Permeability calculated from velocity field and density.
+
+    # Unit conversion:
+    The Following is a conversion of the units to improve numerical stability during simulation:
+    L_phys = 1e-3 m        # Physical domain length (channel width)
+    Nx = 128               # Number of lattice nodes across the domain
+    dx = L_phys / Nx       # Lattice spacing in physical units
+        = 1e-3 m / 128 = 7.8125e-6 m
+
+    nu_phys = 1e-6 m^2/s   # Physical kinematic viscosity (water)
+    g_phys = 9.81 m/s^2    # Physical gravitational acceleration
+
+    Choose lattice viscosity:
+    nu_lat = 0.05          # Chosen for numerical stability (0.01-0.1 typical)
+
+    Compute time step from viscosity scaling:
+    dt = nu_lat * dx^2 / nu_phys
+        = 0.05 * (7.8125e-6)^2 / 1e-6
+        = 3.0517578125e-6 s
+
+    Convert gravity to lattice units:
+    g_lat = g_phys * dt^2 / dx
+            = 9.81 * (3.05176e-6)^2 / 7.8125e-6
+            approx 1.19e-5
+
+    Summary:
+    dx     = 7.8125e-6 m
+    dt     approx 3.05e-6 s
+    nu_lat = 0.05
+    g_lat  approx 1.19e-5
+
     """
     Nx = solid.shape[0]
     Ny = solid.shape[1]

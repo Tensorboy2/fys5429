@@ -448,7 +448,18 @@ def plot_percolation(img, labeled, filled, px, py,name=""):
     
 
 from test import big_LBM
+def run_lbm(img):
+    ux, k_xx, k_xy, t = big_LBM(img, T=10_000, force_dir=0)
+    uy, k_yx, k_yy, t = big_LBM(img, T=10_000, force_dir=1)
+    return np.array([[k_xx, k_xy], [k_yx, k_yy]])
 
+def print_diff(name, k_ref, k_transformed, tol=1e-3):
+    diff = np.abs(k_ref - k_transformed)
+    print(f"\n{name} transformation:")
+    print("Expected:\n", k_ref)
+    print("Got:\n", k_transformed)
+    print("Difference:\n", diff)
+    print("OK ✅" if np.all(diff < tol) else "Mismatch ❌")
 # Example usage
 if __name__ == "__main__":
     # img = np.array([
@@ -503,22 +514,25 @@ if __name__ == "__main__":
     # print("Percolates:", px and py)
     # plot_percolation(img, labeled, filled, px, py,name="_cross")
 
-    img = periodic_binary_blobs(blob_density=0.5, sigma=6.0, shape=(128, 128), seed=9)
+    # img = periodic_binary_blobs(blob_density=0.5, sigma=4.0, shape=(128, 128), seed=9)
+    # ux, k_xx, k_xy, t = big_LBM(img,T=10_000, force_dir=0)
+    # print(f"ran for {t} iterations")
+    # uy, k_yx, k_yy, t = big_LBM(img,T=10_000, force_dir=1)
+    # print(f"ran for {t} iterations")
+    # k = np.array([[k_xx, k_xy],[k_yx,k_yy]])
+    # print(k)
 
-    # img = binary_dilation(img)
 
-    ux, k_xx, k_xy, t = big_LBM(img,T=10_000, force_dir=0)
-    print(f"ran for {t} iterations")
-    plt.subplot(1,2,1)
-    plt.imshow(np.sqrt(ux[:,:,0]**2 + ux[:,:,1]**2))
-    plt.colorbar()
-    ux, k_xx, k_xy, t = big_LBM(img,T=10_000, force_dir=1)
-    print(f"ran for {t} iterations")
-    plt.subplot(1,2,2)
-    plt.imshow(np.sqrt(ux[:,:,0]**2 + ux[:,:,1]**2))
-    plt.colorbar()
 
-    plt.show()
+
+    # plt.subplot(1,2,1)
+    # plt.imshow(np.sqrt(ux[:,:,0]**2 + ux[:,:,1]**2))
+    # plt.colorbar()
+    # plt.subplot(1,2,2)
+    # plt.imshow(np.sqrt(ux[:,:,0]**2 + ux[:,:,1]**2))
+    # plt.colorbar()
+
+    # plt.show()
 
 
     # labeled = label_fluid_periodic(img)
@@ -527,3 +541,28 @@ if __name__ == "__main__":
     # filled = fill_non_percolating_periodic(img,labeled,px,py)
     # print("Percolates:", px and py)
     # plot_percolation(img, labeled, filled, px, py,name="_full_media")
+
+    img = periodic_binary_blobs(blob_density=0.5, sigma=4.0, shape=(128, 128), seed=9)
+    k = run_lbm(img)
+    print("Original permeability tensor:\n", k)
+
+    # --- Rotation matrices ---
+    R90  = np.array([[0, -1], [1, 0]])
+    R180 = np.array([[-1, 0], [0, -1]])
+    R270 = np.array([[0, 1], [-1, 0]])
+    I    = np.eye(2)
+
+    # --- Test transforms ---
+    tests = [
+        ("Rotate 90°",     np.rot90(img, k=1), lambda K: R90.T @ K @ R90),
+        ("Rotate 180°",    np.rot90(img, k=2), lambda K: R180.T @ K @ R180),
+        ("Rotate 270°",    np.rot90(img, k=3), lambda K: R270.T @ K @ R270),
+        ("Flip vertical",  np.flipud(img),     lambda K: np.array([[ K[0,0], -K[0,1]], [-K[1,0], K[1,1]]])),
+        ("Flip horizontal",np.fliplr(img),     lambda K: np.array([[ K[0,0], -K[0,1]], [-K[1,0], K[1,1]]]))
+    ]
+
+    # --- Run tests ---
+    for name, img_t, transform_fn in tests:
+        k_expected = transform_fn(k)
+        k_actual = run_lbm(img_t)
+        print_diff(name, k_expected, k_actual)

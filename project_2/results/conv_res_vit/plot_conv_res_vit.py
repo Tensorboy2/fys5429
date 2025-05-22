@@ -28,10 +28,10 @@ models_info = {
         "file": "ViT_B16_metrics_vit.csv",
         "color": cm.plasma(0.75)
     },
-    # "ResNet50": {
-    #     "file": "resnet50_metrics_conv_res_vit.csv",
-    #     "color": cm.viridis(0.4)
-    # },
+    "ResNet50": {
+        "file": "resnet50_metrics_conv_res_vit.csv",
+        "color": cm.viridis(0.4)
+    },
     "ResNet101": {
         "file": "resnet101_metrics_conv_res_vit.csv",
         "color": cm.viridis(0.7)

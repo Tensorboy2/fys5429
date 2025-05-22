@@ -30,7 +30,9 @@ experiments:
       batch_size: 128 # What the GPU could handel and stable training
       decay: "linear" # Options are ("","linear","cosine")
     data:
-      normalize: false # Does not do anything yet
+      hfli: True # Horizontal flip data augmentation
+      vfli: True # Vertical flip data augmentation
+      rotate: True # Rotation data augmentation
       num_samples: null # null means all data
       test_size: 0.2 # Default
 ```
