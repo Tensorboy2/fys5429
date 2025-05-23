@@ -56,18 +56,16 @@ class CustomDataset(Dataset):
     Gives image, image_filled and label(2 by 2 permeability tensor.)
     '''
     def __init__(self, label_path, image_path, image_filled_path, num_samples = None, transform = None, target_transform=None):
-        self.images = np.load(image_path, mmap_mode='r')['images']
-        self.images_filled = np.load(image_filled_path, mmap_mode='r')['images_filled']
-        self.labels = np.load(label_path, mmap_mode='r')['k']
-        # self.image_path = image_path
-        # self.image_filled_path = image_filled_path
-        # self.label_path = label_path
+        labels_all = np.load(label_path, mmap_mode='r')['k']
+        images_all = np.load(image_path, mmap_mode='r')['images']
+        images_filled_all = np.load(image_filled_path, mmap_mode='r')['images_filled']
 
-        # if num_samples == None:
-        #     with np.load(label_path, mmap_mode='r') as data:
-        #         self.num_samples = data['k'].shape[0]
+        # Limit by num_samples
+        self.num_samples = num_samples or labels_all.shape[0]
+        self.labels = labels_all[:self.num_samples]
+        self.images = images_all[:self.num_samples]
+        self.images_filled = images_filled_all[:self.num_samples]
 
-        self.num_samples = num_samples or self.labels.shape[0]
         self.transform = transform
         self.target_transform = target_transform
     
@@ -129,6 +127,7 @@ def get_data(batch_size = 32,
 
     # Split into train and test sets:
     num_samples = len(dataset)
+    print(f"Num datapoints: {num_samples}")
     train_size = int((1 - test_size) * num_samples)
     test_size = num_samples - train_size
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, test_size])
@@ -152,5 +151,6 @@ def get_data(batch_size = 32,
 
 if __name__ == "__main__":
     print("Getting data...")
-    train_data_loader, test_data_loader = get_data(num_workers=4)
+    train_data_loader, test_data_loader = get_data(num_workers=4,num_samples=4000)
+    print(len(train_data_loader))
     print("Data loaders ready, with lazy loading.")

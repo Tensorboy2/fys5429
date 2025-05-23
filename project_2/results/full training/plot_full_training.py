@@ -51,7 +51,7 @@ for label, info in models_info.items():
 
     # Print max test R2 info
     idx_max = np.argmax(df['test_r2'])
-    print(f"Aug: {label}, test R²: {df['test_r2'][idx_max]:.5f}, train R²: {df['train_r2'][idx_max]:.5f}, "
+    print(f"model: {label}, test R²: {df['test_r2'][idx_max]:.5f}, train R²: {df['train_r2'][idx_max]:.5f}, "
           f"test MSE: {df['test_mse'][idx_max]:.6f}, train MSE: {df['train_mse'][idx_max]:.6f}")
 
 # Custom legend
