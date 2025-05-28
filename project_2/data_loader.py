@@ -43,9 +43,9 @@ class DataAugmentation:
             if angle == 90:
                 K = torch.tensor([Kyy, -Kyx, -Kxy, Kxx])
             elif angle == 180:
-                K = torch.tensor([Kxx, -Kxy, -Kyx, Kyy])
+                K = torch.tensor([Kxx, Kxy, Kyx, Kyy])
             elif angle == 270:
-                K = torch.tensor([Kyy, Kyx, Kxy, Kxx])
+                K = torch.tensor([Kyy, -Kyx, -Kxy, Kxx])
 
         return image, image_filled, K
         

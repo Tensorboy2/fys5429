@@ -92,7 +92,7 @@ class ViT(nn.Module):
             for _ in range(depth)
         ])
         self.norm = nn.LayerNorm(embed_dim)
-        self.head = nn.Linear(embed_dim, num_classes)  # Example: for regression task
+        self.head = nn.Linear(embed_dim, num_classes)
 
     def forward(self, x):
         x = self.patchify(x)  # (B, N, embed_dim)

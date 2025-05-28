@@ -51,6 +51,7 @@ class ResNet(nn.Module):
     def __init__(self, depth=[3,4,6,3], width=[64,256,512,1024,2048], num_classes=1, input_channels=1):
         super().__init__()
         self.name = ""
+        # Define stem:
         self.stem = nn.Sequential(
             nn.Conv2d(input_channels, width[0], kernel_size=9, stride=2, padding=4, padding_mode="circular", bias=False),
             nn.BatchNorm2d(width[0]),
@@ -58,12 +59,13 @@ class ResNet(nn.Module):
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         )
 
-        # Define layers for ResNet-50
+        # Define stages:
         self.stage1 = self._make_stage(width[0], width[1], num_blocks=depth[0], first_stride=1)
         self.stage2 = self._make_stage(width[1], width[2], num_blocks=depth[1])
         self.stage3 = self._make_stage(width[2], width[3], num_blocks=depth[2])
         self.stage4 = self._make_stage(width[3], width[4], num_blocks=depth[3])
 
+        # Define pooling and fully-connected layer:
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Sequential(nn.Linear(width[4], num_classes))
 
