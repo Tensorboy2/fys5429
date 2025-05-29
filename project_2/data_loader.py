@@ -8,38 +8,38 @@ import numpy as np
 path = os.path.dirname(__file__)
 import random
 
-# class DataAugmentation:
-#     '''Data augmentation using 8 fixed image + permeability permutations (D4 group)'''
-#     def __init__(self, hflip=True, vflip=True, rotate=True,):
-#         # Each entry is (image_transform_fn, corresponding K_transform_fn)
-#         self.permutations = [
-#             ('I', lambda img: img, lambda K: K),
-#             ('R', lambda img: tf.rotate(img, 90),
-#                   lambda K: torch.tensor([K[3], -K[2], -K[1], K[0]])),  # 90°
-#             ('RR', lambda img: tf.rotate(img, 180),
-#                    lambda K: torch.tensor([K[0], K[1], K[2], K[3]])),  # 180°
-#             ('RRR', lambda img: tf.rotate(img, 270),
-#                     lambda K: torch.tensor([K[3], -K[2], -K[1], K[0]])),  # 270°
-#             ('H', lambda img: tf.hflip(img),
-#                   lambda K: torch.tensor([K[0], -K[1], -K[2], K[3]])),  # Horizontal flip
-#             ('HR', lambda img: tf.rotate(tf.hflip(img), 90),
-#                    lambda K: torch.tensor([K[3], K[2], K[1], K[0]])),  # H + 90°
-#             ('HRR', lambda img: tf.rotate(tf.hflip(img), 180),
-#                     lambda K: torch.tensor([K[0], -K[1], -K[2], K[3]])),  # H + 180°
-#             ('HRRR', lambda img: tf.rotate(tf.hflip(img), 270),
-#                      lambda K: torch.tensor([K[3], K[2], K[1], K[0]])),  # H + 270°
-#         ]
+class groupAugmentation:
+    '''Data augmentation using 8 fixed image + permeability permutations (D4 group)'''
+    def __init__(self, hflip=True, vflip=True, rotate=True,):
+        # Each entry is (image_transform_fn, corresponding K_transform_fn)
+        self.permutations = [
+            ('I', lambda img: img, lambda K: K),
+            ('R', lambda img: tf.rotate(img, 90),
+                  lambda K: torch.tensor([K[3], -K[2], -K[1], K[0]])),  # 90°
+            ('RR', lambda img: tf.rotate(img, 180),
+                   lambda K: torch.tensor([K[0], K[1], K[2], K[3]])),  # 180°
+            ('RRR', lambda img: tf.rotate(img, 270),
+                    lambda K: torch.tensor([K[3], -K[2], -K[1], K[0]])),  # 270°
+            ('H', lambda img: tf.hflip(img),
+                  lambda K: torch.tensor([K[0], -K[1], -K[2], K[3]])),  # Horizontal flip
+            ('HR', lambda img: tf.rotate(tf.hflip(img), 90),
+                   lambda K: torch.tensor([K[3], K[2], K[1], K[0]])),  # H + 90°
+            ('HRR', lambda img: tf.rotate(tf.hflip(img), 180),
+                    lambda K: torch.tensor([K[0], -K[1], -K[2], K[3]])),  # H + 180°
+            ('HRRR', lambda img: tf.rotate(tf.hflip(img), 270),
+                     lambda K: torch.tensor([K[3], K[2], K[1], K[0]])),  # H + 270°
+        ]
 
-#     def __call__(self, image, image_filled, label):
-#         K = label.clone()
-#         # Randomly choose one of the 8 permutations
-#         _, img_transform, k_transform = random.choice(self.permutations)
+    def __call__(self, image, image_filled, label):
+        K = label.clone()
+        # Randomly choose one of the 8 permutations
+        _, img_transform, k_transform = random.choice(self.permutations)
 
-#         image = img_transform(image)
-#         image_filled = img_transform(image_filled)
-#         K = k_transform(K)
+        image = img_transform(image)
+        image_filled = img_transform(image_filled)
+        K = k_transform(K)
 
-#         return image, image_filled, K
+        return image, image_filled, K
 
 class DataAugmentation:
     '''Data agumentation class for flipping images and flipping label'''
@@ -131,6 +131,7 @@ def get_data(batch_size = 32,
              hflip=True, 
              vflip=True, 
              rotate=True, 
+             group=False,
              num_samples=None, 
              num_workers=4):
     '''
@@ -142,11 +143,14 @@ def get_data(batch_size = 32,
     image_filled_path = os.path.join(path, 'data/images_filled.npz')
     label_path = os.path.join(path, 'data/k.npz')
 
-    hv_flip = DataAugmentation(hflip=hflip, 
+
+    if group:
+        aug = groupAugmentation()
+    else:
+        aug = DataAugmentation(hflip=hflip, 
                                vflip=vflip,
                                rotate=rotate,
                                p=0.5)
-    # aug = DataAugmentation()
 
 
     dataset = CustomDataset(
@@ -154,7 +158,7 @@ def get_data(batch_size = 32,
         image_filled_path=image_filled_path,
         label_path=label_path,
         num_samples=num_samples,
-        transform=hv_flip,
+        transform=aug,
         target_transform=None
     )
 

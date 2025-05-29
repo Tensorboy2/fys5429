@@ -61,6 +61,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
                                                    rotate=data["rotate"],
                                                    hflip=data["hflip"],
                                                    vflip=data["vflip"],
+                                                   group=data["group"],
                                                    num_samples=data["num_samples"])
     start = time.time()
     train(model,

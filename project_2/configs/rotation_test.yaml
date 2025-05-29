@@ -12,6 +12,7 @@ experiments:
       hflip: False
       vflip: False
       rotate: True
+      group: False
       num_samples: null
       test_size: 0.2
 
@@ -28,5 +29,6 @@ experiments:
       hflip: True
       vflip: True
       rotate: True
+      group: False
       num_samples: null
       test_size: 0.2
