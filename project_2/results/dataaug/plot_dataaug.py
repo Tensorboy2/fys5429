@@ -25,9 +25,10 @@ augmentation_variants = {
     "None": "convnextsmall_metrics_dataaugmentation_test.csv",
     "Horizontal Flip": "convnextsmall_hflip_metrics_dataaugmentation_test.csv",
     "Vertical Flip": "convnextsmall_vflip_metrics_dataaugmentation_test.csv",
-    "Rotation": "convnextsmall_rotate_metrics_dataaugmentation_test.csv",
-    "H+V+Rotate": "convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test.csv",
+    "Rotation": "convnextsmall_rotate_metrics_dataaugmentation_test_2.csv",
+    "H+V+Rotate": "convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test_2.csv",
     "H+V Flip": "convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv",
+    "Group": "convnextsmall_group_metrics_dataaugmentation_test.csv",
 }
 
 # Assign distinct colors
