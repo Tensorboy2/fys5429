@@ -154,7 +154,7 @@ def get_data(batch_size = 32,
         image_filled_path=image_filled_path,
         label_path=label_path,
         num_samples=num_samples,
-        transform=aug,
+        transform=hv_flip,
         target_transform=None
     )
 
