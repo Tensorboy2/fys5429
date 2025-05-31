@@ -1,20 +1,4 @@
 experiments:
-  - model: ViT_S4
-    save_path: "vit_s4_metrics_all_vits.csv"
-    hyperparameters:
-      num_epochs: 100
-      lr: 0.0008
-      warmup_steps: 1000
-      weight_decay: 0.1
-      batch_size: 128
-      decay: "cosine"
-    data:
-      hflip: True
-      vflip: True
-      rotate: True
-      group: False
-      num_samples: null
-      test_size: 0.2
   - model: ViT_S8
     save_path: "vit_s8_metrics_all_vits.csv"
     hyperparameters:
