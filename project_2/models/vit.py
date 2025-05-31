@@ -126,20 +126,20 @@ def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_B8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
+def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
     """
-    Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
+    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
     """
     model = ViT(
         image_size=image_size,
         patch_size=patch_size,
-        embed_dim=768,
+        embed_dim=256,
         depth=12,
         num_heads=12,
         mlp_ratio=4,
         num_classes=num_classes
     )
-    model.name = "ViT_B8"
+    model.name = "ViT_T8"
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 
@@ -149,20 +149,21 @@ def ViT_B8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
-def ViT_B4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
+
+def ViT_T4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
     """
-    Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
+    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
     """
     model = ViT(
         image_size=image_size,
         patch_size=patch_size,
-        embed_dim=768,
+        embed_dim=256,
         depth=12,
         num_heads=12,
         mlp_ratio=4,
         num_classes=num_classes
     )
-    model.name = "ViT_B4"
+    model.name = "ViT_T4"
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 
@@ -173,21 +174,20 @@ def ViT_B4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_L16(image_size=128, num_classes=4, pre_trained = False):
+def ViT_S4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
     """
-    Large ViT with 24 layers, 16 heads, 1024 embedding dim, patch size 16
+    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
     """
     model = ViT(
         image_size=image_size,
-        patch_size=16,
-        embed_dim=1024,
-        depth=24,
-        num_heads=16,
+        patch_size=patch_size,
+        embed_dim=512,
+        depth=12,
+        num_heads=12,
         mlp_ratio=4,
         num_classes=num_classes
     )
-    model.name = "ViT_L16"
-
+    model.name = "ViT_S4"
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 
@@ -198,20 +198,20 @@ def ViT_L16(image_size=128, num_classes=4, pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_H16(image_size=128, num_classes=4, pre_trained = False):
+def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
     """
-    Huge ViT with 32 layers, 16 heads, 1280 embedding dim, patch size 16
+    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
     """
     model = ViT(
         image_size=image_size,
-        patch_size=16,
-        embed_dim=1280,
-        depth=32,
-        num_heads=16,
-        num_classes=num_classes,
+        patch_size=patch_size,
+        embed_dim=512,
+        depth=12,
+        num_heads=12,
         mlp_ratio=4,
+        num_classes=num_classes
     )
-    model.name = "ViT_H16"
+    model.name = "ViT_S8"
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
 
@@ -221,6 +221,8 @@ def ViT_H16(image_size=128, num_classes=4, pre_trained = False):
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
+
+
 
 
 if __name__ == "__main__":

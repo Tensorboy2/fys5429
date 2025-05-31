@@ -22,11 +22,11 @@ path = os.path.dirname(__file__)
 
 # Define model variants and files
 models = {
-    "ResNet101": "resnet101_metrics_all_models.csv",
-    "ResNet50": "resnet50_metrics_all_models.csv",
-    "ViT-B16": "vit_b16_metrics_all_models.csv",
-    "ConvNeXtTiny": "convnexttiny_metrics_all_models.csv",
-    "ConvNeXtSmall": "convnextsmall_metrics_all_models.csv",
+    "ResNet101": "resnet101_metrics_all_models_2.csv",
+    "ResNet50": "resnet50_metrics_all_models_2.csv",
+    "ViT-B16": "vit_b16_metrics_all_models_2.csv",
+    "ConvNeXtTiny": "convnexttiny_metrics_all_models_2.csv",
+    "ConvNeXtSmall": "convnextsmall_metrics_all_models_2.csv",
 }
 
 # Assign distinct colors
@@ -66,7 +66,7 @@ legend_elements = [
 plt.legend(handles=legend_elements, fontsize=8, title="Models", frameon=False)
 plt.xlabel("Epochs")
 plt.ylabel(r"$R^2$ Score")
-plt.ylim(0.92, 1)
+plt.ylim(0.95, 1)
 plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()
 plt.savefig(os.path.join(path, "full_training_r2.pdf"), bbox_inches='tight')

@@ -10,7 +10,7 @@ path = os.path.dirname(__file__)
 from train import train
 from models.resnet import ResNet50, ResNet101, ResNet152
 from models.convnext import ConvNeXtTiny, ConvNeXtSmall, ConvNeXtBase, ConvNeXtLarge
-from models.vit import ViT_B16, ViT_B4, ViT_B8, ViT_L16, ViT_H16
+from models.vit import ViT_B16, ViT_T8, ViT_T4, ViT_S4, ViT_S8
 from data_loader import get_data
 
 model_registry = {
@@ -22,10 +22,10 @@ model_registry = {
     "ConvNeXtBase": ConvNeXtBase,
     "ConvNeXtLarge": ConvNeXtLarge,
     "ViT_B16": ViT_B16,
-    "ViT_B4": ViT_B4,
-    "ViT_B8": ViT_B8,
-    "ViT_L16": ViT_L16,
-    "ViT_H16": ViT_H16
+    "ViT_S8": ViT_S8,
+    "ViT_S4": ViT_S4,
+    "ViT_T4": ViT_T4,
+    "ViT_T8": ViT_T8,
 }
 
 def get_model_size(model):
