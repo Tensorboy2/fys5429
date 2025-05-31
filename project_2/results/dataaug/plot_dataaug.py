@@ -26,9 +26,9 @@ augmentation_variants = {
     "Horizontal Flip": "convnextsmall_hflip_metrics_dataaugmentation_test.csv",
     "Vertical Flip": "convnextsmall_vflip_metrics_dataaugmentation_test.csv",
     "Rotation": "convnextsmall_rotate_metrics_dataaugmentation_test_2.csv",
-    "H+V+Rotate": "convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test_2.csv",
+    "H+V+Rotate": "convnextsmall_hflip_vflip_rotate_metrics_dataaugmentation_test_2.csv",
     "H+V Flip": "convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv",
-    "Group": "convnextsmall_group_metrics_dataaugmentation_test.csv",
+    "Group": "convnextsmall_group_dataaugmentation_test.csv",
 }
 
 # Assign distinct colors
@@ -68,7 +68,7 @@ legend_elements = [
 plt.legend(handles=legend_elements, fontsize=8, title="Augmentations", frameon=False)
 plt.xlabel("Epochs")
 plt.ylabel(r"$R^2$ Score")
-plt.ylim(0.92, 1)
+plt.ylim(0.967, 1.001)
 plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()
 plt.savefig(os.path.join(path, "dataaug_r2.pdf"), bbox_inches='tight')
