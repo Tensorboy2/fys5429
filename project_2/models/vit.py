@@ -135,7 +135,7 @@ def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
         patch_size=patch_size,
         embed_dim=256,
         depth=12,
-        num_heads=12,
+        num_heads=8,
         mlp_ratio=4,
         num_classes=num_classes
     )
@@ -159,7 +159,7 @@ def ViT_T4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
         patch_size=patch_size,
         embed_dim=256,
         depth=12,
-        num_heads=12,
+        num_heads=8,
         mlp_ratio=4,
         num_classes=num_classes
     )
@@ -183,7 +183,7 @@ def ViT_S4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
         patch_size=patch_size,
         embed_dim=512,
         depth=12,
-        num_heads=12,
+        num_heads=8,
         mlp_ratio=4,
         num_classes=num_classes
     )
@@ -207,7 +207,7 @@ def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
         patch_size=patch_size,
         embed_dim=512,
         depth=12,
-        num_heads=12,
+        num_heads=8,
         mlp_ratio=4,
         num_classes=num_classes
     )
