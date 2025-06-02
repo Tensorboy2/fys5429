@@ -7,7 +7,6 @@ path = os.path.dirname(__file__)
 import matplotlib as mpl
 
 mpl.rcParams.update({
-    # "text.usetex": True,  # Requires LaTeX installed
     "font.family": "serif",
     "font.size": 9,
     "axes.labelsize": 9,
@@ -38,26 +37,6 @@ components = {
     "k_yy": k_11
 }
 
-# Optional: Apply smoothing (rolling mean)
-window = 200  # Adjust as needed
-components_smoothed = {
-    name: pd.Series(data).rolling(window, center=True).mean()
-    for name, data in components.items()
-}
-
-# Create a figure for line plots
-# plt.figure(figsize=(12, 6))
-# for name, smoothed in components_smoothed.items():
-#     plt.plot(smoothed, label=f"{name} (smoothed)")
-# plt.title("Smoothed Line Plot of k_ij Components")
-# plt.xlabel("Sample Index")
-# plt.ylabel("Value")
-# plt.legend()
-# plt.grid(True)
-# plt.tight_layout()
-# plt.show()
-
-# Create histograms:
 plt.figure(figsize=(6.4, 6.4))
 for i, (name, data) in enumerate(components.items(), 1):
     plt.subplot(2, 2, i)
@@ -67,5 +46,5 @@ for i, (name, data) in enumerate(components.items(), 1):
     plt.ylabel("Count")
 plt.tight_layout()
 plt.savefig(os.path.join(path,"permeability_distribution.pdf"))
-plt.show()
+# plt.show()
 

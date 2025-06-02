@@ -85,7 +85,7 @@ for label, info in models_info.items():
 # Legend again
 plt.legend(handles=legend_elements, fontsize=8, title="Augmentations", frameon=False)
 plt.xlabel("Epochs")
-plt.ylabel("MSE")
+plt.ylabel("MSE (Lattice Units)")
 plt.yscale("log")
 plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()

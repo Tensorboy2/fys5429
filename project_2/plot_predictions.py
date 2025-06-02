@@ -7,19 +7,21 @@ import matplotlib as mpl
 
 mpl.rcParams.update({
     "font.family": "serif",
-    "font.size": 12,
-    "axes.labelsize": 12,
-    "xtick.labelsize": 12,
-    "ytick.labelsize": 12,
-    "legend.fontsize": 12,
+    "font.size": 9,
+    "axes.labelsize": 9,
+    "xtick.labelsize": 8,
+    "ytick.labelsize": 8,
+    "legend.fontsize": 8,
 })
+
+sns.set_theme(style="whitegrid")
 
 from models.resnet import ResNet50, ResNet101
 from models.vit import ViT_B16
 from models.convnext import ConvNeXtTiny, ConvNeXtSmall
 
 ROOT = os.path.dirname(__file__)
-SAVE_PATH = os.path.join(ROOT, "plots/prediction_plots/predictions.npz")
+SAVE_PATH = os.path.join(ROOT, "results/prediction_plots/predictions.npz")
 IMAGES_PATH = os.path.join(ROOT, "data/images_filled.npz")
 K_PATH = os.path.join(ROOT, "data/k.npz")
 
@@ -58,43 +60,45 @@ def run_inference(model, images, device):
     return np.array(preds)
 
 def plot_scatter(preds, targets, label, cmap):
-    fig, axes = plt.subplots(2, 2, figsize=(6.4, 6.4))
+    plt.figure(figsize=(6.4, 6.4))
     for i in range(4):
-        ax = axes[i // 2, i % 2]
+        plt.subplot(2, 2, i + 1)
+        
         error = np.abs(preds[:, i] - targets[:, i])
         sns.scatterplot(
             x=targets[:, i], y=preds[:, i], hue=error,
-            palette=cmap, s=10, alpha=0.6, legend=False, ax=ax
+            palette=cmap, s=10, alpha=0.6, legend=False
         )
         min_val = min(targets[:, i].min(), preds[:, i].min())
         max_val = max(targets[:, i].max(), preds[:, i].max())
-        ax.plot([min_val, max_val], [min_val, max_val], 'r--', lw=1)
-        ax.set_xlabel("Actual")
-        ax.set_ylabel("Predicted")
-        ax.set_title(f"$k_{{{i // 2}{i % 2}}}$")
-        ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
+        plt.plot([min_val, max_val], [min_val, max_val], 'r--', lw=1)
+        plt.xlabel("Actual")
+        plt.ylabel("Predicted")
+        plt.title(f"$k_{{{i // 2}{i % 2}}}$")
+        plt.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(ROOT, "plots/prediction_plots", f"similarity_plot_{label}.pdf"), bbox_inches='tight')
+    plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"similarity_plot_{label}.pdf"))
     plt.close()
 
 
 def plot_histogram(relative_errors, label):
-    fig, axes = plt.subplots(2, 2, figsize=(6.4, 6.4))
+    plt.figure(figsize=(6.4, 6.4))
     for i in range(4):
-        ax = axes[i // 2, i % 2]
+        plt.subplot(2, 2, i + 1)
+        
         sns.histplot(
             relative_errors[:, i], kde=True, stat="density", bins=40,
-            color="C0", alpha=0.7, ax=ax
+            color="C0", alpha=0.7
         )
-        ax.axvline(0, color='black', linestyle='--', linewidth=1)
-        ax.set_xlabel(r"$R$")
-        ax.set_ylabel("Density")
-        ax.set_title(f"$k_{{{i // 2}{i % 2}}}$")
-        ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
+        plt.axvline(0, color='black', linestyle='--', linewidth=1)
+        plt.xlabel(r"$R$")
+        plt.ylabel("Density")
+        plt.title(f"$k_{{{i // 2}{i % 2}}}$")
+        plt.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(ROOT, "plots/prediction_plots", f"histogram_{label}.pdf"), bbox_inches='tight')
+    plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"histogram_{label}.pdf"))
     plt.close()
 
 

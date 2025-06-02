@@ -32,7 +32,7 @@ models = {
         "14000": "convnextsmall_14000_metrics_diff_num_datapoints.csv",
         "16000": "convnextsmall_16000_metrics_diff_num_datapoints.csv",
         "18000": "convnextsmall_18000_metrics_diff_num_datapoints.csv",
-        "20000": "convnextsmall_metrics_all_models.csv",
+        "20000": "convnextsmall_metrics_all_models_2.csv",
     },
     "ConvNeXtTiny": { 
         "2000": "convnexttiny_2000_metrics_diff_num_datapoints.csv",
@@ -44,7 +44,7 @@ models = {
         "14000": "convnexttiny_14000_metrics_diff_num_datapoints.csv",
         "16000": "convnexttiny_16000_metrics_diff_num_datapoints.csv",
         "18000": "convnexttiny_18000_metrics_diff_num_datapoints.csv",
-        "20000": "convnexttiny_metrics_all_models.csv",
+        "20000": "convnexttiny_metrics_all_models_2.csv",
     },
 }
 
@@ -133,7 +133,7 @@ for i, (model_name, runs) in enumerate(model_data.items()):
 
     ax.legend(handles=legend_lines, title=model_name, frameon=True)
     ax.set_xlabel("Epochs")
-    ax.set_ylabel("MSE")
+    ax.set_ylabel("MSE (Lattice Units)")
     ax.set_yscale("log")
     ax.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.tight_layout()
@@ -195,7 +195,7 @@ sns.scatterplot(
 #     plt.plot(x_fit, y_fit, linestyle="--", label=f"{model} Fit (R²={r_value**2:.3f})", color=df_model["color"].iloc[0])
 
 # Labels & save
-plt.ylabel(r"$R^2$")
+plt.ylabel(r"$R^2$ Score")
 plt.xlabel("Num Datapoints")
 plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
 plt.legend(fontsize=8, frameon=False)
