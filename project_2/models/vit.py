@@ -1,4 +1,11 @@
-"""Module for Vision Transformer"""
+"""
+vit.py
+
+This module implements the Vision Transformer architecture in PyTorch.
+The model is split into Patchify and Attention- and MLP-components, which is combined into Transformer blocks.
+
+Specific architectures with optional pretrain loading for ViT-B16 is included as a function.
+"""
 import torch
 import torch.nn as nn
 torch.manual_seed(0)
@@ -7,7 +14,12 @@ path = os.path.dirname(__file__)
 
 class Attention(nn.Module):
     """
-    Standard Self-Attention layer.
+    Multi-head self-attention Mechanism.
+
+    # Parameters:
+    - embed_dim (int): Total embedding dimension.
+    - num_heads (int): Number of attention heads.
+    - dropout (float): Dropout rate attention weights and output projection.
     """
     def __init__(self, embed_dim, num_heads=8, dropout=0.0):
         super().__init__()
@@ -24,15 +36,12 @@ class Attention(nn.Module):
 
     def forward(self, x):
         B, N, C = x.shape  # Batch, Sequence (patches), Channels
-
         qkv = self.qkv(x)  # (B, N, 3*C)
         qkv = qkv.reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # Each is (B, num_heads, N, head_dim)
-
         attn = (q @ k.transpose(-2, -1)) * self.scale  # (B, num_heads, N, N)
         attn = attn.softmax(dim=-1)
         attn = self.attn_drop(attn)
-
         out = attn @ v  # (B, num_heads, N, head_dim)
         out = out.transpose(1, 2).reshape(B, N, C)  # (B, N, embed_dim)
         out = self.proj(out)
@@ -79,6 +88,18 @@ class Patchify(nn.Module):
         return x
 
 class ViT(nn.Module):
+    '''
+    Vision transformer backbone.
+
+    # Parameters:
+    - image_size (int): Size of input image.
+    - patch_size (int): Size of patches to split the image into.
+    - embed_dim (int): Dimension of patch embeddings.
+    - depth (int): Number of Transformer blocks.
+    - num_heads (int): Number of attention heads.
+    - mlp_ration (int): Expansion factor in MLP layers.
+    - dropout (float): Dropout rate.
+    '''
     def __init__(self, image_size, patch_size, embed_dim, depth, num_heads, mlp_ratio, num_classes, dropout=0.0):
         super().__init__()
         self.name = ""
@@ -96,7 +117,7 @@ class ViT(nn.Module):
 
     def forward(self, x):
         x = self.patchify(x)  # (B, N, embed_dim)
-        x = x + self.pos_embed
+        x = x + self.pos_embed # Add positional embedding to patch tokens
         x = self.encoder(x)
         x = self.norm(x)
         x = x.mean(dim=1)  # Global average pooling over patches
@@ -105,6 +126,15 @@ class ViT(nn.Module):
 def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained = False):
     """
     Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
+
+    # Parameters:
+    - image_size (int): Input image size.
+    - num_classes (int): Number of output classes.
+    - patch_size (int): Size of patch.
+    - pre_trained (bool): wether oor not to look for existing model weights.
+
+    # Returns.
+    - ViT: A ViT-B16 model instance.
     """
     model = ViT(
         image_size=image_size,
@@ -126,109 +156,10 @@ def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
-    """
-    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
-    """
-    model = ViT(
-        image_size=image_size,
-        patch_size=patch_size,
-        embed_dim=256,
-        depth=12,
-        num_heads=8,
-        mlp_ratio=4,
-        num_classes=num_classes
-    )
-    model.name = "ViT_T8"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
-
-        if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path, map_location="cpu")
-            model.load_state_dict(state_dict)
-        else:
-            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
-    return model
-
-def ViT_T4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
-    """
-    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
-    """
-    model = ViT(
-        image_size=image_size,
-        patch_size=patch_size,
-        embed_dim=256,
-        depth=12,
-        num_heads=8,
-        mlp_ratio=4,
-        num_classes=num_classes
-    )
-    model.name = "ViT_T4"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
-
-        if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path, map_location="cpu")
-            model.load_state_dict(state_dict)
-        else:
-            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
-    return model
-
-def ViT_S4(image_size=128, num_classes=4, patch_size=4, pre_trained = False):
-    """
-    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
-    """
-    model = ViT(
-        image_size=image_size,
-        patch_size=patch_size,
-        embed_dim=512,
-        depth=12,
-        num_heads=8,
-        mlp_ratio=4,
-        num_classes=num_classes
-    )
-    model.name = "ViT_S4"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
-
-        if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path, map_location="cpu")
-            model.load_state_dict(state_dict)
-        else:
-            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
-    return model
-
-def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained = False):
-    """
-    Base ViT with 12 layers, 12 heads, 256 embedding dim, patch size 16
-    """
-    model = ViT(
-        image_size=image_size,
-        patch_size=patch_size,
-        embed_dim=512,
-        depth=12,
-        num_heads=8,
-        mlp_ratio=4,
-        num_classes=num_classes
-    )
-    model.name = "ViT_S8"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
-
-        if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path, map_location="cpu")
-            model.load_state_dict(state_dict)
-        else:
-            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
-    return model
-
-
-
-
 if __name__ == "__main__":
-    x = torch.rand((2, 1, 128, 128))
-    # model = ViT(image_size=128, patch_size=16, embed_dim=512, depth=12, num_heads=8, mlp_ratio=4)
-    model = ViT_B16(pre_trained=True)
-    out = model(x)
-    print(out.shape)  # Should be (2, 1)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(device)
+    x = torch.randn((3,1,128,128)).to(device)
+    model = ViT_B16().to(device)
+    # print(model)
     print(model(x).cpu().detach().numpy())

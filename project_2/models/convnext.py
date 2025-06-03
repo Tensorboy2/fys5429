@@ -1,9 +1,19 @@
+'''
+convnext.py
+
+This module implements the ConvNeXt architecture in PyTorch.
+The 
+'''
 import torch
 import torch.nn as nn
 torch.manual_seed(0)
-
+import os
+path = os.path.dirname(__file__)
 
 class ConvNeXtBlock(nn.Module):
+    '''
+    
+    '''
     def __init__(self, dim, expansion=4):
         super().__init__()
         self.dwconv = nn.Conv2d(dim, dim, kernel_size=7, padding=3, groups=dim)
@@ -25,6 +35,9 @@ class ConvNeXtBlock(nn.Module):
 
 
 class ConvNeXtStage(nn.Module):
+    '''
+    
+    '''
     def __init__(self, in_dim, out_dim, depth):
         super().__init__()
         self.downsample = nn.Sequential(
@@ -45,6 +58,9 @@ class ConvNeXtStage(nn.Module):
 
 
 class ConvNeXt(nn.Module):
+    '''
+    
+    '''
     def __init__(self,dims = [96, 192, 384, 768],depths = [3, 3, 9, 3], in_channels=1, num_classes=4):
         super().__init__()
         self.name = ""
@@ -67,10 +83,10 @@ class ConvNeXt(nn.Module):
         )
 
     def forward(self, x):
-        x = self.stem[0](x)               # patchify conv
-        x = x.permute(0, 2, 3, 1)
-        x = self.stem[1](x)               # layernorm
-        x = x.permute(0, 3, 1, 2)
+        x = self.stem[0](x)
+        x = x.permute(0, 2, 3, 1) # permutation to fit LayerNorm
+        x = self.stem[1](x)
+        x = x.permute(0, 3, 1, 2) # permutation back.
 
         x = self.stage1(x)
         x = self.stage2(x)
@@ -79,10 +95,11 @@ class ConvNeXt(nn.Module):
 
         return self.head(x)
 
-import os
-path = os.path.dirname(__file__)
 
 def ConvNeXtTiny(pre_trained = False):
+    '''
+    
+    '''
     model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 9, 3])
     model.name = "ConvNeXtTiny"
 
@@ -98,6 +115,9 @@ def ConvNeXtTiny(pre_trained = False):
     return model
 
 def ConvNeXtSmall(pre_trained = False):
+    '''
+    
+    '''
     model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 27, 3])
     model.name = "ConvNeXtSmall"
 
@@ -112,41 +132,10 @@ def ConvNeXtSmall(pre_trained = False):
     
     return model
 
-def ConvNeXtBase(pre_trained = False):
-    model = ConvNeXt(dims = [128, 256, 512, 1024],depths = [3, 3, 27, 3])
-    model.name = "ConvNeXtBase"
-
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
-
-        if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path, map_location="cpu")
-            model.load_state_dict(state_dict)
-        else:
-            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
-    
-    return model
-
-def ConvNeXtLarge(pre_trained = False):
-    model = ConvNeXt(dims = [192, 384, 768, 1536],depths = [3, 3, 27, 3])
-    model.name = "ConvNeXtLarge"
-
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
-
-        if os.path.exists(weights_path):
-            state_dict = torch.load(weights_path, map_location="cpu")
-            model.load_state_dict(state_dict)
-        else:
-            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
-    
-    return model
-
-
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
     x = torch.randn((3,1,128,128)).half().to(device)
-    model = ConvNeXtLarge().half().to(device)
-    print(model)
+    model = ConvNeXtSmall().half().to(device)
+    # print(model)
     print(model(x).cpu().detach().numpy())
