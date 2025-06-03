@@ -1,3 +1,8 @@
+'''
+plot_diff_num_datapoints.py
+
+Module for plotting the R^2 accuracy, the mean square error and the max R^2 for different dataset sizes.
+'''
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -5,6 +10,7 @@ import seaborn as sns
 import os
 from matplotlib.lines import Line2D
 import matplotlib as mpl
+path = os.path.dirname(__file__)
 
 mpl.rcParams.update({
     "font.family": "serif",
@@ -17,7 +23,6 @@ mpl.rcParams.update({
 
 sns.set_theme(style="whitegrid")
 
-path = os.path.dirname(__file__)
 
 models = {
     "ConvNeXtSmall": { 
@@ -74,7 +79,6 @@ for model_name, files in models.items():
 
 # Plot R^2:
 plt.figure(figsize=(6.4, 6.4))
-
 for i, (model_name, runs) in enumerate(model_data.items()):
     ax = plt.subplot(1, 2, i + 1)
     legend_lines = []
@@ -91,24 +95,17 @@ for i, (model_name, runs) in enumerate(model_data.items()):
         # Store legend handles for datapoints:
         legend_lines.append(Line2D([0], [0], color=color, lw=2, label=f"{datapoints}"))
 
-        # Print stats
-        idx_max = np.argmax(df['test_r2'])
-        print(f"model: {model_name}, datapoints: {datapoints}, "
-              f"test R²: {df['test_r2'][idx_max]:.5f}, train R²: {df['train_r2'][idx_max]:.5f}, "
-              f"test MSE: {df['test_mse'][idx_max]:.6f}, train MSE: {df['train_mse'][idx_max]:.6f}")
-
     ax.legend(handles=legend_lines, title=model_name, frameon=True)
     ax.set_xlabel("Epochs")
     ax.set_ylabel(r"$R^2$ Score")
     ax.set_ylim(0.92, 1)
     ax.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
-
 plt.tight_layout()
 plt.savefig(os.path.join(path, "diff_num_datapoints_r2.pdf"), bbox_inches='tight')
 
+
 # Plot MSE:
 plt.figure(figsize=(6.4, 6.4))
-
 for i, (model_name, runs) in enumerate(model_data.items()):
     ax = plt.subplot(1, 2, i + 1)
     legend_lines = []
@@ -132,13 +129,9 @@ plt.tight_layout()
 plt.savefig(os.path.join(path, "diff_num_datapoints_mse.pdf"), bbox_inches='tight')
 
 
-
-
-# Plot regression:
-# Initialize list for collecting all rows
+# Plot max R^2 for each dataset size:
 data_records = []
-
-# Collect all data points into a list of dicts
+# Collect all data points into a list of dicts:
 for model_name, runs in model_data.items():
     for run in runs:
         df = run["df"]

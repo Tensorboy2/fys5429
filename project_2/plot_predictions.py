@@ -49,6 +49,9 @@ MODELS_INFO = {
 }
 
 def run_inference(model, images, device):
+    '''
+    Runs inference on all samples in the datasets and returns its predicted values.
+    '''
     preds = []
     with torch.no_grad():
         for i, img in enumerate(images):
@@ -60,6 +63,9 @@ def run_inference(model, images, device):
     return np.array(preds)
 
 def plot_scatter(preds, targets, label, cmap):
+    '''
+    Similarity plot for model inference.
+    '''
     plt.figure(figsize=(6.4, 6.4))
     for i in range(4):
         plt.subplot(2, 2, i + 1)
@@ -83,6 +89,9 @@ def plot_scatter(preds, targets, label, cmap):
 
 
 def plot_histogram(relative_errors, label):
+    '''
+    Histogram of relative error in the prediction vs. target values.
+    '''
     plt.figure(figsize=(6.4, 6.4))
     for i in range(4):
         plt.subplot(2, 2, i + 1)
@@ -131,6 +140,10 @@ def generate_all_plots(predictions, targets):
 
 
 def main():
+    '''
+    If the prediction.npz does not exists, then inference is run and then plotted. 
+    If it exists then inference is skipped. 
+    '''
     if os.path.exists(SAVE_PATH):
         data = np.load(SAVE_PATH, mmap_mode="r")
         predictions = {
