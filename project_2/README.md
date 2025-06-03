@@ -9,10 +9,20 @@ This project contains three main parts:
 ## Data
 The data folder of this project contains the full process of generating the required dataset for training the models. 
 The first code: **make_images.py** uses the modified binary\_blobs function with a percolation check to generate synthetic 2D periodic porous media. 
+```bash
+python3 data/data_generation/make_images.py
+```
 
 The next step is: **data_pipeline.py**, which uses **simulation/lbm.py** to execute the Lattice-Boltzmann simulations on the generated domains.
+```bash
+mpirun -np 8 data/data_pipeline.py
+```
 The data generated can be converted manually to **.npz** format for faster transfer to remotes or clusters.
 *images.npz*, *images\_filled.npz* and *k.npz* are required for the data loader so this must be made manually.
+Configure the folder that needs to be read to npz and then run:
+```bash
+python3 data/convert_to_npz.py
+```
 
 ## Training
 To reproduce the training done in the project there are 3 runs within **configs/**:
@@ -33,8 +43,8 @@ experiments:
       batch_size: 128 # What the GPU could handel and stable training
       decay: "cosine" # Options are ("","linear","cosine")
     data:
-      hfli: True # Horizontal flip data augmentation
-      vfli: True # Vertical flip data augmentation
+      hflip: True # Horizontal flip data augmentation
+      vflip: True # Vertical flip data augmentation
       rotate: True # Rotation data augmentation
       group: False # Group based agumentation (If True, overrides other augmentations)
       num_samples: null # null means all data
