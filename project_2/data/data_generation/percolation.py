@@ -1,3 +1,8 @@
+'''
+percolation.py
+
+This module contains the functionality to generate the images and check the percolation.
+'''
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter, label, binary_dilation

@@ -1,3 +1,8 @@
+'''
+convert_to_npz.py
+
+Module for converting folders to npz format.
+'''
 import numpy as np
 import os
 from tqdm import tqdm
