@@ -43,7 +43,7 @@ def porous_media_generation(num_img=1, img_size=128, porosity_range=[0.1,0.5], s
 
 
 def compute_porosity(blobs):
-    # Assuming pore space is False
+    # pore space is False
     return 1-np.sum(blobs)/blobs.shape[-1]**2
 
 def demo():

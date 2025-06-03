@@ -13,9 +13,9 @@ The first code: **make_images.py** uses the modified binary\_blobs function with
 python3 data/data_generation/make_images.py
 ```
 
-The next step is: **data_pipeline.py**, which uses **simulation/lbm.py** to execute the Lattice-Boltzmann simulations on the generated domains.
+The next step is: **data_pipeline_2.py**, which uses **simulation/lbm.py** to execute the Lattice-Boltzmann simulations on the generated domains.
 ```bash
-mpirun -np 8 data/data_pipeline.py
+mpirun -np 8 data/data_pipeline_2.py
 ```
 The data generated can be converted manually to **.npz** format for faster transfer to remotes or clusters.
 *images.npz*, *images\_filled.npz* and *k.npz* are required for the data loader so this must be made manually.
