@@ -102,7 +102,7 @@ def plot_percolation_results(original, labeled, filled, percolates_x, percolates
 
 
 def main():
-    # Example: switch between blob or cross image here
+    # Switch between blob or cross image here:
     img = generate_cross_channels(shape=(128, 128), width=30)
     # img = generate_periodic_blobs(shape=(128, 128), density=0.5, sigma=2.0, seed=9)
 

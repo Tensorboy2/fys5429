@@ -1,4 +1,10 @@
-'''Training module.'''
+'''
+train.py
+
+Module for training Pytorch models.
+
+Includes a training function and a torch jited R^2 score function. 
+'''
 import torch
 import torch.optim as op
 import pandas
@@ -10,7 +16,14 @@ from torch.amp import autocast, GradScaler
 @torch.jit.script
 def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
     """
-    Jit'ed rd score function
+    Jit'ed R^2 score function
+    
+    # Parameters:
+    - y_true (torch.Tensor): Target values.
+    - y_pred (torch.Tensor): Predicted values.
+
+    # Returns:
+    - r2 (torch.Tensor): R^2 score based on target and prediction.
     """
     y_true = y_true.view(-1)
     y_pred = y_pred.view(-1)
@@ -19,7 +32,7 @@ def r2_score_torch(y_true: torch.Tensor, y_pred: torch.Tensor) -> torch.Tensor:
     ss_tot = torch.sum((y_true - mean_y_true) ** 2)
     ss_res = torch.sum((y_true - y_pred) ** 2)
     
-    # Prevent divide by zero
+    # Prevent divide by zero:
     if ss_tot < 1e-8:
         return torch.tensor(0.0, device=y_true.device)
     
@@ -41,8 +54,23 @@ def train(model = None,
           use_amp=True):
     '''
     Training function.
-    Performs adams optimization to model on train data loader and predicts on test data loader.
-    Returns metrics from training.
+    Performs AdamW optimization to model on train data loader and predicts on test data loader.
+    Saves metrics from training.
+
+    # Parameters:
+    - model (torch.nn.Module): Instance of trainable model.
+    - optimizer (torch.optim): Optimizer instance.
+    - test_data_loader (torch.utils.data.DataLoader): Instance of the test data loader.
+    - num_epochs (int): Number of training epochs.
+    - device (string/torch.device): Hardware dependent: cuda if available
+    - save_path (string): Path to save training metrics.
+    - warmup_steps (int): Number of steps in warmup period.
+    - decay (string): Type of Learning rate decay: 
+        - "" : no decay 
+        - "linear" : linear decay 
+        - "cosine" : cosine decay 
+    - save_model_path (None): Path to store model state dict.
+    - use_amp (bool): Whether to use half precision or not.
     '''
     metrics = {
         "epoch": [],
@@ -77,6 +105,7 @@ def train(model = None,
 
     scheduler = op.lr_scheduler.LambdaLR(optimizer,lr_lambda)
 
+    # Scaler to Half precision:
     scaler = GradScaler(enabled=use_amp)
 
     for epoch in range(num_epochs):
@@ -100,7 +129,7 @@ def train(model = None,
                 loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
 
             scaler.scale(loss).backward() # Calculate gradients
-            scaler.step(optimizer) # Update weights (Torch might warn that lr.step should be called after optimizer.step, but it just does not see scaler.step, so this is ok.)
+            scaler.step(optimizer) # Update weights (Torch might warn that lr.step should be called after optimizer.step, but it does not see scaler.step, so this is ok.)
             scaler.update()
 
             running_train_loss += loss.item()
@@ -109,8 +138,7 @@ def train(model = None,
 
             scheduler.step()
 
-            # print(f"Batch {batch_idx + 1}/{num_batches} | Loss: {loss.item():.4f} | ", flush=True)
-            
+            # Gpu memory management:
             del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
             torch.cuda.empty_cache()
 
@@ -149,6 +177,7 @@ def train(model = None,
         metrics["train_r2"].append(epoch_train_r2)
         metrics["test_r2"].append(epoch_test_r2)
 
+        # Checkpoint model with lowest test mse.
         if (epoch_test_mse<best_test_mse):
             '''Save best performing model:'''
             best_test_mse = epoch_test_mse

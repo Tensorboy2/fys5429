@@ -13,6 +13,7 @@ from models.convnext import ConvNeXtTiny, ConvNeXtSmall
 from models.vit import ViT_B16
 from data_loader import get_data
 
+# Available models:
 model_registry = {
     "ResNet50": ResNet50,
     "ResNet101": ResNet101,
@@ -22,6 +23,7 @@ model_registry = {
 }
 
 def get_model_size(model):
+    '''For logging the memory usage of the model.'''
     param_size = 0
     for param in model.parameters():
         param_size += param.nelement() * param.element_size()
@@ -32,6 +34,11 @@ def get_model_size(model):
     return size_all_mb
 
 def main(model, hyperparameters, data, save_path="metrics.csv"):
+    '''
+    Main function of Project 2. 
+
+    Executes model instance, data loading, training and saving of metrics.
+    '''
     num_epochs = hyperparameters["num_epochs"]
     lr = hyperparameters["lr"]
     warmup_steps = hyperparameters["warmup_steps"]
@@ -39,16 +46,16 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
     batch_size = hyperparameters["batch_size"]
     decay = hyperparameters["decay"]
 
-    torch.cuda.empty_cache() # Make available space
+    torch.cuda.empty_cache() # Make available space.
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Check if gpu is available.
 
     print(f"Device: {device}")
     optimizer = optim.AdamW(params = model.parameters(),
                              lr = lr, 
-                             weight_decay=weight_decay)
+                             weight_decay=weight_decay) # AdamW for decoupled weight decay.
     model.to(device)
-    print(model.name)
+    print(model.name) # Print model to log current model in training.
     train_data_loader, test_data_loader = get_data(batch_size=batch_size,
                                                    test_size=data["test_size"],
                                                    rotate=data["rotate"],
@@ -80,7 +87,6 @@ if __name__ == '__main__':
     with open(args.config_file, "r") as f:
         config = yaml.safe_load(f)
 
-    # result_dir = config["result_dir"]
     for exp in config["experiments"]:
         model_name = exp["model"]
         model_class = model_registry[model_name]
@@ -89,6 +95,7 @@ if __name__ == '__main__':
 
         main(model, exp["hyperparameters"], exp["data"], save_path=exp["save_path"])
 
+        # Memory management for gpu:
         del model
         torch.cuda.empty_cache()
         torch.cuda.ipc_collect()

@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 import torch
 import torchvision.transforms.functional as tf
 import os
-import pandas as pd
+import multiprocessing
 import numpy as np
 path = os.path.dirname(__file__)
 import random
@@ -87,8 +87,9 @@ class CustomDataset(Dataset):
     '''
     Custom dataset for lazy loading with torch data_loader.
     Gives image, image_filled and label(2 by 2 permeability tensor.)
+    Applies given transform using Data augmentation classes
     '''
-    def __init__(self, label_path, image_path, image_filled_path, num_samples = None, transform = None, target_transform=None):
+    def __init__(self, label_path, image_path, image_filled_path, num_samples = None, transform = None):
         labels_all = np.load(label_path, mmap_mode='r')['k']
         images_all = np.load(image_path, mmap_mode='r')['images']
         images_filled_all = np.load(image_filled_path, mmap_mode='r')['images_filled']
@@ -100,7 +101,6 @@ class CustomDataset(Dataset):
         self.images_filled = images_filled_all[:self.num_samples]
 
         self.transform = transform
-        self.target_transform = target_transform
     
     def __len__(self):
         return self.num_samples
@@ -110,21 +110,21 @@ class CustomDataset(Dataset):
         image_filled = torch.from_numpy(self.images_filled[idx]).float().unsqueeze(0)
         label = torch.from_numpy(self.labels[idx].flatten()).float()  # shape: (2, 2)
 
-        # with np.load(self.image_path, mmap_mode='r') as f_img:
-        #     image = torch.from_numpy(f_img['images'][idx]).float().unsqueeze(0)
-        # with np.load(self.image_filled_path, mmap_mode='r') as f_imgf:
-        #     image_filled = torch.from_numpy(f_imgf['images_filled'][idx]).float().unsqueeze(0)
-        # with np.load(self.label_path, mmap_mode='r') as f_label:
-        #     label = torch.from_numpy(f_label['k'][idx].flatten()).float()
-
         if self.transform:
             image, image_filled, label = self.transform(image, image_filled, label)
-        if self.target_transform:
-            label = self.target_transform(label)
 
         return image, image_filled, label
 
-
+def get_available_workers():
+    """
+    Determine how many workers are truly available.
+    This is especially important if slurm limits number of CPUs.
+    """
+    slurm_cpus = os.environ.get("SLURM_CPUS_PER_TASK")
+    if slurm_cpus:
+        return int(slurm_cpus)
+    else:
+        return multiprocessing.cpu_count()
 
 def get_data(batch_size = 32,
              test_size=0.2, 
@@ -133,11 +133,23 @@ def get_data(batch_size = 32,
              rotate=True, 
              group=False,
              num_samples=None, 
-             num_workers=4):
+             num_workers=None):
     '''
     Function for getting data and turning them into the train and test loader.
     Optional: normalization, grid search size, mask outliers.
     '''
+
+    # Set up num workers for DataLoaders:
+    available_cpus = get_available_workers()
+    if num_workers is not None:
+        if num_workers > available_cpus:
+            print(f"Requested {num_workers} workers, but only {available_cpus} available. Using {available_cpus}.")
+        num_workers = min(num_workers, available_cpus)
+        print(f"Using {num_workers} available workers.")
+    else:
+        num_workers = available_cpus
+        print(f"Using {num_workers} available workers.")
+
     # Paths:
     image_path = os.path.join(path, 'data/images.npz')
     image_filled_path = os.path.join(path, 'data/images_filled.npz')
@@ -159,7 +171,6 @@ def get_data(batch_size = 32,
         label_path=label_path,
         num_samples=num_samples,
         transform=aug,
-        target_transform=None
     )
 
 
@@ -190,5 +201,6 @@ def get_data(batch_size = 32,
 if __name__ == "__main__":
     print("Getting data...")
     train_data_loader, test_data_loader = get_data(num_workers=4,num_samples=4000)
-    print(len(train_data_loader))
+    print(f"Len train loader: {len(train_data_loader)}")
+    print(f"Len ttest loader: {len(test_data_loader)}")
     print("Data loaders ready, with lazy loading.")
