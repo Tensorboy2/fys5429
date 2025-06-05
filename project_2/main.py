@@ -1,3 +1,9 @@
+'''
+main.py
+
+The main program of project 2. 
+The program runs training of PyTorch models defined in in the "configs" folder.
+'''
 import torch
 import torch.nn as nn
 torch.manual_seed(0)

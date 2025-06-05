@@ -1,5 +1,6 @@
 # Project 2
 ## By Sigurd Vargdal
+This project aims to compare deep learning architectures on predicting permeability from a 2D porous medium. Architectures include ResNet, ViT and ConvNeXt.
 
 This project contains three main parts:
 - Data

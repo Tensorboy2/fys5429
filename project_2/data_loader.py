@@ -1,5 +1,7 @@
-from torch.utils.data import DataLoader, Dataset, TensorDataset
-# from sklearn.model_selection import train_test_split
+'''
+
+'''
+from torch.utils.data import DataLoader, Dataset
 import torch
 import torchvision.transforms.functional as tf
 import os
@@ -10,8 +12,7 @@ import random
 
 class groupAugmentation:
     '''Data augmentation using 8 fixed image + permeability permutations (D4 group)'''
-    def __init__(self, hflip=True, vflip=True, rotate=True,):
-        # Each entry is (image_transform_fn, corresponding K_transform_fn)
+    def __init__(self):
         self.permutations = [
             ('I', lambda img: img, lambda K: K),
             ('R', lambda img: tf.rotate(img, 90),
