@@ -91,15 +91,5 @@ if __name__ == "__main__":
     porous_media_generation(num_img=num_images,
                             img_size=img_size,
                             porosity_range=porosity_range)
-    # end = time.time()
-    # print(f"Time to generate {num_images}: {end-start:.2f} seconds")
-    # # img = np.load(os.path.join(path,"images.npy"))
-    # # plt.imshow(img[0])
-    # # plt.show()
-    # A = np.array([[1,2],[3,4]])
-    # print(A)
-    # A_1 = np.rot90(A,k=1,axes=(1,0)) # Rotated 90 deg counter clockwise
-    # print(A_1)
-    # A_2 = np.rot90(A_1,k=-1,axes=(1,0)) # Rotated 90 deg clockwise
-    # print(A_2)
+    
     
