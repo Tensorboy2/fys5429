@@ -123,18 +123,9 @@ class ViT(nn.Module):
         x = x.mean(dim=1)  # Global average pooling over patches
         return self.head(x)
 
-def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained = False):
+def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
     """
     Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
-
-    # Parameters:
-    - image_size (int): Input image size.
-    - num_classes (int): Number of output classes.
-    - patch_size (int): Size of patch.
-    - pre_trained (bool): wether oor not to look for existing model weights.
-
-    # Returns.
-    - ViT: A ViT-B16 model instance.
     """
     model = ViT(
         image_size=image_size,
@@ -145,10 +136,79 @@ def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained = False):
         mlp_ratio=4,
         num_classes=num_classes
     )
-    model.name = "ViT_B16"
+    model.name = f"ViT_B{patch_size}"
     if pre_trained:
         weights_path = os.path.join(path, f'{model.name}.pth')
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
 
+
+def ViT_S16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
+    """
+    Small ViT with 12 layers, 6 heads, 384 embedding dim
+    """
+    model = ViT(
+        image_size=image_size,
+        patch_size=patch_size,
+        embed_dim=384,
+        depth=12,
+        num_heads=6,
+        mlp_ratio=4,
+        num_classes=num_classes
+    )
+    model.name = f"ViT_S{patch_size}"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
+
+
+def ViT_T16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
+    """
+    Tiny ViT with 12 layers, 3 heads, 192 embedding dim
+    """
+    model = ViT(
+        image_size=image_size,
+        patch_size=patch_size,
+        embed_dim=192,
+        depth=12,
+        num_heads=3,
+        mlp_ratio=4,
+        num_classes=num_classes
+    )
+    model.name = f"ViT_T{patch_size}"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
+def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
+    """
+    Tiny ViT with 12 layers, 3 heads, 192 embedding dim
+    """
+    model = ViT(
+        image_size=image_size,
+        patch_size=patch_size,
+        embed_dim=192,
+        depth=12,
+        num_heads=3,
+        mlp_ratio=4,
+        num_classes=num_classes
+    )
+    model.name = f"ViT_T{patch_size}"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
         if os.path.exists(weights_path):
             state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
