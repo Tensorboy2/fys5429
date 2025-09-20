@@ -1,6 +1,7 @@
 experiments:
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_2000_metrics_diff_num_datapoints.csv"
+  # ViT_S16 diff num datapoints
+  - model: ViT_S16
+    save_path: "results/vit_s16_2000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -15,9 +16,8 @@ experiments:
       group: False
       num_samples: 2000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_4000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_4000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -32,9 +32,8 @@ experiments:
       group: False
       num_samples: 4000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_6000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_6000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -49,9 +48,8 @@ experiments:
       group: False
       num_samples: 6000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_8000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_8000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -66,8 +64,8 @@ experiments:
       group: False
       num_samples: 8000
       test_size: 0.2
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_10000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_10000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -82,9 +80,8 @@ experiments:
       group: False
       num_samples: 10000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_12000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_12000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -99,9 +96,8 @@ experiments:
       group: False
       num_samples: 12000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_14000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_14000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -116,9 +112,8 @@ experiments:
       group: False
       num_samples: 14000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_16000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_16000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -133,9 +128,8 @@ experiments:
       group: False
       num_samples: 16000
       test_size: 0.2
-
-  - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_18000_metrics_diff_num_datapoints.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_18000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -150,9 +144,9 @@ experiments:
       group: False
       num_samples: 18000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_2000_metrics_diff_num_datapoints.csv"
+  # ViT_T16 diff num datapoints
+  - model: ViT_T16
+    save_path: "results/vit_t16_2000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -167,9 +161,8 @@ experiments:
       group: False
       num_samples: 2000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_4000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_4000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -184,9 +177,8 @@ experiments:
       group: False
       num_samples: 4000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_6000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_6000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -201,9 +193,8 @@ experiments:
       group: False
       num_samples: 6000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_8000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_8000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -218,8 +209,8 @@ experiments:
       group: False
       num_samples: 8000
       test_size: 0.2
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_10000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_10000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -234,9 +225,8 @@ experiments:
       group: False
       num_samples: 10000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_12000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_12000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -251,9 +241,8 @@ experiments:
       group: False
       num_samples: 12000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_14000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_14000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -268,9 +257,8 @@ experiments:
       group: False
       num_samples: 14000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_16000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_16000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -285,9 +273,8 @@ experiments:
       group: False
       num_samples: 16000
       test_size: 0.2
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_18000_metrics_diff_num_datapoints.csv"
+  - model: ViT_T16
+    save_path: "results/vit_t16_18000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008

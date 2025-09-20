@@ -1,7 +1,6 @@
-
 experiments:
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_metrics_dataaugmentation_test.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -17,8 +16,8 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_hflip_metrics_dataaugmentation_test.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_hflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -30,11 +29,12 @@ experiments:
       hflip: True
       vflip: False
       rotate: False
+      group: False
       num_samples: null
       test_size: 0.2
 
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_vflip_metrics_dataaugmentation_test.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_vflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -50,8 +50,8 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_rotate_metrics_dataaugmentation_test.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_rotate_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -67,9 +67,8 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_hflip_vflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -84,9 +83,9 @@ experiments:
       group: False
       num_samples: null
       test_size: 0.2
-      
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall__group_dataaugmentation_test.csv"
+
+  - model: ViT_S16
+    save_path: "results/vit_s16_group_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -102,8 +101,8 @@ experiments:
       num_samples: null
       test_size: 0.2
 
-  - model: ConvNeXtSmall
-    save_path: "results/convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test.csv"
+  - model: ViT_S16
+    save_path: "results/vit_s16_hflip_vflip_rotate_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
