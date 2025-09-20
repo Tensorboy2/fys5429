@@ -1,7 +1,7 @@
 experiments:
   # ViT_S16 diff num datapoints
   - model: ViT_S16
-    save_path: "results/vit_s16_2000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_2000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -17,7 +17,7 @@ experiments:
       num_samples: 2000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_4000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_4000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -33,7 +33,7 @@ experiments:
       num_samples: 4000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_6000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_6000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -49,7 +49,7 @@ experiments:
       num_samples: 6000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_8000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_8000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -65,7 +65,7 @@ experiments:
       num_samples: 8000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_10000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_10000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -81,7 +81,7 @@ experiments:
       num_samples: 10000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_12000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_12000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -97,7 +97,7 @@ experiments:
       num_samples: 12000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_14000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_14000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -113,7 +113,7 @@ experiments:
       num_samples: 14000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_16000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_16000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -129,7 +129,7 @@ experiments:
       num_samples: 16000
       test_size: 0.2
   - model: ViT_S16
-    save_path: "results/vit_s16_18000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_s16_18000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -146,7 +146,7 @@ experiments:
       test_size: 0.2
   # ViT_T16 diff num datapoints
   - model: ViT_T16
-    save_path: "results/vit_t16_2000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_2000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -162,7 +162,7 @@ experiments:
       num_samples: 2000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_4000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_4000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -178,7 +178,7 @@ experiments:
       num_samples: 4000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_6000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_6000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -194,7 +194,7 @@ experiments:
       num_samples: 6000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_8000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_8000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -210,7 +210,7 @@ experiments:
       num_samples: 8000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_10000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_10000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -226,7 +226,7 @@ experiments:
       num_samples: 10000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_12000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_12000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -242,7 +242,7 @@ experiments:
       num_samples: 12000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_14000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_14000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -258,7 +258,7 @@ experiments:
       num_samples: 14000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_16000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_16000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -274,7 +274,7 @@ experiments:
       num_samples: 16000
       test_size: 0.2
   - model: ViT_T16
-    save_path: "results/vit_t16_18000_metrics_diff_num_datapoints.csv"
+    save_path: "vit_t16_18000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008

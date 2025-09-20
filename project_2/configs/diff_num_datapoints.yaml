@@ -1,6 +1,6 @@
 experiments:
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_2000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_2000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -17,7 +17,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_4000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_4000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -34,7 +34,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_6000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_6000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -51,7 +51,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_8000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_8000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -67,7 +67,7 @@ experiments:
       num_samples: 8000
       test_size: 0.2
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_10000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_10000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -84,7 +84,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_12000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_12000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -101,7 +101,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_14000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_14000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -118,7 +118,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_16000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_16000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -135,7 +135,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtTiny
-    save_path: "results/convnexttiny_18000_metrics_diff_num_datapoints.csv"
+    save_path: "convnexttiny_18000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -152,7 +152,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_2000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_2000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -169,7 +169,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_4000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_4000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -186,7 +186,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_6000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_6000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -203,7 +203,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_8000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_8000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -219,7 +219,7 @@ experiments:
       num_samples: 8000
       test_size: 0.2
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_10000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_10000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -236,7 +236,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_12000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_12000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -253,7 +253,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_14000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_14000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -270,7 +270,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_16000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_16000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -287,7 +287,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_18000_metrics_diff_num_datapoints.csv"
+    save_path: "convnextsmall_18000_metrics_diff_num_datapoints.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008

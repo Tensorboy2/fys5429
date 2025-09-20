@@ -1,7 +1,7 @@
 
 experiments:
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_metrics_dataaugmentation_test.csv"
+    save_path: "convnextsmall_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -18,7 +18,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_hflip_metrics_dataaugmentation_test.csv"
+    save_path: "convnextsmall_hflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -34,7 +34,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_vflip_metrics_dataaugmentation_test.csv"
+    save_path: "convnextsmall_vflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -51,7 +51,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_rotate_metrics_dataaugmentation_test.csv"
+    save_path: "convnextsmall_rotate_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -69,7 +69,7 @@ experiments:
 
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv"
+    save_path: "convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -86,7 +86,7 @@ experiments:
       test_size: 0.2
       
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall__group_dataaugmentation_test.csv"
+    save_path: "convnextsmall__group_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
@@ -103,7 +103,7 @@ experiments:
       test_size: 0.2
 
   - model: ConvNeXtSmall
-    save_path: "results/convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test.csv"
+    save_path: "convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test.csv"
     hyperparameters:
       num_epochs: 100
       lr: 0.0008
