@@ -1,0 +1,17 @@
+experiments:
+  - model: ConvNeXtSmall
+    save_path: "convnextsmall_vflip_metrics_dataaugmentation_test.csv"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: False
+      vflip: True
+      rotate: False
+      group: False
+      num_samples: null
+      test_size: 0.2
