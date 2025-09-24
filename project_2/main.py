@@ -72,7 +72,8 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
                                                    hflip=data["hflip"],
                                                    vflip=data["vflip"],
                                                    group=data["group"],
-                                                   num_samples=data["num_samples"])
+                                                   num_samples=data["num_samples"],
+                                                   num_workers=data.get("num_workers", 2))
     start = time.time()
     train(model,
             optimizer,
