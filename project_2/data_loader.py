@@ -91,9 +91,9 @@ class CustomDataset(Dataset):
     Applies given transform using Data augmentation classes
     '''
     def __init__(self, label_path, image_path, image_filled_path, num_samples = None, transform = None):
-        labels_all = np.load(label_path, mmap_mode='r')['k']
-        images_all = np.load(image_path, mmap_mode='r')['images']
-        images_filled_all = np.load(image_filled_path, mmap_mode='r')['images_filled']
+        labels_all = np.load(label_path)['k']
+        images_all = np.load(image_path)['images']
+        images_filled_all = np.load(image_filled_path)['images_filled']
 
         # Limit by num_samples
         self.num_samples = num_samples or labels_all.shape[0]
@@ -199,9 +199,23 @@ def get_data(batch_size = 32,
 
     return train_data_loader, test_data_loader
 
+
+def print_dataset_size_gb():
+    image_path = os.path.join(path, 'data/images.npz')
+    image_filled_path = os.path.join(path, 'data/images_filled.npz')
+    label_path = os.path.join(path, 'data/k.npz')
+    total_bytes = 0
+    for f in [image_path, image_filled_path, label_path]:
+        if os.path.exists(f):
+            total_bytes += os.path.getsize(f)
+        else:
+            print(f"Warning: {f} does not exist.")
+    print(f"Total dataset size: {total_bytes / (1024**3):.2f} GB")
+
 if __name__ == "__main__":
+    print_dataset_size_gb()
     print("Getting data...")
-    train_data_loader, test_data_loader = get_data(num_workers=4,num_samples=4000)
+    train_data_loader, test_data_loader = get_data(batch_size=128,num_workers=2,num_samples=None)
     print(f"Len train loader: {len(train_data_loader)}")
-    print(f"Len ttest loader: {len(test_data_loader)}")
+    print(f"Len test loader: {len(test_data_loader)}")
     print("Data loaders ready, with lazy loading.")

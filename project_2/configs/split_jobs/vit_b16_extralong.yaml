@@ -1,0 +1,17 @@
+experiments:
+  - model: ViT_B16
+    save_path: "vit_b16_extralong.csv"
+    hyperparameters:
+      num_epochs: 500
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: True
+      group: True
+      num_samples: null
+      test_size: 0.2
