@@ -43,7 +43,7 @@ def get_model_size(model):
     size_all_mb = (param_size + buffer_size) / 1024**2
     return size_all_mb
 
-def main(model, hyperparameters, data, save_path="metrics.csv"):
+def main(model, hyperparameters, data, save_path="metrics.csv", save_model_path=None):
     '''
     Main function of Project 2. 
 
@@ -83,6 +83,7 @@ def main(model, hyperparameters, data, save_path="metrics.csv"):
             warmup_steps=warmup_steps,
             decay=decay,
             save_path=save_path,
+            save_model_path=save_model_path,
             device=device)
     stop = time.time()
     print(f'Total training time: {stop-start} seconds')
@@ -104,7 +105,7 @@ if __name__ == '__main__':
         model = model_class()
         print(f"Model size: {get_model_size(model):.2f} MB")
 
-        main(model, exp["hyperparameters"], exp["data"], save_path=exp["save_path"])
+        main(model, exp["hyperparameters"], exp["data"], save_path=exp["save_path"], save_model_path=exp.get("save_model_path", None))
 
         # Memory management for gpu:
         del model
