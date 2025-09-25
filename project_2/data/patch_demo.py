@@ -1,5 +1,8 @@
 '''
+patch_demo.py
 
+Demonstration of the patch embedding using input images and a random matrix. 
+Produces figure for theory section of rapport.
 '''
 import numpy as np
 import matplotlib.pyplot as plt

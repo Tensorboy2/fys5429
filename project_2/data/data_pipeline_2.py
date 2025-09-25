@@ -1,6 +1,10 @@
+'''
+data_pipeline_2.py
+
+Module for running Lattice-Boltzmann simulations on 2d porous media and storing the resulting permeability tensor.
+MPI compatible.
+'''
 import numpy as np
-import time
-import torch
 import os
 from mpi4py import MPI
 path = os.path.dirname(__file__)

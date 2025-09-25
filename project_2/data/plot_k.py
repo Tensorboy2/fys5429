@@ -1,3 +1,8 @@
+'''
+plot_k.py
+
+Module for showing the distribution of the permeability tensor components from the simulations. 
+'''
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -15,7 +20,7 @@ mpl.rcParams.update({
     "legend.fontsize": 8,
 })
 
-# Set a nice seaborn theme
+# Set seaborn theme:
 sns.set_theme(style="whitegrid")
 
 

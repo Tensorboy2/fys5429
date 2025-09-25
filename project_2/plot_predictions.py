@@ -84,7 +84,7 @@ def plot_scatter(preds, targets, label, cmap):
         plt.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"similarity_plot_{label}.pdf"))
+    plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"similarity_plot_{label}.png"))
     plt.close()
 
 
@@ -107,7 +107,7 @@ def plot_histogram(relative_errors, label):
         plt.grid(True, linestyle="--", linewidth=0.5, alpha=0.6)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"histogram_{label}.pdf"))
+    plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"histogram_{label}.png"))
     plt.close()
 
 
