@@ -146,6 +146,29 @@ def ViT_B16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
+def ViT_B8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
+    """
+    Base ViT with 12 layers, 12 heads, 768 embedding dim, patch size 16
+    """
+    model = ViT(
+        image_size=image_size,
+        patch_size=patch_size,
+        embed_dim=768,
+        depth=12,
+        num_heads=12,
+        mlp_ratio=4,
+        num_classes=num_classes
+    )
+    model.name = f"ViT_B{patch_size}"
+    if pre_trained:
+        weights_path = os.path.join(path, f'{model.name}.pth')
+        if os.path.exists(weights_path):
+            state_dict = torch.load(weights_path, map_location="cpu")
+            model.load_state_dict(state_dict)
+        else:
+            raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
+    return model
+
 
 def ViT_S16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
     """
@@ -243,7 +266,7 @@ def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
-    x = torch.randn((32,1,128,128)).to(device)
-    model = ViT_S8().to(device)
+    x = torch.randn((16,1,128,128)).to(device)
+    model = ViT_B8().to(device)
     # print(model)
     print(model(x).cpu().detach().numpy().shape)

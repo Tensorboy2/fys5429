@@ -128,8 +128,16 @@ def train(model = None,
                 outputs_image_filled = model(image_filled_train) # Make predictions
                 loss =  (loss_fn(outputs_image,k_train)+ loss_fn(outputs_image_filled,k_train))/2 # Calculate loss
 
-            scaler.scale(loss).backward() # Calculate gradients
-            scaler.step(optimizer) # Update weights (Torch might warn that lr.step should be called after optimizer.step, but it does not see scaler.step, so this is ok.)
+            scaler.scale(loss).backward()  # Calculate gradients
+
+            # # Unscale gradients before clipping
+            # scaler.unscale_(optimizer)
+
+            # # Clip gradients
+            # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # adjust max_norm
+
+            # Optimizer step
+            scaler.step(optimizer)
             scaler.update()
 
             running_train_loss += loss.item()
