@@ -3,6 +3,7 @@
 '''
 from torch.utils.data import DataLoader, Dataset
 import torch
+torch.manual_seed(0)
 import torchvision.transforms.functional as tf
 import os
 import multiprocessing

@@ -6,6 +6,7 @@ Module for training Pytorch models.
 Includes a training function and a torch jited R^2 score function. 
 '''
 import torch
+torch.manual_seed(0)
 import torch.optim as op
 import pandas
 import os
