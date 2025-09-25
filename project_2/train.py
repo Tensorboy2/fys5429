@@ -131,10 +131,10 @@ def train(model = None,
             scaler.scale(loss).backward()  # Calculate gradients
 
             # # Unscale gradients before clipping
-            # scaler.unscale_(optimizer)
+            scaler.unscale_(optimizer)
 
             # # Clip gradients
-            # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # adjust max_norm
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # adjust max_norm
 
             # Optimizer step
             scaler.step(optimizer)

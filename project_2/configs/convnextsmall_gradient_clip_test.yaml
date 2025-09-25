@@ -1,0 +1,18 @@
+experiments:
+  - model: ConvNeXtSmall
+    save_path: "convnextsmall_gradient_clip_test.csv"
+    save_model_path: "ConNextTiny_gradient_clip_test.pth"
+    hyperparameters:
+      num_epochs: 100
+      lr: 0.0008
+      warmup_steps: 1000
+      weight_decay: 0.1
+      batch_size: 128
+      decay: "cosine"
+    data:
+      hflip: True
+      vflip: True
+      rotate: True
+      group: True
+      num_samples: null
+      test_size: 0.2
