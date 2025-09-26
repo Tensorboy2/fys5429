@@ -52,6 +52,7 @@ def train(model = None,
           warmup_steps=0,
           decay="",
           save_model_path=None,
+          clip_grad=False,
           use_amp=True):
     '''
     Training function.
@@ -133,13 +134,14 @@ def train(model = None,
 
             scaler.scale(loss).backward()  # Calculate gradients
 
-            # Unscale gradients before clipping
-            scaler.unscale_(optimizer)
-            
-            # --- GRADIENT TRACKING ---
-            # Clip gradients and capture the norm before clipping
-            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0) # adjust max_norm
-            running_grad_norm += grad_norm.item()
+            if clip_grad:
+                # Unscale gradients before clipping
+                scaler.unscale_(optimizer)
+                
+                # --- GRADIENT TRACKING ---
+                # Clip gradients and capture the norm before clipping
+                grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0) # adjust max_norm
+                running_grad_norm += grad_norm.item()
 
             # Optimizer step
             scaler.step(optimizer)

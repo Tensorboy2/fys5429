@@ -18,9 +18,9 @@ data_set_sizes = [2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000]
 # optional fixed fields
 common = {
     "data": {
-        "hflip": True,
-        "vflip": True,
-        "rotate": True,
+        "hflip": False,
+        "vflip": False,
+        "rotate": False,
         "group": True,
         "test_size": 0.2
     },
@@ -46,7 +46,7 @@ for model, data_set_size in itertools.product(models,data_set_sizes):
                 "model": model,
                 "save_model_path": f"{name}.pth",
                 "save_path": f"{name}.csv",
-                "hyperparameters": common["hyperparameters"],
+                "hyperparameters": {**common["hyperparameters"], "clip_grad": False if model.startswith("ViT") else True},
                 "data": {**common["data"],"num_samples": data_set_size}
             }
         ]

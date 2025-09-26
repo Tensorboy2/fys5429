@@ -1,47 +1,44 @@
 import yaml
+import itertools
 import os
 file = os.path.dirname(__file__)
 
 # Where to put YAMLs and Slurm scripts
-YAML_DIR = os.path.join(file,"all_models_run")
+YAML_DIR = os.path.join(file,"diffnum_epochs")
 SLURM_DIR = YAML_DIR
 os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
-models = ["ViT_T16",
-        #   "ViT_S16", # will already have been run
-          "ViB_B16", 
-          "ViB_T8", 
-          "ViB_S8", 
-        #   "ConNextSmall", # will already have been run
-          "ConNextTiny",
-            "ResNet50",
-            "ResNet101"
-          ]
+models = ["ViT_S16",
+          "ViT_T16",
+          "ConNextTiny", 
+          "ConNextSmall"]
+epochs = [100,200,300,400,500]
 
 # optional fixed fields
 common = {
     "data": {
-        "hflip": True,
-        "vflip": True,
-        "rotate": True,
+        "hflip": False,
+        "vflip": False,
+        "rotate": False,
         "group": True,
         "test_size": 0.2
     },
     "hyperparameters": {
         "lr": 0.0008,
         "batch_size": 128,
-        "num_epochs": 500,
+        # "num_epochs": 500,
         "warmup_steps": 1000,
         "weight_decay": 0.1,
+        "num_samples": None,
         "decay": "cosine"
     }
 }
 
 
 slurm_script_paths = []
-for model in models:
-    name = f"{model}_all"
+for model, epoch in itertools.product(models,epochs):
+    name = f"{model}_{epoch}_epochs"
     yaml_path = os.path.join(YAML_DIR,f"{name}.yaml")
     # Build experiment dict
     exp = {
@@ -50,7 +47,7 @@ for model in models:
                 "model": model,
                 "save_model_path": f"{name}.pth",
                 "save_path": f"{name}.csv",
-                "hyperparameters": {**common["hyperparameters"], "clip_grad": False if model.startswith("ViT") else True},
+                "hyperparameters": {**common["hyperparameters"],"num_epochs": epoch,"clip_grad": False if model.startswith("ViT") else True},
                 "data": common["data"],
             }
         ]
@@ -75,7 +72,7 @@ python main.py \"{yaml_path}\"
     print(f"Generated: {name}")
 
 # Write a .sh script to launch all slurm jobs
-launcher_path = os.path.join(file, f"submit_all_jobs_all_models_run.sh")
+launcher_path = os.path.join(file, "submit_all_jobs_diffnum_epochs.sh")
 with open(launcher_path, "w") as f:
     f.write("#!/bin/bash\n")
     for script in slurm_script_paths:

@@ -77,7 +77,7 @@ for model, augmentation_variant in itertools.product(models,augmentation_variant
                 "model": model,
                 "save_model_path": f"{name}.pth",
                 "save_path": f"{name}.csv",
-                "hyperparameters": common["hyperparameters"],
+                "hyperparameters": {**common["hyperparameters"], "clip_grad": False if model.startswith("ViT") else True},
                 "data": {**common["data"],**augmentation_variant}
             }
         ]
