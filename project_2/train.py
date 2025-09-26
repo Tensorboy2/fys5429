@@ -78,7 +78,8 @@ def train(model = None,
         "train_mse" : [], # Mean square error
         "train_r2" : [], # Coefficient of Determination
         "test_mse" : [], # Mean square error
-        "test_r2" : [] # Coefficient of Determination
+        "test_r2" : [], # Coefficient of Determination
+        "grad_norm": []  # To track the L2 norm of the gradients
     }
 
     loss_fn = torch.nn.MSELoss()
@@ -113,6 +114,7 @@ def train(model = None,
         '''Training:'''
         model.train()
         running_train_loss = 0
+        running_grad_norm = 0 
         all_y_true_train = []
         all_y_pred_train = []
 
@@ -131,11 +133,13 @@ def train(model = None,
 
             scaler.scale(loss).backward()  # Calculate gradients
 
-            # # Unscale gradients before clipping
+            # Unscale gradients before clipping
             scaler.unscale_(optimizer)
-
-            # # Clip gradients
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # adjust max_norm
+            
+            # --- GRADIENT TRACKING ---
+            # Clip gradients and capture the norm before clipping
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0) # adjust max_norm
+            running_grad_norm += grad_norm.item()
 
             # Optimizer step
             scaler.step(optimizer)
@@ -148,11 +152,12 @@ def train(model = None,
             scheduler.step()
 
             # Gpu memory management:
-            del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
-            torch.cuda.empty_cache()
+            # del image_train, image_filled_train, k_train, outputs_image, outputs_image_filled, loss
+            # torch.cuda.empty_cache()
 
         
         epoch_train_mse = running_train_loss/len(train_data_loader)
+        epoch_grad_norm = running_grad_norm / len(train_data_loader)
         y_true_tensor = torch.cat(all_y_true_train)
         y_pred_tensor = torch.cat(all_y_pred_train)
         epoch_train_r2 = r2_score_torch(y_true_tensor, y_pred_tensor).item()
@@ -185,6 +190,7 @@ def train(model = None,
         metrics["test_mse"].append(epoch_test_mse)
         metrics["train_r2"].append(epoch_train_r2)
         metrics["test_r2"].append(epoch_test_r2)
+        metrics["grad_norm"].append(epoch_grad_norm)
 
         # Checkpoint model with lowest test mse.
         if (epoch_test_mse<best_test_mse):
@@ -194,13 +200,11 @@ def train(model = None,
             print(f"Best model form epoch: {epoch} with MSE: {best_test_mse:.5f} saved.")
 
         print(f'Epoch {epoch},')
-        print(f'Train: MSE = {epoch_train_mse}, R2 = {epoch_train_r2}')
-        print(f'Test: MSE = {epoch_test_mse}, R2 = {epoch_test_r2}')
+        print(f'Train: MSE = {epoch_train_mse:.5f}, R2 = {epoch_train_r2:.5f}, Grad Norm = {epoch_grad_norm:.5f}')
+        print(f'Test: MSE = {epoch_test_mse:.5f}, R2 = {epoch_test_r2:.5f}')
         print('')
-        torch.cuda.empty_cache()
+        # torch.cuda.empty_cache()
 
     df = pandas.DataFrame(metrics)
     df.to_csv(os.path.join(path,"results",save_path))
     print(f"Metrics saved to {save_path}")
-            
-                    
