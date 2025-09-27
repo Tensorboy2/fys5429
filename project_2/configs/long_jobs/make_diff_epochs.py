@@ -10,10 +10,10 @@ os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
 models = [
-          "ViT_T16",
-          "ConNeTtTiny", 
-          "ConNeTtSmall",
-          "ViT_S16",
+        #   "ViT_T16",
+          "ConNeXtTiny", 
+          "ConNeXtSmall",
+        #   "ViT_S16",
           ]
 epochs = [100,200,300,400,500,600]
 
