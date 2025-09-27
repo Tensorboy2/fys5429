@@ -9,11 +9,13 @@ SLURM_DIR = YAML_DIR
 os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
-models = ["ViT_S16",
+models = [
           "ViT_T16",
-          "ConNextTiny", 
-          "ConNextSmall"]
-epochs = [100,200,300,400,500]
+          "ConNeTtTiny", 
+          "ConNeTtSmall",
+          "ViT_S16",
+          ]
+epochs = [100,200,300,400,500,600]
 
 # optional fixed fields
 common = {
@@ -22,7 +24,8 @@ common = {
         "vflip": False,
         "rotate": False,
         "group": True,
-        "test_size": 0.2
+        "test_size": 0.2,
+        "num_samples": None,
     },
     "hyperparameters": {
         "lr": 0.0008,
@@ -30,8 +33,7 @@ common = {
         # "num_epochs": 500,
         "warmup_steps": 1000,
         "weight_decay": 0.1,
-        "num_samples": None,
-        "decay": "cosine"
+        "decay": "cosine",
     }
 }
 
