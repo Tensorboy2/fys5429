@@ -11,8 +11,8 @@ os.makedirs(YAML_DIR, exist_ok=True)
 # Parameter grid
 models = ["ViT_S16",
           "ViT_T16",
-          "ConNextTiny", 
-          "ConNextSmall"]
+          "ConvNeXtTiny", 
+          "ConvNeXtSmall"]
 data_set_sizes = [2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000]
 
 # optional fixed fields

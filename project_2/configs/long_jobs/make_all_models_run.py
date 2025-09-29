@@ -14,7 +14,7 @@ models = ["ViT_T16",
           "ViB_T8", 
           "ViB_S8", 
         #   "ConNextSmall", # will already have been run
-          "ConNextTiny",
+          "ConvNeXtTiny",
             "ResNet50",
             "ResNet101"
           ]

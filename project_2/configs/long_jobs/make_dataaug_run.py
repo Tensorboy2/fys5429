@@ -4,7 +4,8 @@ import os
 file = os.path.dirname(__file__)
 
 # Where to put YAMLs and Slurm scripts
-YAML_DIR = os.path.join(file,"dataaug_run")
+exp_name = "dataaug_run"
+YAML_DIR = os.path.join(file,exp_name)
 SLURM_DIR = YAML_DIR
 os.makedirs(YAML_DIR, exist_ok=True)
 
@@ -12,7 +13,7 @@ os.makedirs(YAML_DIR, exist_ok=True)
 models = ["ViT_S16",
         #   "ViT_T16",
         #   "ConNextTiny", 
-          "ConNextSmall"]
+          "ConvNeXtSmall"]
 augmentation_variants = [{"hflip": False,
                             "vflip": False,
                             "rotate": False,
@@ -68,7 +69,7 @@ slurm_script_paths = []
 for model, augmentation_variant in itertools.product(models,augmentation_variants):
     active = [k for k,v in augmentation_variant.items() if v]
     active_str = "_".join(active) if active else "none"
-    name = f"{model}_{active_str}"
+    name = f"{model}_{active_str}_{exp_name}"
     yaml_path = os.path.join(YAML_DIR,f"{name}.yaml")
     # Build experiment dict
     exp = {

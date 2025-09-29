@@ -57,6 +57,7 @@ def load_models_info(augmentation_variants):
             print(f"Warning: File not found: {file}")
     return models_info
 
+
 if plot_model in ["convnextsmall", "both"]:
     models_info_convnext = load_models_info(augmentation_variants_convnext)
 if plot_model in ["vit_s16", "both"]:
@@ -68,8 +69,8 @@ def plot_metrics(models_info, title_prefix):
     for label, info in models_info.items():
         df = info["df"]
         color = info["color"]
-        plt.plot(df["epoch"], df["test_r2"], c=color, linestyle="-")
-        plt.plot(df["epoch"], df["train_r2"], c=color, linestyle="--", alpha=0.5)
+        plt.plot(df["epoch"], 1-df["test_r2"], c=color, linestyle="-")
+        plt.plot(df["epoch"], 1-df["train_r2"], c=color, linestyle="--", alpha=0.5)
         idx_max = np.argmax(df['test_r2'])
         print(f"{title_prefix} Aug: {label}, test R²: {df['test_r2'][idx_max]:.5f}, train R²: {df['train_r2'][idx_max]:.5f}, "
               f"test MSE: {df['test_mse'][idx_max]:.6f}, train MSE: {df['train_mse'][idx_max]:.6f}")
@@ -82,10 +83,12 @@ def plot_metrics(models_info, title_prefix):
     ]
     plt.legend(handles=legend_elements, fontsize=8, title="Augmentations", frameon=False)
     plt.xlabel("Epochs")
-    plt.ylabel(r"$R^2$ Score")
-    plt.ylim(0.9, 1.001)
+    plt.ylabel(r"$1-R^2$ Score")
+    # plt.ylim(0.9, 1.001)
+    plt.yscale('log')
+    plt.xscale("log")
     plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
-    plt.title(f"{title_prefix} Data Augmentation: R² Score")
+    plt.title(f"{title_prefix} Data Augmentation: 1- R² Score")
     plt.tight_layout()
     plt.savefig(os.path.join(path, f"{title_prefix.lower()}_dataaug_r2_v2.pdf"), bbox_inches='tight')
 

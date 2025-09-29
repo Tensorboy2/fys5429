@@ -26,14 +26,33 @@ sns.set_theme(style="whitegrid")
 
 runs = {
     # "V1": "vit_s16_extralong.csv",
-    "ViT-S16": "vit_s16_extralong_v2.csv",
-    # "ViT-T16": "vit_t16_extralong.csv",
-    "ConvNext-Small": "convnextsmall_extralong.csv",
+    # "ViT-T16_long": "vit_t16_extralong.csv",
+    # "ViT-B16_long": "vit_b16_extralong.csv",
+    # "ViT-T16": "vit_t16_metrics_more_vits.csv",
+    # "ViT-S16": "vit_s16_metrics_more_vits.csv",
+    # "ViT-B16": "vit_b16_metrics_more_vits.csv",
+    # "ResNet50_GC": "resnet50_gradient_clip_test.csv",
+    # "ConvNeXtTiny": "convnexttiny_metrics_all_models_2.csv",
+    # "ConvNeXtTiny_GC": "convnexttiny_gradient_clip_test.csv",
+    # "ConvNext-Small": "convnextsmall_metrics_all_models_2.csv",
+    # "ConvNeXtSmall-GC-100-epochs": "convnextsmall_gradient_clip_test_2.csv",
+    # "ConvNext-Small-500-epochs": "convnextsmall_extralong.csv",
+    # "ConvNeXtTiny_GC_long": "convnexttiny_gradient_clip_long_test_3.csv",
+
+    # "ViT-S16-gc": "vit_s16_gradient_clip_test_2.csv",
+
+    "ViT-S16-1k-epochs":"vit_s16_gradient_clip_long_test_3.csv",
+    "ViT-S16-600-epochs": "ViT_S16_600_epochs.csv",
+    "ViT-S16-500-epochs": "ViT_S16_500_epochs.csv",
+    "ViT-S16-400-epochs": "ViT_S16_400_epochs.csv",
+    "ViT-S16-300-epochs": "ViT_S16_300_epochs.csv",
+    "ViT-S16-200-epochs": "ViT_S16_200_epochs.csv",
+    "ViT-S16-100-epochs": "ViT_S16_100_epochs.csv",
 }
 
 
 def load_models_info(augmentation_variants):
-    colors = sns.color_palette("tab10", n_colors=len(augmentation_variants))
+    colors = sns.color_palette("Reds", n_colors=len(augmentation_variants))#[::-1]
     models_info = {}
     for (label, file), color in zip(augmentation_variants.items(), colors):
         try:
@@ -51,8 +70,8 @@ def plot_metrics(models_info, title_prefix):
     for label, info in models_info.items():
         df = info["df"]
         color = info["color"]
-        plt.plot(df["epoch"],1- df["test_r2"], c=color, linestyle="-")
-        plt.plot(df["epoch"],1- df["train_r2"], c=color, linestyle="--", alpha=0.5)
+        plt.plot(df["epoch"],1-df["test_r2"], c=color, linestyle="-")
+        plt.plot(df["epoch"],1-df["train_r2"], c=color, linestyle="--", alpha=0.5)
         idx_max = np.argmax(df['test_r2'])
         print(f"{title_prefix} Aug: {label}, test R²: {df['test_r2'][idx_max]:.5f}, train R²: {df['train_r2'][idx_max]:.5f}, "
               f"test MSE: {df['test_mse'][idx_max]:.6f}, train MSE: {df['train_mse'][idx_max]:.6f}")
@@ -67,8 +86,10 @@ def plot_metrics(models_info, title_prefix):
     plt.xlabel("Epochs")
     plt.ylabel(r"$R^2$ Score")
     # plt.ylim(0.99, 1.001)
+    plt.xlim(40, 1100)
     plt.xscale('log')
     plt.yscale('log')
+    plt.xticks([100, 200, 300, 400, 500, 1000], [100, 200, 300, 400, 500, 1000])
     plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
     plt.title(f"{title_prefix} Extra long run: 1-R²")
     plt.tight_layout()
@@ -86,6 +107,7 @@ def plot_metrics(models_info, title_prefix):
     plt.ylabel("MSE (Lattice Units)")
     plt.yscale("log")
     plt.xscale("log")
+    plt.xlim(40, 1100)
     plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
     plt.title(f"{title_prefix} Long runs: MSE")
     plt.tight_layout()
