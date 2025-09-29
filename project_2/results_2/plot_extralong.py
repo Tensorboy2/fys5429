@@ -51,8 +51,8 @@ runs = {
 }
 
 
-def load_models_info(augmentation_variants):
-    colors = sns.color_palette("Reds", n_colors=len(augmentation_variants))#[::-1]
+def load_models_info(augmentation_variants,cmap="Reds"):
+    colors = sns.color_palette(cmap, n_colors=len(augmentation_variants))#[::-1]
     models_info = {}
     for (label, file), color in zip(augmentation_variants.items(), colors):
         try:
@@ -62,9 +62,8 @@ def load_models_info(augmentation_variants):
             print(f"Warning: File not found: {file}")
     return models_info
 
-models_info = load_models_info(runs)
 
-def plot_metrics(models_info, title_prefix):
+def plot_metrics(models_info, title_prefix,):
     # Plot R^2 scores:
     plt.figure(figsize=(6.4, 6.4))
     for label, info in models_info.items():
@@ -84,12 +83,12 @@ def plot_metrics(models_info, title_prefix):
     ]
     plt.legend(handles=legend_elements, fontsize=8, title="Run", frameon=False)
     plt.xlabel("Epochs")
-    plt.ylabel(r"$R^2$ Score")
+    plt.ylabel(r"$1-R^2$ Score")
     # plt.ylim(0.99, 1.001)
-    plt.xlim(40, 1100)
+    # plt.xlim(40, 1100)
     plt.xscale('log')
     plt.yscale('log')
-    plt.xticks([100, 200, 300, 400, 500, 1000], [100, 200, 300, 400, 500, 1000])
+    # plt.xticks([100, 200, 300, 400, 500, 1000], [100, 200, 300, 400, 500, 1000])
     plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
     plt.title(f"{title_prefix} Extra long run: 1-R²")
     plt.tight_layout()
@@ -107,7 +106,7 @@ def plot_metrics(models_info, title_prefix):
     plt.ylabel("MSE (Lattice Units)")
     plt.yscale("log")
     plt.xscale("log")
-    plt.xlim(40, 1100)
+    # plt.xlim(40, 1100)
     plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
     plt.title(f"{title_prefix} Long runs: MSE")
     plt.tight_layout()
@@ -123,5 +122,33 @@ def plot_metrics(models_info, title_prefix):
         print(f"{label:<15} {row['test_r2']:.5f} {row['train_r2']:.5f} "
               f"{row['test_mse']:.6f} {row['train_mse']:.6f}")
 
-plot_metrics(models_info, "ViT-S16")
+plot_metrics(load_models_info(runs,"Reds"), "ViT-S16")
 
+runs_convnexttiny = {
+    "ConvNext-T-600-epochs": "ConvNeXtTiny_600_epochs.csv",
+    "ConvNext-T-500-epochs": "ConvNeXtTiny_500_epochs.csv",
+    "ConvNext-T-400-epochs": "ConvNeXtTiny_400_epochs.csv",
+    "ConvNext-T-300-epochs": "ConvNeXtTiny_300_epochs.csv",
+    "ConvNext-T-200-epochs": "ConvNeXtTiny_200_epochs.csv",
+    "ConvNext-T-100-epochs": "ConvNeXtTiny_100_epochs.csv",
+}
+plot_metrics(load_models_info(runs_convnexttiny,"Blues"), "ConvNeXtTiny")
+
+runs_convnextsmall = {
+    "ConvNext-S-500-epochs": "convnextsmall_extralong.csv",
+    "ConvNeXt-S-300-epochs": "ConvNeXtSmall_300_epochs.csv",
+    "ConvNeXt-S-200-epochs": "ConvNeXtSmall_200_epochs.csv",
+    "ConvNeXt-S-100-epochs": "ConvNeXtSmall_100_epochs.csv",
+}
+plot_metrics(load_models_info(runs_convnextsmall,"Greens"), "ConvNeXtSmall")
+
+runs_vit_t16 = {
+    "ViT-B16-500-epochs": "vit_b16_extralong.csv",
+    "ViT-t16-600-epochs": "ViT_T16_600_epochs.csv",
+    "ViT-t16-500-epochs": "ViT_T16_500_epochs.csv",
+    "ViT-t16-400-epochs": "ViT_T16_400_epochs.csv",
+    "ViT-t16-300-epochs": "ViT_T16_300_epochs.csv",
+    "ViT-t16-200-epochs": "ViT_T16_200_epochs.csv",
+    "ViT-t16-100-epochs": "ViT_T16_100_epochs.csv",
+}
+plot_metrics(load_models_info(runs_vit_t16,"Purples"), "ViT-T16")

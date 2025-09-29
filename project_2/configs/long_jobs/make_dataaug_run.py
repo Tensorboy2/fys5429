@@ -13,7 +13,8 @@ os.makedirs(YAML_DIR, exist_ok=True)
 models = ["ViT_S16",
         #   "ViT_T16",
         #   "ConNextTiny", 
-          "ConvNeXtSmall"]
+          "ConvNeXtSmall"
+          ]
 augmentation_variants = [{"hflip": False,
                             "vflip": False,
                             "rotate": False,
