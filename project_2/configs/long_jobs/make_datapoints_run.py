@@ -83,7 +83,7 @@ else:  # slurm mode
                     "save_path": f"{name}.csv",
                     "hyperparameters": {**common["hyperparameters"], 
                                         "clip_grad": False if model.startswith("ViT") else True, 
-                                        "num_epochs": 1000 if model.startswith("ViT") else 500},
+                                        "num_epochs": 500 if model.startswith("ViT") else 500},
                     "data": {**common["data"], "num_samples": data_set_size}
                 }
             ]
