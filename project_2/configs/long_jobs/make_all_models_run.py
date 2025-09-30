@@ -1,20 +1,31 @@
 import yaml
+import argparse
 import os
 file = os.path.dirname(__file__)
 
+# -----------------------------
+# Parse mode
+# -----------------------------
+parser = argparse.ArgumentParser()
+parser.add_argument("--mode", choices=["herbie", "slurm"], default="slurm", help="Mode for experiment generation")
+# parser.add_argument("--models", choices=["both","convnext", "vit"], default="both", help="Mode for experiment generation")
+args = parser.parse_args()
+mode = args.mode
+
 # Where to put YAMLs and Slurm scripts
-YAML_DIR = os.path.join(file,"all_models_run")
+exp_name = "all_models_run"
+YAML_DIR = os.path.join(file,exp_name)
 SLURM_DIR = YAML_DIR
 os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
-models = ["ViT_T16",
+models = [#"ViT_T16",
         #   "ViT_S16", # will already have been run
-          "ViB_B16", 
+          #"ViB_B16", 
           "ViB_T8", 
           "ViB_S8", 
         #   "ConNextSmall", # will already have been run
-          "ConvNeXtTiny",
+          #"ConvNeXtTiny",
             "ResNet50",
             "ResNet101"
           ]
@@ -22,9 +33,9 @@ models = ["ViT_T16",
 # optional fixed fields
 common = {
     "data": {
-        "hflip": True,
-        "vflip": True,
-        "rotate": True,
+        "hflip": False,
+        "vflip": False,
+        "rotate": False,
         "group": True,
         "test_size": 0.2
     },
@@ -40,26 +51,47 @@ common = {
 
 
 slurm_script_paths = []
-for model in models:
-    name = f"{model}_all"
-    yaml_path = os.path.join(YAML_DIR,f"{name}.yaml")
-    # Build experiment dict
-    exp = {
-        "experiments": [
-            {
-                "model": model,
-                "save_model_path": f"{name}.pth",
-                "save_path": f"{name}.csv",
-                "hyperparameters": {**common["hyperparameters"], "clip_grad": False if model.startswith("ViT") else True},
-                "data": common["data"],
-            }
-        ]
-    }
+
+if mode == "herbie":
+    # Combine all experiments into a single YAML
+    all_experiments = []
+    for model in models:
+        name = f"{model}_all"
+        all_experiments.append({
+            "model": model,
+            "save_model_path": f"{name}.pth",
+            "save_path": f"{name}.csv",
+            "hyperparameters": {**common["hyperparameters"], "clip_grad": False if model.startswith("ViT") else True},
+            "data": common["data"],
+        })
     # Write YAML
+    yaml_path = os.path.join(YAML_DIR,f"all_models_run.yaml")
     with open(yaml_path, "w") as f:
-        yaml.dump(exp, f)
-    # Write Slurm script
-    slurm_script = f"""#!/bin/bash
+        yaml.dump({"experiments": all_experiments}, f)
+    print(f"Generated normal mode YAML with {len(all_experiments)} experiments: {yaml_path}")
+
+else:  # slurm mode
+    for model in models:
+        name = f"{model}_all"
+        yaml_path = os.path.join(YAML_DIR,f"{name}.yaml")
+        # Build experiment dict
+        exp = {
+            "experiments": [
+                {
+                    "model": model,
+                    "save_model_path": f"{name}.pth",
+                    "save_path": f"{name}.csv",
+                    "hyperparameters": {**common["hyperparameters"], "clip_grad": False if model.startswith("ViT") else True},
+                    "data": common["data"],
+                }
+            ]
+        }
+        # Write YAML
+        with open(yaml_path, "w") as f:
+            yaml.dump(exp, f)
+        print(f"Generated slurm mode YAML: {yaml_path}")
+        # Write Slurm script
+        slurm_script = f"""#!/bin/bash
 #SBATCH --job-name={name}
 #SBATCH --partition=normal
 #SBATCH --ntasks=1
@@ -68,16 +100,16 @@ for model in models:
 
 python main.py \"{yaml_path}\"
 """
-    script_path = os.path.join(SLURM_DIR, f"{name}.sh")
-    with open(script_path, "w") as f:
-        f.write(slurm_script)
-    slurm_script_paths.append(script_path)
-    print(f"Generated: {name}")
+        script_path = os.path.join(SLURM_DIR, f"{name}.sh")
+        with open(script_path, "w") as f:
+            f.write(slurm_script)
+        slurm_script_paths.append(script_path)
+        print(f"Generated: {name}")
 
-# Write a .sh script to launch all slurm jobs
-launcher_path = os.path.join(file, f"submit_all_jobs_all_models_run.sh")
-with open(launcher_path, "w") as f:
-    f.write("#!/bin/bash\n")
-    for script in slurm_script_paths:
-        f.write(f"sbatch {script}\n")
-print(f"Launcher script written: {launcher_path}")
+    # Write a .sh script to launch all slurm jobs
+    launcher_path = os.path.join(file, f"submit_all_jobs_{exp_name}.sh")
+    with open(launcher_path, "w") as f:
+        f.write("#!/bin/bash\n")
+        for script in slurm_script_paths:
+            f.write(f"sbatch {script}\n")
+    print(f"Launcher script written: {launcher_path}")
