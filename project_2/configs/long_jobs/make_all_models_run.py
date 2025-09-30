@@ -22,7 +22,7 @@ os.makedirs(YAML_DIR, exist_ok=True)
 models = [#"ViT_T16",
         #   "ViT_S16", # will already have been run
           #"ViB_B16", 
-          "ViT_T8", 
+        #   "ViT_T8", 
           "ViT_S8", 
         #   "ConNextSmall", # will already have been run
           #"ConvNeXtTiny",
@@ -42,7 +42,7 @@ common = {
     },
     "hyperparameters": {
         "lr": 0.0008,
-        "batch_size": 128,
+        "batch_size": 64,
         "num_epochs": 500,
         "warmup_steps": 1000,
         "weight_decay": 0.1,
