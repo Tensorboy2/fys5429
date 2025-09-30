@@ -122,6 +122,59 @@ def plot_metrics(models_info, title_prefix,):
         print(f"{label:<15} {row['test_r2']:.5f} {row['train_r2']:.5f} "
               f"{row['test_mse']:.6f} {row['train_mse']:.6f}")
 
+def plot_datapoints_summary(models_info, title_prefix="Datapoints Summary"):
+    """
+    Optional scatter plot of max R² vs number of datapoints for each run.
+    Expects that model labels contain the datapoint count in their name, 
+    e.g., "ViT-S16-2000".
+    """
+    data_records = []
+    for model_name, run in models_info.items():
+        df = run["df"]
+        color = run["color"]
+
+        # Extract datapoints from label if possible
+        # e.g., "ViT-S16-2000" -> 2000
+        tokens = model_name.split("-")
+        num_data = None
+        for t in tokens:
+            if t.endswith("k"):  # handle "2k", "4k"
+                num_data = int(t[:-1]) * 1000
+            elif t.isdigit():
+                num_data = int(t)
+
+        if num_data is None:
+            print(f"Could not infer datapoints from {model_name}, skipping")
+            continue
+
+        max_r2 = df["test_r2"].max()
+        data_records.append({
+            "model": model_name,
+            "num_datapoints": num_data,
+            "max_r2": max_r2,
+            "color": color,
+        })
+
+    if not data_records:
+        print("No valid datapoint information found for scatter plot.")
+        return
+
+    df_points = pd.DataFrame(data_records)
+    plt.figure(figsize=(6.4, 6.4))
+    sns.scatterplot(
+        data=df_points,
+        x="num_datapoints",
+        y="max_r2",
+        hue="model"
+    )
+    plt.ylabel(r"$R^2$ Score")
+    plt.xlabel("Num Datapoints")
+    plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
+    plt.legend(fontsize=8, frameon=False)
+    plt.tight_layout()
+    plt.savefig(os.path.join(path, "diff_num_datapoints_fit_v2.pdf"), bbox_inches='tight')
+    print(f"Saved datapoints summary plot: diff_num_datapoints_fit_v2.pdf")
+
 plot_metrics(load_models_info(runs,"Reds"), "ViT-S16")
 
 runs_convnexttiny = {
@@ -152,3 +205,18 @@ runs_vit_t16 = {
     "ViT-t16-100-epochs": "ViT_T16_100_epochs.csv",
 }
 plot_metrics(load_models_info(runs_vit_t16,"Purples"), "ViT-T16")
+
+runs_vit_s16_diff_num_datapoints = {
+    "ViT-S16-2k": "ViT_S16_2000_datapoints_run.csv",
+    "ViT-S16-4k": "ViT_S16_4000_datapoints_run.csv",
+    "ViT-S16-6k": "ViT_S16_6000_datapoints_run.csv",
+    "ViT-S16-8k": "ViT_S16_8000_datapoints_run.csv",
+    "ViT-S16-10k": "ViT_S16_10000_datapoints_run.csv",
+    "ViT-S16-12k": "ViT_S16_12000_datapoints_run.csv",
+    "ViT-S16-14k": "ViT_S16_14000_datapoints_run.csv",
+    "ViT-S16-16k": "ViT_S16_16000_datapoints_run.csv",
+    "ViT-S16-18k": "ViT_S16_18000_datapoints_run.csv",
+    "ViT-S16-20k": "ViT_T16_500_epochs.csv",
+}
+plot_metrics(load_models_info(runs_vit_s16_diff_num_datapoints,"Reds"), "ViT-S16 Different Number of Data Points")
+plot_datapoints_summary(load_models_info(runs_vit_s16_diff_num_datapoints,"Reds"), "ViT-S16 Different Number of Data Points")
