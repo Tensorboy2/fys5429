@@ -22,12 +22,12 @@ os.makedirs(YAML_DIR, exist_ok=True)
 models = [#"ViT_T16",
         #   "ViT_S16", # will already have been run
           #"ViB_B16", 
-          "ViB_T8", 
-          "ViB_S8", 
+          "ViT_T8", 
+          "ViT_S8", 
         #   "ConNextSmall", # will already have been run
           #"ConvNeXtTiny",
-            "ResNet50",
-            "ResNet101"
+            # "ResNet50",
+            # "ResNet101"
           ]
 
 # optional fixed fields
