@@ -22,12 +22,12 @@ os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
 if args.models == "both":
-    models = ["ViT_S16",
-              "ConvNeXtSmall"]
+    models = ["ViT_T16",
+              "ConvNeXtTiny"]
 elif args.models == "convnext":
-    models = ["ConvNeXtSmall"]
+    models = ["ConvNeXtTiny"]
 elif args.models == "vit":
-        models = ["ViT_S16"]
+        models = ["ViT_T16"]
 
 data_set_sizes = [2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000]
 
