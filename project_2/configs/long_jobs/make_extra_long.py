@@ -20,15 +20,15 @@ os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
 models = [
-    "ViT_T16",
+    # "ViT_T16",
         #   "ViT_S16",
           #"ViB_B16", 
         #   "ViT_T8", 
         #   "ViT_S8", 
-          "ConNextSmall",
-          "ConvNeXtTiny",
-            #"ResNet50",
-            "ResNet101"
+          "ConvNeXtSmall",
+        #   "ConvNeXtTiny",
+            "ResNet50",
+            # "ResNet101"
           ]
 
 # optional fixed fields
