@@ -23,7 +23,7 @@ models = [#"ViT_T16",
         #   "ViT_S16", # will already have been run
           #"ViB_B16", 
         #   "ViT_T8", 
-          "ViT_S8", 
+          "ViT_B16", 
         #   "ConNextSmall", # will already have been run
           #"ConvNeXtTiny",
             # "ResNet50",
@@ -57,7 +57,7 @@ if mode == "herbie":
     # Combine all experiments into a single YAML
     all_experiments = []
     for model in models:
-        name = f"{model}_all"
+        name = f"{model}_{exp_name}"
         all_experiments.append({
             "model": model,
             "save_model_path": f"{name}.pth",
@@ -73,7 +73,7 @@ if mode == "herbie":
 
 else:  # slurm mode
     for model in models:
-        name = f"{model}_all"
+        name = f"{model}_{exp_name}"
         yaml_path = os.path.join(YAML_DIR,f"{name}.yaml")
         # Build experiment dict
         exp = {
