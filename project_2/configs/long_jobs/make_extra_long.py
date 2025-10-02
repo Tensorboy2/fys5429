@@ -58,7 +58,7 @@ if mode == "herbie":
     # Combine all experiments into a single YAML
     all_experiments = []
     for model in models:
-        name = f"{model}_all"
+        name = f"{model}_{exp_name}"
         all_experiments.append({
             "model": model,
             "save_model_path": f"{name}.pth",
@@ -74,7 +74,7 @@ if mode == "herbie":
 
 else:  # slurm mode
     for model in models:
-        name = f"{model}_all"
+        name = f"{model}_{exp_name}"
         yaml_path = os.path.join(YAML_DIR,f"{name}.yaml")
         # Build experiment dict
         exp = {

@@ -11,11 +11,13 @@ os.makedirs(YAML_DIR, exist_ok=True)
 # Parameter grid
 models = [
         #   "ViT_T16",
-          "ConvNeXtTiny", 
-          "ConvNeXtSmall",
+        #   "ConvNeXtTiny", 
+        #   "ConvNeXtSmall",
         #   "ViT_S16",
+        "ResNet50",
+        "ResNet101"
           ]
-epochs = [100,200,300,400,500,600]
+epochs = [200,300,400,500]
 
 # optional fixed fields
 common = {
