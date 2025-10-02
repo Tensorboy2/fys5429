@@ -13,21 +13,22 @@ args = parser.parse_args()
 mode = args.mode
 
 # Where to put YAMLs and Slurm scripts
-exp_name = "all_models_run"
+exp_name = "1000_epochs_all_models_run"
 YAML_DIR = os.path.join(file,exp_name)
 SLURM_DIR = YAML_DIR
 os.makedirs(YAML_DIR, exist_ok=True)
 
 # Parameter grid
-models = [#"ViT_T16",
-        #   "ViT_S16", # will already have been run
+models = [
+    "ViT_T16",
+        #   "ViT_S16",
           #"ViB_B16", 
         #   "ViT_T8", 
-          "ViT_S8", 
-        #   "ConNextSmall", # will already have been run
-          #"ConvNeXtTiny",
-            # "ResNet50",
-            # "ResNet101"
+        #   "ViT_S8", 
+          "ConNextSmall",
+          "ConvNeXtTiny",
+            #"ResNet50",
+            "ResNet101"
           ]
 
 # optional fixed fields
@@ -43,7 +44,7 @@ common = {
     "hyperparameters": {
         "lr": 0.0008,
         "batch_size": 128,
-        "num_epochs": 500,
+        "num_epochs": 1000,
         "warmup_steps": 1000,
         "weight_decay": 0.1,
         "decay": "cosine"
