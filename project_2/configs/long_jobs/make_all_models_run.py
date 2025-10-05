@@ -13,7 +13,7 @@ args = parser.parse_args()
 mode = args.mode
 
 # Where to put YAMLs and Slurm scripts
-exp_name = "all_models_run"
+exp_name = "all_models_run_3"
 YAML_DIR = os.path.join(file,exp_name)
 SLURM_DIR = YAML_DIR
 os.makedirs(YAML_DIR, exist_ok=True)
@@ -41,9 +41,9 @@ common = {
         "num_samples": None,
     },
     "hyperparameters": {
-        "lr": 0.0008,
+        "lr": 0.0001,
         "batch_size": 128,
-        "num_epochs": 500,
+        "num_epochs": 1000,
         "warmup_steps": 1000,
         "weight_decay": 0.1,
         "decay": "cosine"
