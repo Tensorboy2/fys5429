@@ -87,6 +87,8 @@ def plot_scatter(preds, targets, label, cmap):
     plt.savefig(os.path.join(ROOT, "results/prediction_plots", f"similarity_plot_{label}.png"))
     plt.close()
 
+def compute_relative_errors(preds, targets, threshold=50.0, epsilon=1e-8):
+    return np.clip(1 - preds / (targets + epsilon), -threshold, threshold)
 
 def plot_histogram(relative_errors, label):
     '''
@@ -111,8 +113,6 @@ def plot_histogram(relative_errors, label):
     plt.close()
 
 
-def compute_relative_errors(preds, targets, threshold=50.0, epsilon=1e-8):
-    return np.clip(1 - preds / (targets + epsilon), -threshold, threshold)
 
 
 def generate_all_plots(predictions, targets):

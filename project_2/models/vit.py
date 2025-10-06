@@ -170,7 +170,7 @@ def ViT_B8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
     return model
 
 
-def ViT_S16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
+def ViT_S16(image_size=128, num_classes=4, patch_size=16, pre_trained_path=None):
     """
     Small ViT with 12 layers, 6 heads, 384 embedding dim
     """
@@ -184,8 +184,8 @@ def ViT_S16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
         num_classes=num_classes
     )
     model.name = f"ViT_S{patch_size}"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
+    if pre_trained_path:
+        weights_path = os.path.join(path, pre_trained_path)
         if os.path.exists(weights_path):
             state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
@@ -193,7 +193,7 @@ def ViT_S16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
+def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained_path=False):
     """
     Small ViT with 12 layers, 6 heads, 384 embedding dim
     """
@@ -207,8 +207,8 @@ def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
         num_classes=num_classes
     )
     model.name = f"ViT_S{patch_size}"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
+    if pre_trained_path:
+        weights_path = os.path.join(path, pre_trained_path)
         if os.path.exists(weights_path):
             state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
@@ -217,7 +217,7 @@ def ViT_S8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
     return model
 
 
-def ViT_T16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
+def ViT_T16(image_size=128, num_classes=4, patch_size=16, pre_trained_path=None):
     """
     Tiny ViT with 12 layers, 3 heads, 192 embedding dim
     """
@@ -231,8 +231,8 @@ def ViT_T16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
         num_classes=num_classes
     )
     model.name = f"ViT_T{patch_size}"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
+    if pre_trained_path:
+        weights_path = os.path.join(path, pre_trained_path)
         if os.path.exists(weights_path):
             state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
@@ -240,7 +240,7 @@ def ViT_T16(image_size=128, num_classes=4, patch_size=16, pre_trained=False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
 
-def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
+def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained_path=None):
     """
     Tiny ViT with 12 layers, 3 heads, 192 embedding dim
     """
@@ -254,19 +254,26 @@ def ViT_T8(image_size=128, num_classes=4, patch_size=8, pre_trained=False):
         num_classes=num_classes
     )
     model.name = f"ViT_T{patch_size}"
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
+    if pre_trained_path:
+        weights_path = os.path.join(path, pre_trained_path)
         if os.path.exists(weights_path):
             state_dict = torch.load(weights_path, map_location="cpu")
             model.load_state_dict(state_dict)
         else:
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     return model
+
+def param_count(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 if __name__ == "__main__":
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(device)
-    x = torch.randn((16,1,128,128)).to(device)
-    model = ViT_S16().to(device)
-    # print(model)
-    print(model(x).cpu().detach().numpy().shape)
+    models = {"ViT_B16": ViT_B16, "ViT_S16": ViT_S16, "ViT_T16": ViT_T16}
+    for name, model_func in models.items():
+        model = model_func()
+        print(f"{name} has {param_count(model):,} trainable parameters")
+    # device = "cuda" if torch.cuda.is_available() else "cpu"
+    # print(device)
+    # x = torch.randn((16,1,128,128)).to(device)
+    # model = ViT_S16().to(device)
+    # # print(model)
+    # print(model(x).cpu().detach().numpy().shape)

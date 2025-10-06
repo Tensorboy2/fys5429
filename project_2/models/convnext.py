@@ -148,7 +148,7 @@ def ConvNeXtTiny(pre_trained = False):
     
     return model
 
-def ConvNeXtSmall(pre_trained = False):
+def ConvNeXtSmall(pre_trained_path = None):
     '''
     Creates a ConvNeXtSmall model.
 
@@ -161,8 +161,8 @@ def ConvNeXtSmall(pre_trained = False):
     model = ConvNeXt(dims = [96, 192, 384, 768],depths = [3, 3, 27, 3])
     model.name = "ConvNeXtSmall"
 
-    if pre_trained:
-        weights_path = os.path.join(path, f'{model.name}.pth')
+    if pre_trained_path:
+        weights_path = os.path.join(path, pre_trained_path)
 
         if os.path.exists(weights_path):
             state_dict = torch.load(weights_path, map_location="cpu")
@@ -171,11 +171,15 @@ def ConvNeXtSmall(pre_trained = False):
             raise FileNotFoundError(f"Pretrained weights not found at {weights_path}")
     
     return model
+def param_count(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-if __name__ == '__main__':
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(device)
-    x = torch.randn((3,1,128,128)).half().to(device)
-    model = ConvNeXtSmall().half().to(device)
-    # print(model)
-    print(model(x).cpu().detach().numpy())
+if __name__ == "__main__":
+    models = {"ConvNeXtTiny": ConvNeXtTiny, "ConvNeXtSmall": ConvNeXtSmall}
+    for name, model_func in models.items():
+        model = model_func()
+        print(f"{name} has {param_count(model):,} trainable parameters")
+    # x = torch.randn((3,1,128,128)).half()
+    # model = ConvNeXtSmall()
+    # # print(model)
+    # print(model(x).cpu().detach().numpy())

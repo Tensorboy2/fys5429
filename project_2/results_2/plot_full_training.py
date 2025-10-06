@@ -20,8 +20,6 @@ sns.set_theme(style="whitegrid")
 
 
 models = {
-    # "ResNet101": "resnet101_metrics_all_models_2.csv",
-    # "ResNet50": "resnet50_metrics_all_models_2.csv",
     # "ResNet50-GC": "resnet50_gradient_clip_test.csv",
     # "ResNet50-GC-500-epochs": "resnet50_gradient_clip_500_epochs.csv",
     # "ConvNeXtTiny_GC": "convnexttiny_gradient_clip_test.csv",
@@ -37,24 +35,21 @@ models = {
     # "ViT-S16-gc": "vit_s16_gradient_clip_test_2.csv",
     # "ViT-B16": "vit_b16_metrics_more_vits.csv",
 
-    "ConvNext-T-500-epochs": "ConvNeXtTiny_500_epochs.csv",
-    "ConvNext-T-400-epochs": "ConvNeXtTiny_400_epochs.csv",
-    "ConvNext-T-300-epochs": "ConvNeXtTiny_300_epochs.csv",
-    "ConvNext-T-200-epochs": "ConvNeXtTiny_200_epochs.csv",
-    "ConvNext-T-100-epochs": "ConvNeXtTiny_100_epochs.csv",
+    "ResNet101": "ResNet101_all.csv",
+    "ResNet50": "ResNet50_all.csv",
 
+    "ConvNext-Tiny": "ConvNeXtTiny_500_epochs.csv",
+    "ConvNeXt-Small": "convnextsmall_extralong.csv",
 
-    # "ViT-t16-600-epochs": "ViT_T16_600_epochs.csv",
-    # "ViT-t16-500-epochs": "ViT_T16_500_epochs.csv",
-    # "ViT-t16-400-epochs": "ViT_T16_400_epochs.csv",
-    # "ViT-t16-300-epochs": "ViT_T16_300_epochs.csv",
-    # "ViT-t16-200-epochs": "ViT_T16_200_epochs.csv",
-    # "ViT-t16-100-epochs": "ViT_T16_100_epochs.csv",
-
+    "ViT-B16": "vit_b16_extralong.csv",
+    "ViT-S16": "ViT_S16_500_epochs.csv",
+    "ViT-T16": "ViT_T16_500_epochs.csv",
+    "ViT-T8": "ViT_T8_all.csv",
+    "ViT-S8": "ViT_S8_all.csv",
 }
 def plot_full_training(models):
     # Assign distinct colors:
-    colors = sns.color_palette("Blues", n_colors=len(models))
+    colors = sns.color_palette("tab10", n_colors=len(models))
 
     # Load all data:
     models_info = {}
@@ -87,12 +82,12 @@ def plot_full_training(models):
     ]
     plt.legend(handles=legend_elements, fontsize=8, title="Models", frameon=False)
     plt.xlabel("Epochs")
-    plt.ylabel(r"$R^2$ Score")
-    # plt.ylim(0.96, 1)
-    # plt.xlim(40, 700)
+    plt.ylabel(r"$1-R^2$")
+    # plt.ylim(0.99, 1.001)
+    plt.xlim(40, 700)
     plt.xscale("log")
     plt.yscale("log")
-    # plt.xticks([100, 200, 300, 400, 500], [100, 200, 300, 400, 500])
+    plt.xticks([100, 200, 300, 400, 500], [100, 200, 300, 400, 500])
     plt.grid(True, linestyle="--", linewidth=0.4, alpha=0.5)
     plt.tight_layout()
     plt.savefig(os.path.join(path, "full_training_r2_v2.pdf"), bbox_inches='tight')

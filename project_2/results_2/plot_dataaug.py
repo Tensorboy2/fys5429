@@ -27,23 +27,23 @@ sns.set_theme(style="whitegrid")
 plot_model = "both"  # options: "convnextsmall", "vit_s16", "both"
 
 augmentation_variants_convnext = {
-    "None": "convnextsmall_metrics_dataaugmentation_test.csv",
-    "Horizontal Flip": "convnextsmall_hflip_metrics_dataaugmentation_test.csv",
-    "Vertical Flip": "convnextsmall_vflip_metrics_dataaugmentation_test.csv",
-    "Rotation": "convnextsmall_rotate_metrics_dataaugmentation_test.csv",
-    "H+V+Rotate": "convnextsmall__hflip_vflip_rotate_metrics_dataaugmentation_test.csv",
-    "H+V Flip": "convnextsmall_hflip_vflip_metrics_dataaugmentation_test.csv",
-    "Group": "convnextsmall__group_dataaugmentation_test.csv",
+    r"$D_4$": "ConvNeXtSmall_group_dataaug_run.csv",
+    "H+V+Rotate": "ConvNeXtSmall_hflip_vflip_rotate_dataaug_run.csv",
+    "H+V Flip": "ConvNeXtSmall_hflip_vflip_dataaug_run.csv",
+    "Rotation": "ConvNeXtSmall_rotate_dataaug_run.csv",
+    "Vertical Flip": "ConvNeXtSmall_vflip_dataaug_run.csv",
+    "Horizontal Flip": "ConvNeXtSmall_hflip_dataaug_run.csv",
+    "None": "ConvNeXtSmall_none_dataaug_run.csv",
 }
 
 augmentation_variants_vit_s16 = {
-    "None": "vit_s16_metrics_dataaugmentation_test.csv",
-    "Horizontal Flip": "vit_s16_hflip_metrics_dataaugmentation_test.csv",
-    "Vertical Flip": "vit_s16_vflip_metrics_dataaugmentation_test.csv",
-    "Rotation": "vit_s16_rotate_metrics_dataaugmentation_test.csv",
-    "H+V+Rotate": "vit_s16_hflip_vflip_rotate_metrics_dataaugmentation_test.csv",
-    "H+V Flip": "vit_s16_hflip_vflip_metrics_dataaugmentation_test.csv",
-    "Group": "vit_s16_group_dataaugmentation_test.csv",
+    r"$D_4$": "ViT_S16_500_epochs.csv",
+    "H+V+Rotate": "ViT_S16_hflip_vflip_rotate_dataaug_run.csv",
+    "H+V Flip": "ViT_S16_hflip_vflip_dataaug_run.csv",
+    "Rotation": "ViT_S16_rotate_dataaug_run.csv",
+    "Horizontal Flip": "ViT_S16_hflip_dataaug_run.csv",
+    "Vertical Flip": "ViT_S16_vflip_dataaug_run.csv",
+    "None": "ViT_S16_none_dataaug_run.csv",
 }
 
 def load_models_info(augmentation_variants):
@@ -70,7 +70,7 @@ def plot_metrics(models_info, title_prefix):
         df = info["df"]
         color = info["color"]
         plt.plot(df["epoch"], 1-df["test_r2"], c=color, linestyle="-")
-        plt.plot(df["epoch"], 1-df["train_r2"], c=color, linestyle="--", alpha=0.5)
+        # plt.plot(df["epoch"], 1-df["train_r2"], c=color, linestyle="--", alpha=0.5)
         idx_max = np.argmax(df['test_r2'])
         print(f"{title_prefix} Aug: {label}, test R²: {df['test_r2'][idx_max]:.5f}, train R²: {df['train_r2'][idx_max]:.5f}, "
               f"test MSE: {df['test_mse'][idx_max]:.6f}, train MSE: {df['train_mse'][idx_max]:.6f}")
